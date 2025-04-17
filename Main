@@ -1,0 +1,114 @@
+local Version = "0.0.1v"
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+	Name = "Ducky-Hub (BGSI)",
+	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	LoadingTitle = "Ducky-Hub",
+	LoadingSubtitle = "Welcome!",
+	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+	DisableRayfieldPrompts = false,
+	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil, -- Create a custom folder for your hub/game
+		FileName = "DuckyHubConfigs"
+	},
+
+	Discord = {
+		Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+		Invite = "https://discord.gg/P49rCFQ7FX", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+	},
+
+	KeySystem = true, -- Set this to true to use our key system
+	KeySettings = {
+		Title = "Ducky-Hub",
+		Subtitle = "Key System",
+		Note = "Join our discord to get the key!", -- Use this to tell the user how to get a key
+		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = {"test"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+	}
+})
+
+-- SERVICES
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- VALUES
+
+Setting_AutoVoidChest = false
+Setting_AutoInfinityChest = false
+Setting_AutoGiantChest = false
+
+-- MAIN WHILE LOOP
+
+while true do
+	
+	if Setting_AutoVoidChest == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest")
+	end
+	
+	if Setting_AutoInfinityChest == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest")
+	end
+	
+	if Setting_AutoGiantChest == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest")
+	end
+	
+	task.wait(5)
+end
+
+-- FUNCTIONS
+
+
+-- FARMING TAB
+
+local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
+
+	local Section_Automatic = Tab_Farming:CreateSection("Automation")
+
+		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
+			Name = "Auto Void Chest",
+			CurrentValue = false,
+			Flag = "Flag_AutoVoidChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoVoidChest = true
+				elseif Value == false then
+					Setting_AutoVoidChest = false
+				end
+			end,
+		})
+				
+		local Toggle_AutoGiantChest = Tab_Farming:CreateToggle({
+			Name = "Auto Giant Chest",
+			CurrentValue = false,
+			Flag = "Flag_AutoGiantChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoGiantChest = true
+				elseif Value == false then
+					Setting_AutoGiantChest = false
+				end
+			end,
+		})
+
+		local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
+			Name = "Auto Infinity Chest",
+			CurrentValue = false,
+			Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoInfinityChest = true
+				elseif Value == false then
+					Setting_AutoInfinityChest = false
+				end
+			end,
+		})
