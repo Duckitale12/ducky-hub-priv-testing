@@ -47,6 +47,7 @@ local Setting_AutoInfinityChest = false
 local Setting_AutoGiantChest = false
 local Setting_AutoFreeWheelSpin = false
 local Setting_AutoSpinWheel = false
+local Setting_AutoClaimPlaytime = false
 
 -- MAIN WHILE LOOP
 
@@ -72,9 +73,21 @@ local Loop = task.spawn(function()
 		if Setting_AutoFreeWheelSpin == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
 		end
+		
+		if Setting_AutoClaimPlaytime == true then
+			for INDEX=1, 9 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", INDEX)
+				task.wait(0.5)
+			end
+		end
 
 		task.wait(5)
 	end
+end)
+
+local Loop_Fast = task.spawn(function()
+	
+	task.wait(0.5)
 end)
 
 -- FUNCTIONS
@@ -83,7 +96,7 @@ end)
 -- FARMING TAB
 
 local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
-
+	
 	local Section_Automatic = Tab_Farming:CreateSection("Automation")
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
@@ -147,6 +160,19 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 					Setting_AutoSpinWheel = true
 				elseif Value == false then
 					Setting_AutoSpinWheel = false
+				end
+			end,
+		})
+		
+		local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
+			Name = "Auto Spin Wheel",
+			CurrentValue = false,
+			Flag = "Flag_AutoClaimPlaytime ", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoClaimPlaytime = true
+				elseif Value == false then
+					Setting_AutoClaimPlaytime  = false
 				end
 			end,
 		})
