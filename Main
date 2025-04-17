@@ -52,6 +52,7 @@ local Setting_AutoBlowBubble = false
 local Setting_AutoSellBubble = false
 local Setting_AutoBuyAlienShop = false
 local Setting_AutoBuyBlackmarketItems = false
+local Setting_AutoPickupables = false
 
 -- MAIN WHILE LOOP
 
@@ -112,6 +113,15 @@ local Loop_Fast = task.spawn(function()
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
 		end
+		
+		if Setting_AutoPickupables == true then
+			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
+				local Name = Pickupable.Name
+				
+				ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
+				task.wait(0.05)
+			end
+		end
 
 		task.wait(0.25)
 	end
@@ -151,7 +161,21 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 				end
 			end,
 		})
-
+	
+	local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
+	
+		local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
+			Name = "Auto Pickup Coins & Gems Around You",
+			CurrentValue = false,
+			Flag = "Flag_AutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoPickupables = true
+				elseif Value == false then
+					Setting_AutoPickupables = false
+				end
+			end,
+		})
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Automation")
 
@@ -281,6 +305,8 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 				end
 			end,
 	})
+	
+	local Section_Info = Tab_Misc:CreateSection("Info")
 	
 	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "Discord Server", Content = "https://discord.gg/P49rCFQ7FX"})
 	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
