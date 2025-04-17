@@ -1,4 +1,4 @@
-local _Version_ = "0.0.21v [Beta]"
+local _Version_ = "0.0.22v [Beta]"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -53,6 +53,7 @@ local Setting_AutoSellBubble = false
 local Setting_AutoBuyAlienShop = false
 local Setting_AutoBuyBlackmarketItems = false
 local Setting_AutoPickupables = false
+local Setting_IslandSpawnNotifications = false
 
 -- MAIN WHILE LOOP
 
@@ -110,18 +111,6 @@ local Loop_Fast = task.spawn(function()
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
 		end
-		
-		if Setting_AutoPickupables == true then
-			task.spawn(function()
-				for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-					local Name = Pickupable.Name
-
-					ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
-					task.wait(0.5)
-					Pickupable:Destroy()
-				end
-			end)
-		end
 
 		task.wait(0.25)
 	end
@@ -129,6 +118,68 @@ end)
 
 -- FUNCTIONS
 
+function Webhook(url, embed, message)
+	local http = game:GetService("HttpService")
+	local headers = {
+		["Content-Type"] = "application/json"
+	}
+	local data = {
+		["content"] = message,
+		["embeds"] = {
+			{
+				["title"] = embed.title,
+				["description"] = embed.description,
+				["color"] = embed.color,
+				["fields"] = embed.fields,
+				["footer"] = {
+					["text"] = embed.footer.text
+				}
+			}
+		}
+	}
+	local body = http:JSONEncode(data)
+	local response = request({
+		Url = url,
+		Method = "POST",
+		Headers = headers,
+		Body = body
+	})
+end
+
+workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
+	if Setting_IslandSpawnNotifications == true then
+		task.wait(5)
+		
+		local IslandName = IslandObject.Name
+		local IslandHeight = IslandObject.Display.CFrame.Y
+		
+		local Luck = nil
+		local Timer = IslandObject.Display.SurfaceGui.Timer.Text
+		
+		if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
+			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+		end
+		
+		if Luck == "x25" then
+
+			
+			
+		end
+		
+	end
+end)
+
+workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
+	if Setting_AutoPickupables == true then
+		task.spawn(function()
+			local Name = Pickupable.Name
+
+			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
+			task.wait(0.5)
+			Pickupable:Destroy()
+		end)
+	end
+end)
 
 -- FARMING TAB
 
@@ -290,6 +341,19 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 	
 	local Section_Notifications = Tab_Islands:CreateSection("Notifications")
+	
+		local Toggle_IslandSpawnNotifications = Tab_Farming:CreateToggle({
+			Name = "Get Notifications When Islands Appear",
+			CurrentValue = false,
+			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_IslandSpawnNotifications = true
+				elseif Value == false then
+					Setting_IslandSpawnNotifications  = false
+				end
+			end,
+		})
 
 
 local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
