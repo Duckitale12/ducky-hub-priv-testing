@@ -1,4 +1,6 @@
-local _Version_ = "0.0.22v [Beta]"
+local _Version_ = "0.0.23v [Beta]"
+
+local placeId = game.PlaceId
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -118,6 +120,8 @@ end)
 
 -- FUNCTIONS
 
+local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
+
 function Webhook(url, embed, message)
 	local http = game:GetService("HttpService")
 	local headers = {
@@ -160,12 +164,35 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
 		end
 		
-		if Luck == "x25" then
+		if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
+			if Luck == "x25" or Luck == "10x" then	
+				local Embed = {
+					["title"] = "✨ Rare Egg Found!",
+					["description"] = "",
+					["fields"] = {
+						{
+							["name"] = "🥚 Egg Name",
+							["value"] = "```" .. IslandName .. "```",
+						},
+						{
+							["name"] = "🍀 Luck Multiplier",
+							["value"] = "```" .. Luck .. "```",
+						},
+						{
+							["name"] = "🔑 Server Link",
+							["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+						},
 
-			
-			
+					},
+					["color"] = 16777215,
+					["footer"] = {
+						["text"] = tostring(os.date("%H:%M:%S")) 
+					}
+				}
+				
+				Webhook(Testing_Hook, Embed)
+			end
 		end
-		
 	end
 end)
 
@@ -175,9 +202,13 @@ workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
 			local Name = Pickupable.Name
 
 			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
-			task.wait(0.5)
-			Pickupable:Destroy()
 		end)
+	end
+	
+	for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
+		local Name = Pickupable.Name
+
+		ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
 	end
 end)
 
