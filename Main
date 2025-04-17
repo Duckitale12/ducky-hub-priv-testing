@@ -1,4 +1,4 @@
-local _Version_ = "0.0.16v [Beta]"
+local _Version_ = "0.0.18v [Beta]"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -50,6 +50,8 @@ local Setting_AutoSpinWheel = false
 local Setting_AutoClaimPlaytime = false
 local Setting_AutoBlowBubble = false
 local Setting_AutoSellBubble = false
+local Setting_AutoBuyAlienShop = false
+local Setting_AutoBuyBlackmarketItems = false
 
 -- MAIN WHILE LOOP
 
@@ -77,14 +79,28 @@ local Loop = task.spawn(function()
 		end
 		
 		if Setting_AutoClaimPlaytime == true then
-			for INDEX=1, 9 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", INDEX)
+			for Index = 1, 9 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
 				task.wait(0.5)
 			end
 		end
 		
 		if Setting_AutoSellBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+		end
+		
+		if Setting_AutoBuyBlackmarketItems == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+				task.wait(0.5)
+			end
+		end
+		
+		if Setting_AutoBuyAlienShop == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+				task.wait(0.5)
+			end
 		end
 
 		task.wait(5)
@@ -207,7 +223,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 		local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
 			Name = "Auto Claim Playtime Rewards",
 			CurrentValue = false,
-			Flag = "Flag_AutoClaimPlaytime ", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Flag = "Flag_AutoClaimPlaytime", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				if Value == true then
 					Setting_AutoClaimPlaytime = true
@@ -216,6 +232,35 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 				end
 			end,
 		})
+		
+	local Selection_Shops = Tab_Farming:CreateSection("Shops")
+		
+		local Toggle_AutoBuyBlackmarket= Tab_Farming:CreateToggle({
+			Name = "Auto Buy Blackmarket Items",
+			CurrentValue = false,
+			Flag = "Flag_AutoBuyBlackmarketItems", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoBuyBlackmarketItems = true
+				elseif Value == false then
+					Setting_AutoBuyBlackmarketItems  = false
+				end
+			end,
+		})
+	
+		local Toggle_AutoBuyAlienShop = Tab_Farming:CreateToggle({
+			Name = "Auto Buy Alien Shop Items",
+			CurrentValue = false,
+			Flag = "Flag_AutoBuyAlienShop", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoBuyAlienShop = true
+				elseif Value == false then
+					Setting_AutoBuyAlienShop  = false
+				end
+			end,
+		})
+
 		
 
 local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
@@ -237,7 +282,8 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 			end,
 	})
 	
-local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
+	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "Discord Server", Content = "https://discord.gg/P49rCFQ7FX"})
+	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
 
 
 Rayfield:LoadConfiguration()
