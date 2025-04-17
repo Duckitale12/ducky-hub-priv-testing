@@ -1,4 +1,4 @@
-local _Version_ = "0.0.18v [Beta]"
+local _Version_ = "0.0.2v [Beta]"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -119,7 +119,8 @@ local Loop_Fast = task.spawn(function()
 				local Name = Pickupable.Name
 				
 				ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
-				task.wait(0.05)
+				task.wait()
+				Pickupable:Destroy()
 			end
 		end
 
