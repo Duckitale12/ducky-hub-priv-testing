@@ -1,9 +1,9 @@
-local Version = "0.0.1v"
+local _Version_ = "0.0.11v - Test"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-	Name = "Ducky-Hub (BGSI)",
+	Name = "Ducky-Hub " .. _Version_,
 	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
 	LoadingTitle = "Ducky-Hub",
 	LoadingSubtitle = "Welcome!",
@@ -150,3 +150,5 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 				end
 			end,
 		})
+
+Rayfield:LoadConfiguration()
