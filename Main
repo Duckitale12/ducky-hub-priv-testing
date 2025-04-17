@@ -1,4 +1,4 @@
-local _Version_ = "0.0.23v [Beta]"
+local _Version_ = "0.0.24v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -202,13 +202,9 @@ workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
 			local Name = Pickupable.Name
 
 			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
+			wait(1)
+			Pickupable:Destroy()
 		end)
-	end
-	
-	for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-		local Name = Pickupable.Name
-
-		ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
 	end
 end)
 
@@ -373,8 +369,8 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 	
 	local Section_Notifications = Tab_Islands:CreateSection("Notifications")
 	
-		local Toggle_IslandSpawnNotifications = Tab_Farming:CreateToggle({
-			Name = "Get Notifications When Islands Appear",
+		local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
+			Name = "Get Notifications When New Islands Appear",
 			CurrentValue = false,
 			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
