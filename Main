@@ -1,4 +1,4 @@
-local _Version_ = "0.0.13v - Test"
+local _Version_ = "0.0.14v - Test"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -28,7 +28,7 @@ local Window = Rayfield:CreateWindow({
 	KeySettings = {
 		Title = "Ducky-Hub",
 		Subtitle = "Key System",
-		Note = "Join our discord to get the key!", -- Use this to tell the user how to get a key
+		Note = "Join our discord to get the key! (https://discord.gg/P49rCFQ7FX)", -- Use this to tell the user how to get a key
 		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
 		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
 		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
@@ -48,6 +48,8 @@ local Setting_AutoGiantChest = false
 local Setting_AutoFreeWheelSpin = false
 local Setting_AutoSpinWheel = false
 local Setting_AutoClaimPlaytime = false
+local Setting_AutoBlowBubble = false
+local Setting_AutoSellBubble = false
 
 -- MAIN WHILE LOOP
 
@@ -80,12 +82,19 @@ local Loop = task.spawn(function()
 				task.wait(0.5)
 			end
 		end
+		
+		if Setting_AutoSellBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+		end
 
 		task.wait(5)
 	end
 end)
 
 local Loop_Fast = task.spawn(function()
+	if Setting_AutoBlowBubble == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+	end
 	
 	task.wait(0.5)
 end)
@@ -96,6 +105,35 @@ end)
 -- FARMING TAB
 
 local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
+	
+	local Section_Bubbles = Tab_Farming:CreateSection("Bubbles")
+	
+		local Toggle_AutoBubbleBlow = Tab_Farming:CreateToggle({
+			Name = "Auto Blow Bubbles",
+			CurrentValue = false,
+			Flag = "Flag_AutoBubbleBlow", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoBlowBubble = true
+				elseif Value == false then
+					Setting_AutoBlowBubble = false
+				end
+			end,
+		})
+
+		local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
+			Name = "Auto Sell Bubbles",
+			CurrentValue = false,
+			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoSellBubble = true
+				elseif Value == false then
+					Setting_AutoSellBubble = false
+				end
+			end,
+		})
+
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Automation")
 
@@ -176,5 +214,21 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 				end
 			end,
 		})
+		
+		
+local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
+
+	local Section_Unlockables = Tab_Misc:CreateSection("Unlockables")
+			
+	local Button_UnlockIslands = Tab_Misc:CreateButton({
+			Name = "Unlock All Islands",
+			Callback = function()
+				for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
+					task.wait(0.5)
+				end
+			end,
+		})
+
 
 Rayfield:LoadConfiguration()
