@@ -48,22 +48,24 @@ Setting_AutoGiantChest = false
 
 -- MAIN WHILE LOOP
 
-while true do
-	
-	if Setting_AutoVoidChest == true then
-		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest")
+local Loop = task.spawn(function()
+	while true do
+
+		if Setting_AutoVoidChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest")
+		end
+
+		if Setting_AutoInfinityChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest")
+		end
+
+		if Setting_AutoGiantChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest")
+		end
+
+		task.wait(5)
 	end
-	
-	if Setting_AutoInfinityChest == true then
-		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest")
-	end
-	
-	if Setting_AutoGiantChest == true then
-		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest")
-	end
-	
-	task.wait(5)
-end
+end)
 
 -- FUNCTIONS
 
@@ -96,6 +98,19 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 					Setting_AutoGiantChest = true
 				elseif Value == false then
 					Setting_AutoGiantChest = false
+				end
+			end,
+		})
+
+		local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
+			Name = "Auto Infinity Chest",
+			CurrentValue = false,
+			Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_AutoInfinityChest = true
+				elseif Value == false then
+					Setting_AutoInfinityChest = false
 				end
 			end,
 		})
