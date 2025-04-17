@@ -207,7 +207,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			end,
 		})
 
-		local Toggle_AutoSpinWheel = Tab_Farming:CreateToggle({
+		--[[local Toggle_AutoSpinWheel = Tab_Farming:CreateToggle({
 			Name = "Auto Spin Wheel",
 			CurrentValue = false,
 			Flag = "Flag_AutoSpinWheel", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -218,7 +218,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 					Setting_AutoSpinWheel = false
 				end
 			end,
-		})
+		})]]
 		
 		local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
 			Name = "Auto Claim Playtime Rewards",
