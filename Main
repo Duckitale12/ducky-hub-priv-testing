@@ -1,4 +1,4 @@
-local _Version_ = "0.0.14v - Test"
+local _Version_ = "0.0.15v [Beta]"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -92,11 +92,13 @@ local Loop = task.spawn(function()
 end)
 
 local Loop_Fast = task.spawn(function()
-	if Setting_AutoBlowBubble == true then
-		ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+	while true do
+		if Setting_AutoBlowBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+		end
+
+		task.wait(0.5)
 	end
-	
-	task.wait(0.5)
 end)
 
 -- FUNCTIONS
