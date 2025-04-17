@@ -54,15 +54,15 @@ local Loop = task.spawn(function()
 	while true do
 
 		if Setting_AutoVoidChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest")
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
 		end
 
 		if Setting_AutoInfinityChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest")
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
 		end
 
 		if Setting_AutoGiantChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest")
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
 		end
 		
 		if Setting_AutoFreeWheelSpin == true then
