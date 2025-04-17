@@ -1,4 +1,4 @@
-local _Version_ = "0.0.25v [Beta]"
+local _Version_ = "0.0.26v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -201,7 +201,7 @@ workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
 		task.spawn(function()
 			local Name = Pickupable.Name
 			
-			Pickupable.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+			--Pickupable.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- maybe?
 			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
 			wait(1)
 			Pickupable:Destroy()
