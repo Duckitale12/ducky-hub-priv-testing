@@ -99,16 +99,3 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 				end
 			end,
 		})
-
-		local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
-			Name = "Auto Infinity Chest",
-			CurrentValue = false,
-			Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				if Value == true then
-					Setting_AutoInfinityChest = true
-				elseif Value == false then
-					Setting_AutoInfinityChest = false
-				end
-			end,
-		})
