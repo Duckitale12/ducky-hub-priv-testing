@@ -1,4 +1,4 @@
-local _Version_ = "0.0.28v [Beta]"
+local _Version_ = "0.0.29v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -130,7 +130,7 @@ local Loop_PickupablesAuto = task.spawn(function()
 			end
 		end
 
-		task.wait(0.25)
+		task.wait(0.7)
 	end
 end)
 
