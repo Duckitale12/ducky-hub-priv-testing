@@ -1,4 +1,4 @@
-local _Version_ = "0.0.75v [Beta]"
+local _Version_ = "0.0.77v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -685,6 +685,8 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_ServerHopFarm = Value
+				
+				TeleportService:Teleport(placeId)
 			end,
 		})
 
@@ -728,6 +730,10 @@ Rayfield:LoadConfiguration()
 
 task.spawn(function()
 	if Setting_ServerHopFarm == true then
+		
+		game:GetService("Players").LocalPlayer.PlayerGui.Intro.Enabled = false
+		game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enabled = true
+		
 		warn("Autofarm Searching...")
 		task.wait(2)
 		
