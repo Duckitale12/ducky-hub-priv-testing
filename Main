@@ -1,4 +1,4 @@
-local _Version_ = "0.0.8v [Beta]"
+local _Version_ = "0.0.81v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -800,6 +800,8 @@ task.spawn(function()
 
 		warn("LF Check ahead...")
 
+		local FOUND = false
+
 		local function Check_LF_Islands_Matches()
 			for _, island in Islands do
 				
@@ -882,27 +884,29 @@ task.spawn(function()
 						
 						HopServer()
 					end)
-				else
-					warn("Island not found!")
-					
-					Rayfield:Notify({
-						Title = "Island not found...",
-						Content = "Attempting to joing a new server!",
-						Image = 0,
-
-						OnClick = function()
-
-						end,
-					})
-					
-					task.wait(5)
-					
-					HopServer()
 				end
 			end
 		end
 		
 		Check_LF_Islands_Matches()
+		
+		if FOUND == false then
+			warn("Island not found!")
+
+			Rayfield:Notify({
+				Title = "Island not found...",
+				Content = "Attempting to joing a new server!",
+				Image = 0,
+
+				OnClick = function()
+
+				end,
+			})
+
+			task.wait(5)
+
+			HopServer()
+		end
 	end
 end)
 
