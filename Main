@@ -1,4 +1,4 @@
-local _Version_ = "0.0.77v [Beta]"
+local _Version_ = "0.0.78v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -679,14 +679,19 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 
 		local HopFarmReminderParagraph = Tab_EggFarm:CreateParagraph({Title = "Warning", Content = "Make sure to select the eggs you want to hatch before turning on!"})
 
+		local Button_Rejoin = Tab_EggFarm:CreateButton({
+			Name = "Rejoin Server (Use after enabling)",
+			Callback = function()
+				TeleportService:Teleport(placeId)
+			end,
+		})
+
 		local Toggle_ServerHopFarm = Tab_EggFarm:CreateToggle({
 			Name = "Enable Server Hopper Farm",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_ServerHopFarm = Value
-				
-				TeleportService:Teleport(placeId)
 			end,
 		})
 
