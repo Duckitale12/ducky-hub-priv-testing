@@ -1,4 +1,4 @@
-local _Version_ = "0.0.35v [Beta]"
+local _Version_ = "0.0.36v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -124,9 +124,15 @@ local Loop_PickupablesAuto = task.spawn(function()
 		if Setting_TeleportToPickupables == true then
 			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
 				local Name = Pickupable.Name
-				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
+				local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
+				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
+				
+				if PickupablePart then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
+				elseif PickupableMeshPart then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupableMeshPart.CFrame + Vector3.new(0, 8, 0)
+				end
 
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
 				wait(1)
 			end
 		end
