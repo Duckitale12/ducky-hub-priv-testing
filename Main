@@ -1,4 +1,4 @@
-local _Version_ = "0.0.4v [Beta]"
+local _Version_ = "0.0.41v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -156,9 +156,9 @@ local Loop_PickupablesAuto = task.spawn(function()
 				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
 
 				if PickupablePart then
-					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame})
+					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
 				elseif PickupableMeshPart then
-					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame})
+					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
 				end
 
 				task.wait(0.5)
