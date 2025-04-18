@@ -1,4 +1,4 @@
-local _Version_ = "0.0.64v [Beta]"
+local _Version_ = "0.0.65v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -695,6 +695,8 @@ task.spawn(function()
 	task.wait(5)
 	
 	warn("Checking... (2)")
+	
+	warn(Setting_Flag_ServerHopFarm_VoidEgg25x, Setting_Flag_ServerHopFarm_VoidEgg10x, Setting_Flag_ServerHopFarm_NightmareEgg25x, Setting_Flag_ServerHopFarm_NightmareEgg10x, Setting_Flag_ServerHopFarm_RainbowEgg25x, Setting_Flag_ServerHopFarm_RainbowEgg10x, Setting_Flag_ServerHopFarm_AuraEgg)
 	
 	if Toggle_ServerHopFarm == true then
 		local Islands = Check_Islands_OnServer()
