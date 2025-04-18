@@ -1,4 +1,4 @@
-local _Version_ = "0.0.7v [Beta]"
+local _Version_ = "0.0.71v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -756,10 +756,9 @@ task.spawn(function()
 					
 					GlobalEggWebhook(island[1], Luck, Timer, Height)
 					
-					ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport",  workspace.Worlds["The Overworld"].Islands.Zen.Island.Portal.Spawn)
+					--ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport",  workspace.Worlds["The Overworld"].Islands.Zen.Island.Portal.Spawn)
 					
 					task.wait(1)
-					
 					
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					
