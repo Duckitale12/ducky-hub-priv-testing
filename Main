@@ -1,4 +1,4 @@
-local _Version_ = "0.0.61v [Beta]"
+local _Version_ = "0.0.62v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -297,6 +297,10 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 					{
 						["name"] = "🥚 Egg Name",
 						["value"] = "```" .. IslandName .. "```",
+					},
+					{
+						["name"] = "⌚ Time Left",
+						["value"] = "```" .. Timer .. "```",
 					},
 					{
 						["name"] = "🍀 Luck Multiplier",
@@ -698,7 +702,13 @@ task.spawn(function()
 
 				for _, IslandOnServer in Islands do
 					--  {Name, Luck, EggCFrame, Timer, Height}
+					warn(IslandOnServer[1] .. " - " .. LF_InfoTable[1])
+					Message(tostring(IslandOnServer[1]) .. " - " .. tostring(LF_InfoTable[1]))
 					if IslandOnServer[1] == LF_InfoTable[1] then
+						warn(IslandOnServer[1] .. IslandOnServer[2] .. " - " .. LF_InfoTable[1] .. LF_InfoTable[2])
+						Message(tostring(IslandOnServer[1]) .. " " .. tostring(IslandOnServer[2]) .. " - " .. tostring(LF_InfoTable[1]) .. " " .. tostring(LF_InfoTable[2]))
+
+						
 						if IslandOnServer[2] == LF_InfoTable[2] then
 							warn(LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
 							Message(Testing_Hook, "FOUND EGG: " .. LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
