@@ -785,9 +785,6 @@ task.spawn(function()
 
 		Check_LF_Islands_Matches()
 		
-		Message(Testing_Hook, tostring(Islands))
-		Message(Testing_Hook, table.unpack(Islands))
-		Message(Testing_Hook, tostring(__LF_Eggs_Table__))
 --[[function printtable()
 	local tablee = Check_Islands_OnServer()
 	for _, v in tablee do
