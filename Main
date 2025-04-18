@@ -1,5 +1,12 @@
-local _Version_ = "0.0.72v [Beta]"
+local _Version_ = "0.0.73v [Beta]"
  
+local EggNames = {
+	["void-egg"] = "Void Egg",
+	["rainbow-egg"] = "Rainbow Egg",
+	["nightmare-egg"] = "Nightmare Egg",
+	["aura-egg"] = "Aura Egg",
+} 
+
 local placeId = game.PlaceId
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -706,8 +713,9 @@ task.spawn(function()
 						local Timer = Island.Display.SurfaceGui.Timer.Text
 						local Height = Island.Display.CFrame.Y
 						local EggCFrame = Island.Display.CFrame
+						local IslandObject = Island
 
-						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height})
+						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
 					end
 				end
 			end
@@ -753,6 +761,7 @@ task.spawn(function()
 					local Position = EggCFrame.Position
 					local Timer = island[4]
 					local Height = island[5]
+					local IslandObject = island[6]
 					
 					GlobalEggWebhook(island[1], Luck, Timer, Height)
 					
@@ -762,20 +771,38 @@ task.spawn(function()
 
 					task.wait(1)
 					
+					--------- Flying to island 
+					
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					
 					HRP.Anchored = true
 					CharacterCanColide(false)
 					
 					local distance = (HRP.Position - Position).Magnitude
-					local tweenTime = (distance / 150)
+					local tweenTime = (distance / 200)
 					TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame}):Play()
 					
-					task.wait(tweenTime + 0.5)
+					task.wait(tweenTime + 0.6)
 					
 					CharacterCanColide(true)
 					HRP.Anchored = false
 					
+					task.wait(0.5)
+					
+					------------- At island - egg opening
+					
+					local EggName = EggNames[Name]
+						
+					task.spawn(function()
+						while IslandObject do
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
+							task.wait(0.25)
+						end
+					end)
+					
+					IslandObject.Destroying:Connect(function()
+						warn("EGG IS DESTROYING")
+					end)
 				end
 			end
 		end
@@ -783,6 +810,8 @@ task.spawn(function()
 		Check_LF_Islands_Matches()
 	end
 end)
+
+
 
 function CharacterCanColide(value)
 	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
