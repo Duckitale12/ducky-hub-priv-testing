@@ -1,4 +1,4 @@
-local _Version_ = "0.0.82v [Beta]"
+local _Version_ = "0.0.83v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -760,7 +760,7 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 
 --- AFTER JOINING SERVER
 
-Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
+Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name .. " (SERVER_ID: `" .. game.JobId .. "`")
 Rayfield:LoadConfiguration()
 
 task.spawn(function()
@@ -841,6 +841,8 @@ task.spawn(function()
 					local msg = string.format("Egg Matched: %s | %s", island[1], island[2])
 					warn(msg)
 					Message(Testing_Hook, msg)
+					
+					FOUND = true
 					
 					local Name = island[1]
 					local Luck = island[2]
