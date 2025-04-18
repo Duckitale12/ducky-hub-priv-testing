@@ -1,4 +1,4 @@
-local _Version_ = "0.0.66v [Beta]"
+local _Version_ = "0.0.67v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -696,7 +696,7 @@ task.spawn(function()
 	
 	warn(Setting_Flag_ServerHopFarm_VoidEgg25x, Setting_Flag_ServerHopFarm_VoidEgg10x, Setting_Flag_ServerHopFarm_NightmareEgg25x, Setting_Flag_ServerHopFarm_NightmareEgg10x, Setting_Flag_ServerHopFarm_RainbowEgg25x, Setting_Flag_ServerHopFarm_RainbowEgg10x, Setting_Flag_ServerHopFarm_AuraEgg)
 	
-	if Toggle_ServerHopFarm == true then
+	if Setting_ServerHopFarm == true then
 		warn("TOGGLE AUTOFARM IS TRUE!")
 		local Islands = {}
 		local LF_Eggs_Table = {}
