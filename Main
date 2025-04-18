@@ -1,4 +1,4 @@
-local _Version_ = "0.0.58v [Beta]"
+local _Version_ = "0.0.59v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -676,8 +676,13 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
 
+warn("Checking...")
+
 task.spawn(function()
-	task.wait(8)
+	task.wait(10)
+	
+	warn("Checking...")
+	
 	if Toggle_ServerHopFarm == true then
 		local Islands = Check_Islands_OnServer()
 		local __LF_Eggs_Table__ = Get_Table_Of_LF_Eggs()
