@@ -1,4 +1,4 @@
-local _Version_ = "0.0.45v [Beta]"
+local _Version_ = "0.0.47v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -151,17 +151,21 @@ local Loop_PickupablesAuto = task.spawn(function()
 			game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
 			
 			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-				local Name = Pickupable.Name
-				local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
-				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
+				if Setting_TeleportToPickupables == true then
+					local Name = Pickupable.Name
+					local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
+					local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
 
-				if PickupablePart then
-					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
-				elseif PickupableMeshPart then
-					TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
-				end
+					if PickupablePart then
+						TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1.6, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
+					elseif PickupableMeshPart then
+						TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1.6, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
+					end
 
-				task.wait(2)
+					task.wait(3)
+				else
+					game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+				end	
 			end
 		else
 			game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
@@ -359,7 +363,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 		})
 		
 		local Toggle_TeleportToPickupables = Tab_Farming:CreateToggle({
-			Name = "Teleport To Nearby Pickupables",
+			Name = "Fly To Nearby Pickupables",
 			CurrentValue = false,	
 			Flag = "Flag_TeleportToPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
