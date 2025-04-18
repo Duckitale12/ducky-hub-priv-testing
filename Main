@@ -1,4 +1,4 @@
-local _Version_ = "0.0.9v"
+local _Version_ = "0.0.91v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -940,9 +940,9 @@ task.spawn(function()
 
 				local distance = (HRP.Position - Position).Magnitude
 				local tweenTime = (distance / 150)
-				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame}):Play()
+				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Sine), {CFrame = EggCFrame + Vector3.new(0, 10, 0)}):Play()
 
-				task.wait(tweenTime + 1.5)
+				task.wait(tweenTime + 0.7)
 
 				CharacterCanColide(true)
 				HRP.Anchored = false
