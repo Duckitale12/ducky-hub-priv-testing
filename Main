@@ -1,4 +1,4 @@
-local _Version_ = "0.0.91v"
+local _Version_ = "0.0.92v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -74,6 +74,7 @@ local Setting_Flag_ServerHopFarm_NightmareEgg10x = false
 local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
 local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
 local Setting_Flag_ServerHopFarm_AuraEgg = false
+local Setting_FallbackServerHopper = false
 
 -- TELEPORTING FUNCS
 
@@ -82,7 +83,17 @@ local HttpService = game:GetService("HttpService")
 
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
-local function ServerHop_IY()
+local triedServers = {}
+local maxRetries = 5
+
+local function ServerHop_IY(retries)
+	retries = retries or 0
+
+	if retries >= maxRetries then
+		warn("Serverhop", "Max retry attempts reached. Stopping.")
+		return
+	end
+
 	if not httprequest then
 		warn("Incompatible Exploit", "Your exploit does not support this command (missing request)")
 		return
@@ -96,7 +107,8 @@ local function ServerHop_IY()
 
 	if body and body.data then
 		for _, v in ipairs(body.data) do
-			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers)
+				and v.playing < v.maxPlayers and v.id ~= game.JobId and not triedServers[v.id] then
 				table.insert(servers, v.id)
 			end
 		end
@@ -104,28 +116,25 @@ local function ServerHop_IY()
 
 	if #servers > 0 then
 		local pickedServer = servers[math.random(1, #servers)]
+		triedServers[pickedServer] = true
+
 		local success, err = pcall(function()
 			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, pickedServer, game.Players.LocalPlayer)
 		end)
 
 		if not success then
 			warn("Teleport failed:", err)
-			warn("Retrying in 60s...")
-			
-			task.wait(60)
-			
-			ServerHop_IY()
+			warn("Retrying in 15 seconds...")
+			task.wait(15)
+			ServerHop_IY(retries + 1)
 		end
 	else
-		warn("Serverhop", "Couldn't find a server.")
-		
-		warn("Retrying in 60s...")
-
-		task.wait(60)
-
-		ServerHop_IY()
+		warn("No suitable servers found. Retrying in 15 seconds...")
+		task.wait(15)
+		ServerHop_IY(retries + 1)
 	end
 end
+
 
 
 
@@ -654,13 +663,19 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Server Hop Farm - Info")
 		
-		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. Fully AFK-able!"})
+		local WarningLabel = Tab_EggFarm:CreateLabel("This feature is experimental. Not reccomended to afk for longer periods of time!", 134076038612470, Color3.fromRGB(255, 151, 33), true) -- Title, Icon, Color, IgnoreTheme
+		local WarningLabel2 = Tab_EggFarm:CreateLabel("This feature is experimental. Not reccomended to afk for longer periods of time!", 134076038612470, Color3.fromRGB(255, 151, 33), false) -- Title, Icon, Color, IgnoreTheme
+		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears."})
 		local HopFarmWarningParagraph = Tab_EggFarm:CreateParagraph({Title = "!!! WARNING !!!", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!!! It is also reccomended to have the 'Zen' area unlocked to make the feature more efficient!"})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
 		
 		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "Selection", Content = "Select the eggs you want to open! It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script can possibly break)"})
 		
+		local InfoLabel = Tab_EggFarm:CreateLabel("It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox while searching for the server (High chance of breaking)", 91136665328764, Color3.fromRGB(130, 195, 255), true) -- Title, Icon, Color, IgnoreTheme
+		local InfoLabel3 = Tab_EggFarm:CreateLabel("It is reccomended to turn OFF bubble gravity in BGSI settings for better efficiency!", 91136665328764, Color3.fromRGB(130, 195, 255), true) -- Title, Icon, Color, IgnoreTheme
+
+
 		local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_EggFarm:CreateToggle({
 				Name = "Void Egg (x10)",
 				CurrentValue = false,
@@ -736,13 +751,27 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 		})
 
 		local Toggle_ServerHopFarm = Tab_EggFarm:CreateToggle({
-			Name = "Enable Server Hopper Farm",
+			Name = "Server Hopper Farm",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_ServerHopFarm = Value
 			end,
 		})
+		
+	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Server Hop Farm - Fallback")
+	
+		local InfoLabel2 = Tab_EggFarm:CreateLabel("Auto start opening void eggs when there is an error with the server hop farm. (HIGHLY RECOMMENDED)", 91136665328764, Color3.fromRGB(130, 195, 255), false) -- Title, Icon, Color, IgnoreTheme
+		
+		local Toggle_FallbackServerHopper = Tab_EggFarm:CreateToggle({
+			Name = "Fallback To Void Egg",
+			CurrentValue = false,
+			Flag = "Flag_FallbackServerHopper", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_FallbackServerHopper = Value
+			end,
+		})
+
 
 local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 
@@ -935,12 +964,36 @@ task.spawn(function()
 
 				-- Fly to island
 				local HRP = LocalPlayer.Character.HumanoidRootPart
+				-- change humanoid state to stitting 
+				LocalPlayer.Character.Humanoid:ChangeState()
 				HRP.Anchored = true
 				CharacterCanColide(false)
 
 				local distance = (HRP.Position - Position).Magnitude
-				local tweenTime = (distance / 150)
-				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Sine), {CFrame = EggCFrame + Vector3.new(0, 10, 0)}):Play()
+				local tweenTime = nil
+				
+
+				if distance < 300 then
+					tweenTime = distance / 50
+				end
+				
+				if distance >= 300  then
+					tweenTime = distance / 100
+				end
+				
+				if distance >= 1000  then
+					tweenTime = distance / 150
+				end
+				
+				if distance >= 1000  then
+					tweenTime = distance / 150
+				end
+				
+				if distance >= 2000  then
+					tweenTime = distance / 180
+				end
+				
+				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Sine), {CFrame = EggCFrame + Vector3.new(0, 50, 0)}):Play()
 
 				task.wait(tweenTime + 0.7)
 
