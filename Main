@@ -1,4 +1,4 @@
-local _Version_ = "0.0.69v [Beta]"
+local _Version_ = "0.0.7v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -248,6 +248,46 @@ function Webhook(url, embed)
 	})
 end
 
+function GlobalEggWebhook(Island, Luck, Timer, IslandHeight)
+	if Island == "void-egg" or Island == "rainbow-egg" or Island == "nightmare-egg" or Island == "aura-egg" then
+		if Luck == "x25" then	
+			local Embed = {
+				["title"] = "✨ Rare Egg Found!",
+				["description"] = "",
+				["fields"] = {
+					{
+						["name"] = "🥚 Egg Name",
+						["value"] = "```" .. tostring(Island) .. "```",
+					},
+					{
+						["name"] = "⌚ Time Left",
+						["value"] = "```" .. Timer .. "```",
+					},
+					{
+						["name"] = "🍀 Luck Multiplier",
+						["value"] = "```" .. Luck .. "```",
+					},
+					{
+						["name"] = "🎈 Height",
+						["value"] = "```" .. IslandHeight .. "```",
+					},
+					{
+						["name"] = "🔑 Server Link",
+						["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+					},
+
+				},
+				["color"] = 16777215,
+				["footer"] = {
+					["text"] = tostring(os.date("%H:%M:%S")) 
+				},
+			}
+
+			Webhook(Rare_Islands_Hook, Embed)
+		end
+	end
+end
+
 workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	task.wait(10)
 	
@@ -286,43 +326,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	end
 
 
-	if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
-		if Luck == "x25" then	
-			local Embed = {
-				["title"] = "✨ Rare Egg Found!",
-				["description"] = "",
-				["fields"] = {
-					{
-						["name"] = "🥚 Egg Name",
-						["value"] = "```" .. IslandName .. "```",
-					},
-					{
-						["name"] = "⌚ Time Left",
-						["value"] = "```" .. Timer .. "```",
-					},
-					{
-						["name"] = "🍀 Luck Multiplier",
-						["value"] = "```" .. Luck .. "```",
-					},
-					{
-						["name"] = "🎈 Height",
-						["value"] = "```" .. IslandHeight .. "```",
-					},
-					{
-						["name"] = "🔑 Server Link",
-						["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-					},
-
-				},
-				["color"] = 16777215,
-				["footer"] = {
-					["text"] = tostring(os.date("%H:%M:%S")) 
-				},
-			}
-
-			Webhook(Rare_Islands_Hook, Embed)
-		end
-	end
+	GlobalEggWebhook(IslandObject, Luck, Timer, IslandHeight)
 end)
 
 function Check_Islands_OnServer()
@@ -684,26 +688,13 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
 
-warn("Loading...")
-
 task.spawn(function()
-	warn("Checking...")
-	Message(Testing_Hook, "Checking... (1)")
-	
-	task.wait(5)
-	
-	warn("Checking... (2)")
-	
-	warn(Setting_Flag_ServerHopFarm_VoidEgg25x, Setting_Flag_ServerHopFarm_VoidEgg10x, Setting_Flag_ServerHopFarm_NightmareEgg25x, Setting_Flag_ServerHopFarm_NightmareEgg10x, Setting_Flag_ServerHopFarm_RainbowEgg25x, Setting_Flag_ServerHopFarm_RainbowEgg10x, Setting_Flag_ServerHopFarm_AuraEgg)
-	
 	if Setting_ServerHopFarm == true then
-		warn("TOGGLE AUTOFARM IS TRUE!")
+		warn("Autofarm Searching...")
+		task.wait(2)
+		
 		local Islands = {}
 		local LF_Eggs_Table = {}
-
-	--[[  IslandsTable = {
-		[1] = {egg_name, egg_luck, egg_cframe, egg_time, egg_height}
-	}]]
 
 		for _, Island in workspace.Rendered.Rifts:GetChildren() do
 			if Island:FindFirstChild("Display") then
@@ -723,40 +714,22 @@ task.spawn(function()
 		end
 	
 
-		if Setting_Flag_ServerHopFarm_VoidEgg25x == true then
-			table.insert(LF_Eggs_Table, {"void-egg", "x25"})
-		end 	
+		local EggFlags = {
+			{Setting_Flag_ServerHopFarm_VoidEgg25x,      "void-egg",      "x25"},
+			{Setting_Flag_ServerHopFarm_VoidEgg10x,      "void-egg",      "x10"},
+			{Setting_Flag_ServerHopFarm_NightmareEgg25x, "nightmare-egg", "x25"},
+			{Setting_Flag_ServerHopFarm_NightmareEgg10x, "nightmare-egg", "x10"},
+			{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
+			{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
+			{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
+		}
 
-		if Setting_Flag_ServerHopFarm_VoidEgg10x == true then
-			table.insert(LF_Eggs_Table, {"void-egg", "x10"})
-		end 	
-
-		if Setting_Flag_ServerHopFarm_NightmareEgg25x == true then
-			table.insert(LF_Eggs_Table, {"nightmare-egg", "x25"})
-		end 	
-
-		if Setting_Flag_ServerHopFarm_NightmareEgg10x == true then
-			table.insert(LF_Eggs_Table, {"nightmare-egg", "x10"})
-		end 	
-
-		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
-			table.insert(LF_Eggs_Table, {"rainbow-egg", "x25"})
-		end 	
-
-		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
-			table.insert(LF_Eggs_Table, {"rainbow-egg", "x10"})
-		end 
-
-		if Setting_Flag_ServerHopFarm_AuraEgg == true then
-			table.insert(LF_Eggs_Table, {"aura-egg", "x10"})
-		end 
-		
-		
-		warn("---------------------------")
-		test_print_table(Islands)
-		warn("---------------------------")
-		test_print_table(LF_Eggs_Table)
-		warn("---------------------------")
+		for _, flagData in ipairs(EggFlags) do
+			local flag, eggName, luck = table.unpack(flagData)
+			if flag then
+				table.insert(LF_Eggs_Table, {eggName, luck})
+			end
+		end
 
 
 		local LF_Eggs_Lookup = {}
@@ -766,29 +739,43 @@ task.spawn(function()
 
 		local function Check_LF_Islands_Matches()
 			for _, island in Islands do
+				
 				local key = island[1] .. "|" .. island[2]
+				
 				if LF_Eggs_Lookup[key] then
-					local msg = string.format("FOUND EGG: %s | %s", island[1], island[2])
+					local msg = string.format("Egg Matched: %s | %s", island[1], island[2])
 					warn(msg)
 					Message(Testing_Hook, msg)
-					break
+					
+					local Name = island[1]
+					local Luck = island[2]
+					local EggCFrame = island[3]
+					local Position = EggCFrame.Position
+					local Timer = island[4]
+					local Height = island[5]
+					
+					GlobalEggWebhook(island[1], Luck, Timer, Height)
+					
+					ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport",  workspace.Worlds["The Overworld"].Islands.Zen.Island.Portal.Spawn)
+					
+					task.wait(1)
+					
+					
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+					
+					HRP.Anchored = true
+					
+					local distance = (HRP.Position - Position).Magnitude
+					local tweenTime = (distance / 85)
+					TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame}):Play()
+					
+					task.wait(tweenTime + 0.5)
+					
+					HRP.Anchored = false
 				end
 			end
 		end
 
 		Check_LF_Islands_Matches()
-		
---[[function printtable()
-	local tablee = Check_Islands_OnServer()
-	for _, v in tablee do
-		warn(v)
-		for _, x in v do
-			print(x)
-		end
-	end
-end
-
-print(printtable())]]
-
 	end
 end)
