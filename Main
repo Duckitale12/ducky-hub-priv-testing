@@ -1,4 +1,4 @@
-local _Version_ = "0.0.89v"
+local _Version_ = "0.0.9v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -939,7 +939,7 @@ task.spawn(function()
 				CharacterCanColide(false)
 
 				local distance = (HRP.Position - Position).Magnitude
-				local tweenTime = (distance / 170)
+				local tweenTime = (distance / 150)
 				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame}):Play()
 
 				task.wait(tweenTime + 1.5)
