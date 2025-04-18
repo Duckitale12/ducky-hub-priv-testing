@@ -1,4 +1,4 @@
-local _Version_ = "0.0.29v [Beta]"
+local _Version_ = "0.0.3v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -127,6 +127,7 @@ local Loop_PickupablesAuto = task.spawn(function()
 				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
 
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
+				task.wait(0.2)
 			end
 		end
 
