@@ -1,4 +1,4 @@
-local _Version_ = "0.0.54v [Beta]"
+local _Version_ = "0.0.55v [Beta]"
  
 local placeId = game.PlaceId
 
