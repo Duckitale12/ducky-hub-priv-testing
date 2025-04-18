@@ -1,4 +1,4 @@
-local _Version_ = "0.0.68v [Beta]"
+local _Version_ = "0.0.69v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -759,26 +759,19 @@ task.spawn(function()
 		warn("---------------------------")
 
 
+		local LF_Eggs_Lookup = {}
+		for _, lf in LF_Eggs_Table do
+			LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
+		end
+
 		local function Check_LF_Islands_Matches()
-			for _, LF_InfoTable in LF_Eggs_Table do
-				-- {name, luck}
-				warn("Checking loop")
-			
-
-				for _, IslandOnServer in Islands do
-					--  {Name, Luck, EggCFrame, Timer, Height}
-					warn(IslandOnServer[1] .. " - " .. LF_InfoTable[1])
-					Message(Testing_Hook, tostring(IslandOnServer[1]) .. " - " .. tostring(LF_InfoTable[1]))
-					if IslandOnServer[1] == LF_InfoTable[1] then
-						warn(IslandOnServer[1] .. IslandOnServer[2] .. " - " .. LF_InfoTable[1] .. LF_InfoTable[2])
-						Message(Testing_Hook, tostring(IslandOnServer[1]) .. " " .. tostring(IslandOnServer[2]) .. " - " .. tostring(LF_InfoTable[1]) .. " " .. tostring(LF_InfoTable[2]))
-
-						
-						if IslandOnServer[2] == LF_InfoTable[2] then
-							warn(LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
-							Message(Testing_Hook, "FOUND EGG: " .. LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
-						end
-					end
+			for _, island in Islands do
+				local key = island[1] .. "|" .. island[2]
+				if LF_Eggs_Lookup[key] then
+					local msg = string.format("FOUND EGG: %s | %s", island[1], island[2])
+					warn(msg)
+					Message(Testing_Hook, msg)
+					break
 				end
 			end
 		end
