@@ -1,4 +1,4 @@
-local _Version_ = "0.0.63v [Beta]"
+local _Version_ = "0.0.64v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -11,8 +11,8 @@ local Window = Rayfield:CreateWindow({
 	LoadingSubtitle = "Welcome!",
 	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
-	DisableRayfieldPrompts = false,
-	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+	DisableRayfieldPrompts = true,
+	DisableBuildWarnings = true, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
 
 	ConfigurationSaving = {
 		Enabled = true,
@@ -699,6 +699,9 @@ task.spawn(function()
 	if Toggle_ServerHopFarm == true then
 		local Islands = Check_Islands_OnServer()
 		local __LF_Eggs_Table__ = Get_Table_Of_LF_Eggs()
+		
+		warn(Islands)
+		warn(__LF_Eggs_Table__)
 
 		local function Check_LF_Islands_Matches()
 			for _, LF_InfoTable in __LF_Eggs_Table__ do
