@@ -1,4 +1,4 @@
-local _Version_ = "0.0.79v [Beta]"
+local _Version_ = "0.0.8v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -740,6 +740,16 @@ task.spawn(function()
 		game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enabled = true
 		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 		
+		Rayfield:Notify({
+			Title = "Egg Farm: ON",
+			Content = "Click to disable",
+			Image = 0,
+
+			OnClick = function()
+				Toggle_ServerHopFarm:Set(false)
+			end,
+		})
+		
 		warn("Autofarm Searching...")
 		task.wait(2)
 		
@@ -787,6 +797,8 @@ task.spawn(function()
 		for _, lf in LF_Eggs_Table do
 			LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
 		end
+
+		warn("LF Check ahead...")
 
 		local function Check_LF_Islands_Matches()
 			for _, island in Islands do
@@ -889,6 +901,8 @@ task.spawn(function()
 				end
 			end
 		end
+		
+		Check_LF_Islands_Matches()
 	end
 end)
 
