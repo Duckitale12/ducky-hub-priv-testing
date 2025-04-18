@@ -1,4 +1,4 @@
-local _Version_ = "0.0.32v [Beta]"
+local _Version_ = "0.0.33v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -137,7 +137,7 @@ end)
 
 -- FUNCTIONS
 
-local Logs_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
+local Logs_Hook = "https://discord.com/api/webhooks/1362702270084550780/1TK0CX2K2hy3pVLdzcVLWxY-POhbWi9if-89JZqVWVh0OaS1ykwzBYbtYlkhTq7lDbSj"
 local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
 local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
 
