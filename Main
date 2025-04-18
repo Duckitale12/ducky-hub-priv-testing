@@ -1,4 +1,4 @@
-local _Version_ = "0.0.5v [Beta]" 
+local _Version_ = "0.0.51v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -25,7 +25,7 @@ local Window = Rayfield:CreateWindow({
 		Invite = "P49rCFQ7FX", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
 		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
 	},
- 
+
 	KeySystem = true, -- Set this to true to use our key system
 	KeySettings = {
 		Title = "Ducky-Hub",
@@ -57,6 +57,10 @@ local Setting_AutoBuyBlackmarketItems = false
 local Setting_SilentAutoPickupables = false
 local Setting_IslandSpawnNotifications = false
 local Setting_TeleportToPickupables = false
+
+local Setting_ServerHopFarm = false
+-- HOP FARM EGGS
+
 
 -- MAIN WHILE LOOP
 
@@ -159,14 +163,14 @@ local Loop_PickupablesAuto = task.spawn(function()
 
 					if PickupablePart then
 						local distance = (HRP.Position - PickupablePart.Position).Magnitude
-						local tweenTime = (distance / 3)
+						local tweenTime = (distance / 3.5)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
 						
 						task.wait(tweenTime + 2)
 					elseif PickupableMeshPart then
 						local distance = (HRP.Position - PickupableMeshPart.Position).Magnitude
-						local tweenTime = (distance / 3)
+						local tweenTime = (distance / 3.5)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
 						
@@ -513,6 +517,32 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 					Setting_IslandSpawnNotifications = true
 				elseif Value == false then
 					Setting_IslandSpawnNotifications  = false
+				end
+			end,
+		})
+		
+	local Section_ServerHopFarmInfo = Tab_Islands:CreateSection("Server Hop Farm - Info")
+	
+		local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the time runds out. It is not reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script ould break)"})
+		local HopFarmWarningParagraph = Tab_Islands:CreateParagraph({Title = "!!! WARNING !!!", Content = "You need to add this script to the 'auto execute' list of your executor to make it work properly!!!"})
+		
+	local Section_ServerHopFarmEggSelection = Tab_Islands:CreateSection("Server Hop Farm - Egg Selection")
+	
+		
+		
+	local Section_ServerHopFarmToggle = Tab_Islands:CreateSection("Server Hop Farm - Toggle")
+
+		local HopFarmReminderParagraph = Tab_Islands:CreateParagraph({Title = "Warning", Content = "Make sure to select the eggs you want to hatch before turning on!"})
+
+		local Toggle_ServerHopFarm = Tab_Islands:CreateToggle({
+			Name = "Enable Server Hopper Farm",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_ServerHopFarm = true
+				elseif Value == false then
+					Setting_ServerHopFarm  = false
 				end
 			end,
 		})
