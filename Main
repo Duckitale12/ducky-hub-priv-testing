@@ -1,4 +1,4 @@
-local _Version_ = "0.0.71v [Beta]"
+local _Version_ = "0.0.72v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -756,21 +756,26 @@ task.spawn(function()
 					
 					GlobalEggWebhook(island[1], Luck, Timer, Height)
 					
-					--ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("Teleport",  workspace.Worlds["The Overworld"].Islands.Zen.Island.Portal.Spawn)
-					
+					task.spawn(function()
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Zen.Island.Portal.Spawn")
+					end)
+
 					task.wait(1)
 					
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					
 					HRP.Anchored = true
+					CharacterCanColide(false)
 					
 					local distance = (HRP.Position - Position).Magnitude
-					local tweenTime = (distance / 85)
+					local tweenTime = (distance / 150)
 					TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame}):Play()
 					
 					task.wait(tweenTime + 0.5)
 					
+					CharacterCanColide(true)
 					HRP.Anchored = false
+					
 				end
 			end
 		end
@@ -778,3 +783,11 @@ task.spawn(function()
 		Check_LF_Islands_Matches()
 	end
 end)
+
+function CharacterCanColide(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.CanCollide == not value then
+			part.CanCollide = value
+		end
+	end
+end
