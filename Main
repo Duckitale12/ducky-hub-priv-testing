@@ -1,4 +1,4 @@
-local _Version_ = "0.0.88v"
+local _Version_ = "0.0.89v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -96,7 +96,7 @@ local function ServerHop_IY()
 
 	if body and body.data then
 		for _, v in ipairs(body.data) do
-			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and ((v.maxPlayers - v.playing) >= 2) and v.id ~= game.JobId then
+			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
 				table.insert(servers, v.id)
 			end
 		end
@@ -118,6 +118,12 @@ local function ServerHop_IY()
 		end
 	else
 		warn("Serverhop", "Couldn't find a server.")
+		
+		warn("Retrying in 60s...")
+
+		task.wait(60)
+
+		ServerHop_IY()
 	end
 end
 
