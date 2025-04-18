@@ -1,4 +1,4 @@
-local _Version_ = "0.0.43v [Beta]"
+local _Version_ = "0.0.45v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -224,24 +224,24 @@ function Webhook(url, embed)
 end
 
 workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
+	task.wait(10)
+	
+	local IslandName = IslandObject.Name
+	local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
+	
+	local Luck = nil
+	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
+	
+	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
+		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+	end
+		
 	if Setting_IslandSpawnNotifications == true then
-		task.wait(5)
-		
-		local IslandName = IslandObject.Name
-		local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
-		
-		local Luck = nil
-		local Timer = IslandObject.Display.SurfaceGui.Timer.Text
-		
-		if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
-			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
-		end
-		
 		if Luck then
 			Rayfield:Notify({
 				Title = "New Island Detected!",
-				Content = "Name: " .. IslandName .. " | Height: " .. IslandHeight .. " | Luck: " .. Luck .. " | Timer: " .. Timer,
-				Image = 4483362458,
+				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 72635142192444,
 
 				OnClick = function()
 
@@ -250,52 +250,52 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		else
 			Rayfield:Notify({
 				Title = "New Island Detected!",
-				Content = "Name: " .. IslandName .. " | Height: " .. IslandHeight .. " | Timer: " .. Timer,
-				Image = 4483362458,
+				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 72635142192444,
 
 				OnClick = function()
 
 				end,
 			})
 		end
+	end
 
-		
-		if game.PrivateServerId == "" then
-			if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
-				if Luck == "x25" then	
-					local Embed = {
-						["title"] = "✨ Rare Egg Found!",
-						["description"] = "",
-						["fields"] = {
-							{
-								["name"] = "🥚 Egg Name",
-								["value"] = "```" .. IslandName .. "```",
-							},
-							{
-								["name"] = "🍀 Luck Multiplier",
-								["value"] = "```" .. Luck .. "```",
-							},
-							{
-								["name"] = "🎈 Height",
-								["value"] = "```" .. IslandHeight .. "```",
-							},
-							{
-								["name"] = "🔑 Server Link",
-								["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-							},
-
+	if game.PrivateServerId == "" then
+		if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
+			if Luck == "x25" then	
+				local Embed = {
+					["title"] = "✨ Rare Egg Found!",
+					["description"] = "",
+					["fields"] = {
+						{
+							["name"] = "🥚 Egg Name",
+							["value"] = "```" .. IslandName .. "```",
 						},
-						["color"] = 16777215,
-						["footer"] = {
-							["text"] = tostring(os.date("%H:%M:%S")) 
+						{
+							["name"] = "🍀 Luck Multiplier",
+							["value"] = "```" .. Luck .. "```",
 						},
-					}
+						{
+							["name"] = "🎈 Height",
+							["value"] = "```" .. IslandHeight .. "```",
+						},
+						{
+							["name"] = "🔑 Server Link",
+							["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+						},
 
-					Webhook(Testing_Hook, Embed)
-				end
+					},
+					["color"] = 16777215,
+					["footer"] = {
+						["text"] = tostring(os.date("%H:%M:%S")) 
+					},
+				}
+
+				Webhook(Testing_Hook, Embed)
 			end
 		end
-	end
+	end	
+
 end)
 
 workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
