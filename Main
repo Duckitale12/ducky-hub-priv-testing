@@ -1,4 +1,4 @@
-local _Version_ = "0.0.41v [Beta]"
+local _Version_ = "0.0.42v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -236,6 +236,29 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
 			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
 		end
+		
+		if Luck then
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = "Name: " .. IslandName .. " | Height: " .. IslandHeight .. " | Luck: " .. Luck .. " | Timer: " .. Timer,
+				Image = 4483362458,
+
+				OnClick = function()
+
+				end,
+			})
+		else
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = "Name: " .. IslandName .. " | Height: " .. IslandHeight .. " | Timer: " .. Timer,
+				Image = 4483362458,
+
+				OnClick = function()
+
+				end,
+			})
+		end
+
 		
 		if game.PrivateServerId == "" then
 			if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
