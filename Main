@@ -1,4 +1,4 @@
-local _Version_ = "0.0.65v [Beta]"
+local _Version_ = "0.0.66v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -697,14 +697,70 @@ task.spawn(function()
 	warn(Setting_Flag_ServerHopFarm_VoidEgg25x, Setting_Flag_ServerHopFarm_VoidEgg10x, Setting_Flag_ServerHopFarm_NightmareEgg25x, Setting_Flag_ServerHopFarm_NightmareEgg10x, Setting_Flag_ServerHopFarm_RainbowEgg25x, Setting_Flag_ServerHopFarm_RainbowEgg10x, Setting_Flag_ServerHopFarm_AuraEgg)
 	
 	if Toggle_ServerHopFarm == true then
-		local Islands = Check_Islands_OnServer()
-		local __LF_Eggs_Table__ = Get_Table_Of_LF_Eggs()
+		warn("TOGGLE AUTOFARM IS TRUE!")
+		local Islands = {}
+		local LF_Eggs_Table = {}
+
+	--[[  IslandsTable = {
+		[1] = {egg_name, egg_luck, egg_cframe, egg_time, egg_height}
+	}]]
+
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if Island:FindFirstChild("Display") then
+				if Island.Display.SurfaceGui:FindFirstChild("Icon") then
+					if Island.Display.SurfaceGui.Icon:FindFirstChild("Luck") then
+
+						local Name = Island.Name
+						local Luck = Island.Display.SurfaceGui.Icon.Luck.Text
+						local Timer = Island.Display.SurfaceGui.Timer.Text
+						local Height = Island.Display.CFrame.Y
+						local EggCFrame = Island.Display.CFrame
+
+						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height})
+					end
+				end
+			end
+		end
+	
+
+		if Setting_Flag_ServerHopFarm_VoidEgg25x == true then
+			table.insert(LF_Eggs_Table, {"void-egg", "x25"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_VoidEgg10x == true then
+			table.insert(LF_Eggs_Table, {"void-egg", "x10"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_NightmareEgg25x == true then
+			table.insert(LF_Eggs_Table, {"nightmare-egg", "x25"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_NightmareEgg10x == true then
+			table.insert(LF_Eggs_Table, {"nightmare-egg", "x10"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
+			table.insert(LF_Eggs_Table, {"rainbow-egg", "x25"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
+			table.insert(LF_Eggs_Table, {"rainbow-egg", "x10"})
+		end 
+
+		if Setting_Flag_ServerHopFarm_AuraEgg == true then
+			table.insert(LF_Eggs_Table, {"aura-egg", "x10"})
+		end 
 		
-		warn(Islands)
-		warn(__LF_Eggs_Table__)
+		
+		warn("---------------------------")
+		test_print_table(Islands)
+		warn("---------------------------")
+		test_print_table(LF_Eggs_Table)
+		warn("---------------------------")
+
 
 		local function Check_LF_Islands_Matches()
-			for _, LF_InfoTable in __LF_Eggs_Table__ do
+			for _, LF_InfoTable in LF_Eggs_Table do
 				-- {name, luck}
 				warn("Checking loop")
 			
