@@ -1,4 +1,4 @@
-local _Version_ = "0.0.67v [Beta]"
+local _Version_ = "0.0.68v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -768,10 +768,10 @@ task.spawn(function()
 				for _, IslandOnServer in Islands do
 					--  {Name, Luck, EggCFrame, Timer, Height}
 					warn(IslandOnServer[1] .. " - " .. LF_InfoTable[1])
-					Message(tostring(IslandOnServer[1]) .. " - " .. tostring(LF_InfoTable[1]))
+					Message(Testing_Hook, tostring(IslandOnServer[1]) .. " - " .. tostring(LF_InfoTable[1]))
 					if IslandOnServer[1] == LF_InfoTable[1] then
 						warn(IslandOnServer[1] .. IslandOnServer[2] .. " - " .. LF_InfoTable[1] .. LF_InfoTable[2])
-						Message(tostring(IslandOnServer[1]) .. " " .. tostring(IslandOnServer[2]) .. " - " .. tostring(LF_InfoTable[1]) .. " " .. tostring(LF_InfoTable[2]))
+						Message(Testing_Hook, tostring(IslandOnServer[1]) .. " " .. tostring(IslandOnServer[2]) .. " - " .. tostring(LF_InfoTable[1]) .. " " .. tostring(LF_InfoTable[2]))
 
 						
 						if IslandOnServer[2] == LF_InfoTable[2] then
