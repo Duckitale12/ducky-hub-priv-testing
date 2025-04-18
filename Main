@@ -1,4 +1,4 @@
-local _Version_ = "0.0.6v [Beta]"
+local _Version_ = "0.0.61v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -678,10 +678,11 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
 
-warn("Checking...")
+warn("Loading...")
 
 task.spawn(function()
 	warn("Checking...")
+	Message(Testing_Hook, "Checking... (1)")
 	
 	task.wait(5)
 	
@@ -709,8 +710,9 @@ task.spawn(function()
 
 		Check_LF_Islands_Matches()
 		
-		Message(Testing_Hook, Islands)
-		Message(Testing_Hook, __LF_Eggs_Table__)
+		Message(Testing_Hook, tostring(Islands))
+		Message(Testing_Hook, table.unpack(Islands))
+		Message(Testing_Hook, tostring(__LF_Eggs_Table__))
 --[[function printtable()
 	local tablee = Check_Islands_OnServer()
 	for _, v in tablee do
