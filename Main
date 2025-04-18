@@ -1,4 +1,4 @@
-local _Version_ = "0.0.47v [Beta]"
+local _Version_ = "0.0.49v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -34,7 +34,7 @@ local Window = Rayfield:CreateWindow({
 		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
 		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
 		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = {"test"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+		Key = {"Free_Kd89KCD2SP9a8jRNK86YCs", {"adminaccess"}} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
 	}
 })
 
@@ -152,17 +152,27 @@ local Loop_PickupablesAuto = task.spawn(function()
 			
 			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
 				if Setting_TeleportToPickupables == true then
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					local Name = Pickupable.Name
 					local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
 					local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
 
 					if PickupablePart then
-						TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1.6, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
+						local distance = (HRP.Position - PickupablePart.Position).Magnitude
+						local tweenTime = (distance / 3)
+						
+						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
+						
+						task.wait(tweenTime + 2)
 					elseif PickupableMeshPart then
-						TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1.6, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
+						local distance = (HRP.Position - PickupableMeshPart.Position).Magnitude
+						local tweenTime = (distance / 3)
+						
+						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
+						
+						task.wait(tweenTime + 2)
 					end
-
-					task.wait(3)
+			
 				else
 					game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 				end	
@@ -171,7 +181,7 @@ local Loop_PickupablesAuto = task.spawn(function()
 			game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 		end
 
-		task.wait(0.5)
+		task.wait(1)
 	end
 end)
 
@@ -264,42 +274,40 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		end
 	end
 
-	if game.PrivateServerId == "" then
-		if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
-			if Luck == "x25" then	
-				local Embed = {
-					["title"] = "✨ Rare Egg Found!",
-					["description"] = "",
-					["fields"] = {
-						{
-							["name"] = "🥚 Egg Name",
-							["value"] = "```" .. IslandName .. "```",
-						},
-						{
-							["name"] = "🍀 Luck Multiplier",
-							["value"] = "```" .. Luck .. "```",
-						},
-						{
-							["name"] = "🎈 Height",
-							["value"] = "```" .. IslandHeight .. "```",
-						},
-						{
-							["name"] = "🔑 Server Link",
-							["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-						},
 
+	if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
+		if Luck == "x25" then	
+			local Embed = {
+				["title"] = "✨ Rare Egg Found!",
+				["description"] = "",
+				["fields"] = {
+					{
+						["name"] = "🥚 Egg Name",
+						["value"] = "```" .. IslandName .. "```",
 					},
-					["color"] = 16777215,
-					["footer"] = {
-						["text"] = tostring(os.date("%H:%M:%S")) 
+					{
+						["name"] = "🍀 Luck Multiplier",
+						["value"] = "```" .. Luck .. "```",
 					},
-				}
+					{
+						["name"] = "🎈 Height",
+						["value"] = "```" .. IslandHeight .. "```",
+					},
+					{
+						["name"] = "🔑 Server Link",
+						["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+					},
 
-				Webhook(Testing_Hook, Embed)
-			end
+				},
+				["color"] = 16777215,
+				["footer"] = {
+					["text"] = tostring(os.date("%H:%M:%S")) 
+				},
+			}
+
+			Webhook(Rare_Islands_Hook, Embed)
 		end
-	end	
-
+	end
 end)
 
 workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
