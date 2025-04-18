@@ -1,4 +1,4 @@
-local _Version_ = "0.0.94v"
+local _Version_ = "0.0.95v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -738,7 +738,7 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 		
 	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Server Hop Farm - Toggle")
 
-		local HopFarmReminderParagraph = Tab_EggFarm:CreateParagraph({Title = "Warning", Content = "Make sure to select the eggs you want to hatch before turning on!"})
+		local WarningLabel4 = Tab_EggFarm:CreateLabel("Make sure to select the eggs you want to hatch before turning on!", 117867052193434, Color3.fromRGB(255, 170, 51), false) -- Title, Icon, Color, IgnoreTheme
 
 		local Button_Rejoin = Tab_EggFarm:CreateButton({
 			Name = "Rejoin Server (Use after enabling)",
