@@ -1,4 +1,4 @@
-local _Version_ = "0.0.27v [Beta]"
+local _Version_ = "0.0.28v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -120,21 +120,26 @@ local Loop_Fast = task.spawn(function()
 end)
 
 local Loop_PickupablesAuto = task.spawn(function()
-	if Setting_TeleportToPickupables == true then
-		for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-			local Name = Pickupable.Name
-			local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
-			
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
+	while true do
+		if Setting_TeleportToPickupables == true then
+			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
+				local Name = Pickupable.Name
+				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
+
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
+			end
 		end
+
+		task.wait(0.25)
 	end
-	
-	task.wait(0.25)
 end)
 
 -- FUNCTIONS
 
+local Logs_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
 local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
+local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
+
 
 function Webhook(url, embed, message)
 	local http = game:GetService("HttpService")
@@ -169,7 +174,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		task.wait(5)
 		
 		local IslandName = IslandObject.Name
-		local IslandHeight = IslandObject.Display.CFrame.Y
+		local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
 		
 		local Luck = nil
 		local Timer = IslandObject.Display.SurfaceGui.Timer.Text
@@ -178,33 +183,39 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
 		end
 		
-		if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
-			if Luck == "x25" or Luck == "10x" then	
-				local Embed = {
-					["title"] = "✨ Rare Egg Found!",
-					["description"] = "",
-					["fields"] = {
-						{
-							["name"] = "🥚 Egg Name",
-							["value"] = "```" .. IslandName .. "```",
-						},
-						{
-							["name"] = "🍀 Luck Multiplier",
-							["value"] = "```" .. Luck .. "```",
-						},
-						{
-							["name"] = "🔑 Server Link",
-							["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-						},
+		if game.PrivateServerId == "" then
+			if IslandName == "void-egg" or IslandName == "rainbow-egg" or IslandName == "nightmare-egg" or IslandName == "aura-egg" then
+				if Luck == "x25" then	
+					local Embed = {
+						["title"] = "✨ Rare Egg Found!",
+						["description"] = "",
+						["fields"] = {
+							{
+								["name"] = "🥚 Egg Name",
+								["value"] = "```" .. IslandName .. "```",
+							},
+							{
+								["name"] = "🍀 Luck Multiplier",
+								["value"] = "```" .. Luck .. "```",
+							},
+							{
+								["name"] = "🎈 Height",
+								["value"] = "```" .. IslandHeight .. "```",
+							},
+							{
+								["name"] = "🔑 Server Link",
+								["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+							},
 
-					},
-					["color"] = 16777215,
-					["footer"] = {
-						["text"] = tostring(os.date("%H:%M:%S")) 
+						},
+						["color"] = 16777215,
+						["footer"] = {
+							["text"] = tostring(os.date("%H:%M:%S")) 
+						}
 					}
-				}
-				
-				Webhook(Testing_Hook, Embed)
+
+					Webhook(Testing_Hook, Embed)
+				end
 			end
 		end
 	end
@@ -438,4 +449,5 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
 
 
+Webhook(Logs_Hook, {}, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
