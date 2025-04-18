@@ -1,4 +1,4 @@
-local _Version_ = "0.0.31v [Beta]"
+local _Version_ = "0.0.32v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -126,12 +126,12 @@ local Loop_PickupablesAuto = task.spawn(function()
 				local Name = Pickupable.Name
 				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
 
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + CFrame.new(0, 5, 0)
 				wait(1)
 			end
 		end
 
-		wait(1)
+		wait(2)
 	end
 end)
 
