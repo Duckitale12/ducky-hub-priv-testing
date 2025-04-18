@@ -1,4 +1,4 @@
-local _Version_ = "0.0.51v [Beta]"
+local _Version_ = "0.0.52v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -60,6 +60,13 @@ local Setting_TeleportToPickupables = false
 
 local Setting_ServerHopFarm = false
 -- HOP FARM EGGS
+local Setting_Flag_ServerHopFarm_VoidEgg25x = false
+local Setting_Flag_ServerHopFarm_VoidEgg10x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg25x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg10x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
+local Setting_Flag_ServerHopFarm_AuraEgg = false
 
 
 -- MAIN WHILE LOOP
@@ -338,11 +345,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoBubbleBlow", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoBlowBubble = true
-				elseif Value == false then
-					Setting_AutoBlowBubble = false
-				end
+				Setting_AutoBlowBubble = Value
 			end,
 		})
 
@@ -351,11 +354,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoSellBubble = true
-				elseif Value == false then
-					Setting_AutoSellBubble = false
-				end
+				Setting_AutoSellBubble = Value
 			end,
 		})
 	
@@ -366,11 +365,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,	
 			Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_SilentAutoPickupables = true
-				elseif Value == false then
-					Setting_SilentAutoPickupables = false
-				end
+				Setting_SilentAutoPickupables = Value
 			end,
 		})
 		
@@ -379,11 +374,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,	
 			Flag = "Flag_TeleportToPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_TeleportToPickupables = true
-				elseif Value == false then
-					Setting_TeleportToPickupables = false
-				end
+				Setting_TeleportToPickupables = Value
 			end,
 		})
 
@@ -398,11 +389,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoVoidChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoVoidChest = true
-				elseif Value == false then
-					Setting_AutoVoidChest = false
-				end
+				Setting_AutoVoidChest = Value		
 			end,
 		})
 				
@@ -411,11 +398,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoGiantChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoGiantChest = true
-				elseif Value == false then
-					Setting_AutoGiantChest = false
-				end
+				Setting_AutoGiantChest = Value
 			end,
 		})
 
@@ -424,11 +407,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoInfinityChest = true
-				elseif Value == false then
-					Setting_AutoInfinityChest = false
-				end
+				Setting_AutoInfinityChest = Value
 			end,
 		})
 		
@@ -440,11 +419,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoFreeWheelSpinClaim", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoFreeWheelSpin = true
-				elseif Value == false then
-					Setting_AutoFreeWheelSpin = false
-				end
+				Setting_AutoFreeWheelSpin = Value
 			end,
 		})
 
@@ -466,11 +441,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoClaimPlaytime", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoClaimPlaytime = true
-				elseif Value == false then
-					Setting_AutoClaimPlaytime  = false
-				end
+				Setting_AutoClaimPlaytime  = Value
 			end,
 		})
 		
@@ -481,11 +452,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoBuyBlackmarketItems", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoBuyBlackmarketItems = true
-				elseif Value == false then
-					Setting_AutoBuyBlackmarketItems  = false
-				end
+				Setting_AutoBuyBlackmarketItems  = Value
 			end,
 		})
 	
@@ -494,11 +461,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_AutoBuyAlienShop", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_AutoBuyAlienShop = true
-				elseif Value == false then
-					Setting_AutoBuyAlienShop  = false
-				end
+				Setting_AutoBuyAlienShop  = Value
 			end,
 		})
 
@@ -513,22 +476,83 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_IslandSpawnNotifications = true
-				elseif Value == false then
-					Setting_IslandSpawnNotifications  = false
-				end
+				Setting_IslandSpawnNotifications  = Value
 			end,
 		})
 		
+	local HopFarmDivider = Tab_Islands:CreateDivider()
+
 	local Section_ServerHopFarmInfo = Tab_Islands:CreateSection("Server Hop Farm - Info")
 	
-		local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the time runds out. It is not reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script ould break)"})
+		local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the time runds out."})
 		local HopFarmWarningParagraph = Tab_Islands:CreateParagraph({Title = "!!! WARNING !!!", Content = "You need to add this script to the 'auto execute' list of your executor to make it work properly!!!"})
 		
 	local Section_ServerHopFarmEggSelection = Tab_Islands:CreateSection("Server Hop Farm - Egg Selection")
 	
+	local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "Selection", Content = "Select the eggs you want to open! It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script can possibly break)"})
+
+		local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_Islands:CreateToggle({
+			Name = "Void Egg (x10)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_VoidEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_VoidEgg10x = Value
+			end,
+		})
 		
+		local Toggle_Flag_ServerHopFarm_VoidEgg25x = Tab_Islands:CreateToggle({
+			Name = "Void Egg (x25)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_VoidEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_VoidEgg25x = Value
+			end,
+		})
+		
+		local Toggle_Flag_ServerHopFarm_NightmareEgg10x = Tab_Islands:CreateToggle({
+			Name = "Nightmare Egg (x10)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_NightmareEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_NightmareEgg10x = Value
+			end,
+		})
+				
+		local Toggle_Flag_ServerHopFarm_NightmareEgg25x = Tab_Islands:CreateToggle({
+			Name = "Nightmare Egg (x25)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_NightmareEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_NightmareEgg25x = Value
+			end,
+		})
+		
+		local Toggle_Flag_ServerHopFarm_RainbowEgg10x = Tab_Islands:CreateToggle({
+			Name = "Rainbow Egg (x10)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_RainbowEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_RainbowEgg10x = Value
+			end,
+		})
+
+		local Toggle_Flag_ServerHopFarm_RainbowEgg25x = Tab_Islands:CreateToggle({
+			Name = "Rainbow Egg (x25)",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_RainbowEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_RainbowEgg25x = Value
+			end,
+		})
+
+		local Toggle_Flag_ServerHopFarm_AuraEgg = Tab_Islands:CreateToggle({
+			Name = "Aura Egg",
+			CurrentValue = false,
+			Flag = "Flag_ServerHopFarm_AuraEgg", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_Flag_ServerHopFarm_AuraEgg = Value
+			end,
+		})
 		
 	local Section_ServerHopFarmToggle = Tab_Islands:CreateSection("Server Hop Farm - Toggle")
 
