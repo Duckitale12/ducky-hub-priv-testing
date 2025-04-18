@@ -1,4 +1,4 @@
-local _Version_ = "0.0.3v [Beta]"
+local _Version_ = "0.0.31v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -127,11 +127,11 @@ local Loop_PickupablesAuto = task.spawn(function()
 				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
 
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
-				task.wait(0.2)
+				wait(1)
 			end
 		end
 
-		task.wait(0.7)
+		wait(1)
 	end
 end)
 
@@ -142,13 +142,30 @@ local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgk
 local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
 
 
-function Webhook(url, embed, message)
+function Message(url, message)
 	local http = game:GetService("HttpService")
 	local headers = {
 		["Content-Type"] = "application/json"
 	}
 	local data = {
 		["content"] = message,
+	}
+
+	local body = http:JSONEncode(data)
+	local response = request({
+		Url = url,
+		Method = "POST",
+		Headers = headers,
+		Body = body
+	})
+end
+
+function Webhook(url, embed)
+	local http = game:GetService("HttpService")
+	local headers = {
+		["Content-Type"] = "application/json"
+	}
+	local data = {
 		["embeds"] = {
 			{
 				["title"] = embed.title,
@@ -212,7 +229,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 						["color"] = 16777215,
 						["footer"] = {
 							["text"] = tostring(os.date("%H:%M:%S")) 
-						}
+						},
 					}
 
 					Webhook(Testing_Hook, Embed)
@@ -450,5 +467,5 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
 
 
-Webhook(Logs_Hook, {}, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
+Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
