@@ -1,5 +1,5 @@
 local _Version_ = "0.0.41v [Beta]"
-
+ 
 local placeId = game.PlaceId
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
