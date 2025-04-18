@@ -1,4 +1,4 @@
-local _Version_ = "0.0.62v [Beta]"
+local _Version_ = "0.0.63v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -351,6 +351,8 @@ function Check_Islands_OnServer()
 		end
 	end
 	
+	warn("-------------- ISLANDS TABLE --------------")
+	test_print_table(IslandsTable)
 	return IslandsTable 
 end
 
@@ -365,6 +367,7 @@ local Setting_Flag_ServerHopFarm_AuraEgg = false]]
 
 function Get_Table_Of_LF_Eggs()
 	local LF_Eggs_Table = {}
+	
 		if Setting_Flag_ServerHopFarm_VoidEgg25x == true then
 			table.insert(LF_Eggs_Table, {"void-egg", "x25"})
 		end 	
@@ -393,12 +396,14 @@ function Get_Table_Of_LF_Eggs()
 			table.insert(LF_Eggs_Table, {"aura-egg", "x10"})
 		end 
 	
+	warn("-------------- LF EGGS TABLE --------------")
+	test_print_table(LF_Eggs_Table)
 	return LF_Eggs_Table
 end
 
 
---[[function printtable()
-	local tablee = Check_Islands_OnServer()
+function test_print_table(tbl_)
+	local tablee = tbl_
 	for _, v in tablee do
 		warn(v)
 		for _, x in v do
@@ -407,7 +412,6 @@ end
 	end
 end
 
-print(printtable())]]
 
 workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
 	if Setting_SilentAutoPickupables == true then
@@ -699,6 +703,8 @@ task.spawn(function()
 		local function Check_LF_Islands_Matches()
 			for _, LF_InfoTable in __LF_Eggs_Table__ do
 				-- {name, luck}
+				warn("Checking loop")
+			
 
 				for _, IslandOnServer in Islands do
 					--  {Name, Luck, EggCFrame, Timer, Height}
