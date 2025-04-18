@@ -1,4 +1,4 @@
-local _Version_ = "0.0.52v [Beta]"
+local _Version_ = "0.0.53v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -170,14 +170,14 @@ local Loop_PickupablesAuto = task.spawn(function()
 
 					if PickupablePart then
 						local distance = (HRP.Position - PickupablePart.Position).Magnitude
-						local tweenTime = (distance / 3.5)
+						local tweenTime = (distance / 10)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
 						
 						task.wait(tweenTime + 2)
 					elseif PickupableMeshPart then
 						local distance = (HRP.Position - PickupableMeshPart.Position).Magnitude
-						local tweenTime = (distance / 3.5)
+						local tweenTime = (distance / 10)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
 						
@@ -266,7 +266,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Rayfield:Notify({
 				Title = "New Island Detected!",
 				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 72635142192444,
+				Image = 0,
 
 				OnClick = function()
 
@@ -276,7 +276,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Rayfield:Notify({
 				Title = "New Island Detected!",
 				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 72635142192444,
+				Image = 0,
 
 				OnClick = function()
 
@@ -467,40 +467,29 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 
 		
 
-local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
-	
-	local Section_Notifications = Tab_Islands:CreateSection("Notifications")
-	
-		local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
-			Name = "Get Notifications When New Islands Appear",
-			CurrentValue = false,
-			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				Setting_IslandSpawnNotifications  = Value
-			end,
-		})
-		
-	local HopFarmDivider = Tab_Islands:CreateDivider()
 
-	local Section_ServerHopFarmInfo = Tab_Islands:CreateSection("Server Hop Farm - Info")
-	
-		local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the time runds out."})
-		local HopFarmWarningParagraph = Tab_Islands:CreateParagraph({Title = "!!! WARNING !!!", Content = "You need to add this script to the 'auto execute' list of your executor to make it work properly!!!"})
 		
-	local Section_ServerHopFarmEggSelection = Tab_Islands:CreateSection("Server Hop Farm - Egg Selection")
-	
-	local HopFarmParagraph = Tab_Islands:CreateParagraph({Title = "Selection", Content = "Select the eggs you want to open! It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script can possibly break)"})
+local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 
-		local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_Islands:CreateToggle({
-			Name = "Void Egg (x10)",
-			CurrentValue = false,
-			Flag = "Flag_ServerHopFarm_VoidEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				Setting_Flag_ServerHopFarm_VoidEgg10x = Value
-			end,
-		})
+	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Server Hop Farm - Info")
 		
-		local Toggle_Flag_ServerHopFarm_VoidEgg25x = Tab_Islands:CreateToggle({
+		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. Fully AFK-able!"})
+		local HopFarmWarningParagraph = Tab_EggFarm:CreateParagraph({Title = "!!! WARNING !!!", Content = "You need to add this script to the 'auto execute' list of your executor to make it work properly!!!"})
+			
+	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
+		
+		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "Selection", Content = "Select the eggs you want to open! It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox (Script can possibly break)"})
+		
+		local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_EggFarm:CreateToggle({
+				Name = "Void Egg (x10)",
+				CurrentValue = false,
+				Flag = "Flag_ServerHopFarm_VoidEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+				Callback = function(Value)
+					Setting_Flag_ServerHopFarm_VoidEgg10x = Value
+				end,
+			})
+			
+		local Toggle_Flag_ServerHopFarm_VoidEgg25x = Tab_EggFarm:CreateToggle({
 			Name = "Void Egg (x25)",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_VoidEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -509,7 +498,7 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 		
-		local Toggle_Flag_ServerHopFarm_NightmareEgg10x = Tab_Islands:CreateToggle({
+		local Toggle_Flag_ServerHopFarm_NightmareEgg10x = Tab_EggFarm:CreateToggle({
 			Name = "Nightmare Egg (x10)",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_NightmareEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -518,7 +507,7 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 				
-		local Toggle_Flag_ServerHopFarm_NightmareEgg25x = Tab_Islands:CreateToggle({
+		local Toggle_Flag_ServerHopFarm_NightmareEgg25x = Tab_EggFarm:CreateToggle({
 			Name = "Nightmare Egg (x25)",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_NightmareEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -527,7 +516,7 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 		
-		local Toggle_Flag_ServerHopFarm_RainbowEgg10x = Tab_Islands:CreateToggle({
+		local Toggle_Flag_ServerHopFarm_RainbowEgg10x = Tab_EggFarm:CreateToggle({
 			Name = "Rainbow Egg (x10)",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_RainbowEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -536,7 +525,7 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 
-		local Toggle_Flag_ServerHopFarm_RainbowEgg25x = Tab_Islands:CreateToggle({
+		local Toggle_Flag_ServerHopFarm_RainbowEgg25x = Tab_EggFarm:CreateToggle({
 			Name = "Rainbow Egg (x25)",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_RainbowEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -545,7 +534,7 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 
-		local Toggle_Flag_ServerHopFarm_AuraEgg = Tab_Islands:CreateToggle({
+		local Toggle_Flag_ServerHopFarm_AuraEgg = Tab_EggFarm:CreateToggle({
 			Name = "Aura Egg",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm_AuraEgg", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -554,11 +543,11 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 		
-	local Section_ServerHopFarmToggle = Tab_Islands:CreateSection("Server Hop Farm - Toggle")
+	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Server Hop Farm - Toggle")
 
-		local HopFarmReminderParagraph = Tab_Islands:CreateParagraph({Title = "Warning", Content = "Make sure to select the eggs you want to hatch before turning on!"})
+		local HopFarmReminderParagraph = Tab_EggFarm:CreateParagraph({Title = "Warning", Content = "Make sure to select the eggs you want to hatch before turning on!"})
 
-		local Toggle_ServerHopFarm = Tab_Islands:CreateToggle({
+		local Toggle_ServerHopFarm = Tab_EggFarm:CreateToggle({
 			Name = "Enable Server Hopper Farm",
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -571,6 +560,18 @@ local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
 			end,
 		})
 
+local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
+
+	local Section_Notifications = Tab_Islands:CreateSection("Notifications")
+
+		local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
+			Name = "Get Notifications When New Islands Appear",
+			CurrentValue = false,
+			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_IslandSpawnNotifications  = Value
+			end,
+		})
 
 local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 
