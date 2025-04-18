@@ -1,4 +1,4 @@
-local _Version_ = "0.0.78v [Beta]"
+local _Version_ = "0.0.79v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -738,6 +738,7 @@ task.spawn(function()
 		
 		game:GetService("Players").LocalPlayer.PlayerGui.Intro.Enabled = false
 		game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enabled = true
+		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 		
 		warn("Autofarm Searching...")
 		task.wait(2)
