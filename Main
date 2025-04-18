@@ -1,4 +1,4 @@
-local _Version_ = "0.0.59v [Beta]"
+local _Version_ = "0.0.6v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -257,10 +257,12 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	local Luck = nil
 	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
 	
-	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
-		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+	if IslandObject:FindFirstChild("Display") then
+		if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
+			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+		end
 	end
-		
+
 	if Setting_IslandSpawnNotifications == true then
 		if Luck then
 			Rayfield:Notify({
@@ -679,9 +681,11 @@ Rayfield:LoadConfiguration()
 warn("Checking...")
 
 task.spawn(function()
-	task.wait(10)
-	
 	warn("Checking...")
+	
+	task.wait(5)
+	
+	warn("Checking... (2)")
 	
 	if Toggle_ServerHopFarm == true then
 		local Islands = Check_Islands_OnServer()
@@ -704,6 +708,9 @@ task.spawn(function()
 		end
 
 		Check_LF_Islands_Matches()
+		
+		Message(Testing_Hook, Islands)
+		Message(Testing_Hook, __LF_Eggs_Table__)
 --[[function printtable()
 	local tablee = Check_Islands_OnServer()
 	for _, v in tablee do
