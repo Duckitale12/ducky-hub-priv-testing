@@ -1,4 +1,4 @@
-local _Version_ = "0.0.55v [Beta]"
+local _Version_ = "0.0.56v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -170,18 +170,18 @@ local Loop_PickupablesAuto = task.spawn(function()
 
 					if PickupablePart then
 						local distance = (HRP.Position - PickupablePart.Position).Magnitude
-						local tweenTime = (distance / 26)
+						local tweenTime = (distance / 40)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
 						
-						task.wait(tweenTime + 2)
+						task.wait(tweenTime + 0.9)
 					elseif PickupableMeshPart then
 						local distance = (HRP.Position - PickupableMeshPart.Position).Magnitude
-						local tweenTime = (distance / 26)
+						local tweenTime = (distance / 40)
 						
 						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
 						
-						task.wait(tweenTime + 2)
+						task.wait(tweenTime + 0.9)
 					end
 			
 				else
