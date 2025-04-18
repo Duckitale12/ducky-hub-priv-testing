@@ -1,4 +1,4 @@
-local _Version_ = "0.0.26v [Beta]"
+local _Version_ = "0.0.27v [Beta]"
 
 local placeId = game.PlaceId
 
@@ -54,8 +54,9 @@ local Setting_AutoBlowBubble = false
 local Setting_AutoSellBubble = false
 local Setting_AutoBuyAlienShop = false
 local Setting_AutoBuyBlackmarketItems = false
-local Setting_AutoPickupables = false
+local Setting_SilentAutoPickupables = false
 local Setting_IslandSpawnNotifications = false
+local Setting_TeleportToPickupables = false
 
 -- MAIN WHILE LOOP
 
@@ -116,6 +117,19 @@ local Loop_Fast = task.spawn(function()
 
 		task.wait(0.25)
 	end
+end)
+
+local Loop_PickupablesAuto = task.spawn(function()
+	if Setting_TeleportToPickupables == true then
+		for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
+			local Name = Pickupable.Name
+			local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
+			
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame
+		end
+	end
+	
+	task.wait(0.25)
 end)
 
 -- FUNCTIONS
@@ -197,7 +211,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 end)
 
 workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
-	if Setting_AutoPickupables == true then
+	if Setting_SilentAutoPickupables == true then
 		task.spawn(function()
 			local Name = Pickupable.Name
 			
@@ -243,20 +257,37 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
 	
-		local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
-			Name = "Auto Pickup Coins & Gems Around You",
-			CurrentValue = false,
-			Flag = "Flag_AutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		local Toggle_SilentAutoPickupables = Tab_Farming:CreateToggle({
+			Name = "Silently Pickup Coins & Gems That Spawn Near You",
+			CurrentValue = false,	
+			Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				if Value == true then
-					Setting_AutoPickupables = true
+					Setting_SilentAutoPickupables = true
 				elseif Value == false then
-					Setting_AutoPickupables = false
+					Setting_SilentAutoPickupables = false
 				end
 			end,
 		})
+		
+		local Toggle_TeleportToPickupables = Tab_Farming:CreateToggle({
+			Name = "Teleport To Nearby Pickupables [Risky ; More Efficient]",
+			CurrentValue = false,	
+			Flag = "Flag_TeleportToPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				if Value == true then
+					Setting_TeleportToPickupables = true
+				elseif Value == false then
+					Setting_TeleportToPickupables = false
+				end
+			end,
+		})
+
+
 	
-	local Section_Automatic = Tab_Farming:CreateSection("Automation")
+	local Section_Automatic = Tab_Farming:CreateSection("Chests")
+	
+		local ChestParagraph = Tab_Farming:CreateParagraph({Title = "Warning!", Content = "Auto chests require buffs mastery level 15 to work!"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
@@ -297,6 +328,9 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			end,
 		})
 		
+		
+	local Section_Automatic = Tab_Farming:CreateSection("Rewards")
+
 		local Toggle_AutoFreeWheelSpin = Tab_Farming:CreateToggle({
 			Name = "Auto Claim Free Wheel Spin",
 			CurrentValue = false,
