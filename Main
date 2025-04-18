@@ -126,7 +126,7 @@ local Loop_PickupablesAuto = task.spawn(function()
 				local Name = Pickupable.Name
 				local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
 
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + CFrame.new(0, 5, 0)
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
 				wait(1)
 			end
 		end
