@@ -1,4 +1,4 @@
-local _Version_ = "0.0.57v [Beta]"
+local _Version_ = "0.0.58v [Beta]"
  
 local placeId = game.PlaceId
 
@@ -321,6 +321,88 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	end
 end)
 
+function Check_Islands_OnServer()
+	local IslandsTable = {}
+	
+	--[[  IslandsTable = {
+		[1] = {egg_name, egg_luck, egg_cframe, egg_time, egg_height}
+	}]]
+	
+	for _, Island in workspace.Rendered.Rifts:GetChildren() do
+		if Island:FindFirstChild("Display") then
+			if Island.Display.SurfaceGui:FindFirstChild("Icon") then
+				if Island.Display.SurfaceGui.Icon:FindFirstChild("Luck") then
+					
+					local Name = Island.Name
+					local Luck = Island.Display.SurfaceGui.Icon.Luck.Text
+					local Timer = Island.Display.SurfaceGui.Timer.Text
+					local Height = Island.Display.CFrame.Y
+					local EggCFrame = Island.Display.CFrame
+					
+					table.insert(IslandsTable, {Name, Luck, EggCFrame, Timer, Height})
+				end
+			end
+		end
+	end
+	
+	return IslandsTable 
+end
+
+
+--[[local Setting_Flag_ServerHopFarm_VoidEgg25x = false
+local Setting_Flag_ServerHopFarm_VoidEgg10x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg25x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg10x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
+local Setting_Flag_ServerHopFarm_AuraEgg = false]]
+
+function Get_Table_Of_LF_Eggs()
+	local LF_Eggs_Table = {}
+		if Setting_Flag_ServerHopFarm_VoidEgg25x == true then
+			table.insert(LF_Eggs_Table, {"void-egg", "x25"})
+		end 	
+		
+		if Setting_Flag_ServerHopFarm_VoidEgg10x == true then
+			table.insert(LF_Eggs_Table, {"void-egg", "x10"})
+		end 	
+		
+		if Setting_Flag_ServerHopFarm_NightmareEgg25x == true then
+			table.insert(LF_Eggs_Table, {"nightmare-egg", "x25"})
+		end 	
+		
+		if Setting_Flag_ServerHopFarm_NightmareEgg10x == true then
+			table.insert(LF_Eggs_Table, {"nightmare-egg", "x10"})
+		end 	
+		
+		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
+			table.insert(LF_Eggs_Table, {"rainbow-egg", "x25"})
+		end 	
+
+		if Setting_Flag_ServerHopFarm_RainbowEgg25x == true then
+			table.insert(LF_Eggs_Table, {"rainbow-egg", "x10"})
+		end 
+		
+		if Setting_Flag_ServerHopFarm_AuraEgg == true then
+			table.insert(LF_Eggs_Table, {"aura-egg", "x10"})
+		end 
+	
+	return LF_Eggs_Table
+end
+
+
+--[[function printtable()
+	local tablee = Check_Islands_OnServer()
+	for _, v in tablee do
+		warn(v)
+		for _, x in v do
+			print(x)
+		end
+	end
+end
+
+print(printtable())]]
+
 workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
 	if Setting_SilentAutoPickupables == true then
 		task.spawn(function()
@@ -552,11 +634,7 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 			CurrentValue = false,
 			Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
-				if Value == true then
-					Setting_ServerHopFarm = true
-				elseif Value == false then
-					Setting_ServerHopFarm  = false
-				end
+				Setting_ServerHopFarm = Value
 			end,
 		})
 
@@ -593,5 +671,45 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
 
 
+--- AFTER JOINING SERVER
+
 Message(Logs_Hook, tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name)
 Rayfield:LoadConfiguration()
+
+task.spawn(function()
+	task.wait(8)
+	if Toggle_ServerHopFarm == true then
+		local Islands = Check_Islands_OnServer()
+		local __LF_Eggs_Table__ = Get_Table_Of_LF_Eggs()
+
+		local function Check_LF_Islands_Matches()
+			for _, LF_InfoTable in __LF_Eggs_Table__ do
+				-- {name, luck}
+
+				for _, IslandOnServer in Islands do
+					--  {Name, Luck, EggCFrame, Timer, Height}
+					if IslandOnServer[1] == LF_InfoTable[1] then
+						if IslandOnServer[2] == LF_InfoTable[2] then
+							warn(LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
+							Message(Testing_Hook, "FOUND EGG: " .. LF_InfoTable[1] .. " | " .. LF_InfoTable[2])
+						end
+					end
+				end
+			end
+		end
+
+		Check_LF_Islands_Matches()
+--[[function printtable()
+	local tablee = Check_Islands_OnServer()
+	for _, v in tablee do
+		warn(v)
+		for _, x in v do
+			print(x)
+		end
+	end
+end
+
+print(printtable())]]
+
+	end
+end)
