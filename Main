@@ -1,4 +1,4 @@
-local _Version_ = "0.0.74v [Beta]"
+local _Version_ = "0.0.75v [Beta]"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -75,6 +75,37 @@ local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
 local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
 local Setting_Flag_ServerHopFarm_AuraEgg = false
 
+-- TELEPORTING FUNCS
+
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+
+local function getPublicServers()
+	local url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100"):format(placeId)
+	local success, response = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet(url))
+	end)
+
+	if success and response and response.data then
+		return response.data
+	else
+		return {}
+	end
+end
+
+local function HopServer()
+	local servers = getPublicServers()
+	local currentJobId = game.JobId
+
+	warn("Attempting to hop server!")
+
+	for _, server in pairs(servers) do
+		if server.playing < server.maxPlayers and server.id ~= currentJobId then
+			TeleportService:TeleportToPlaceInstance(placeId, server.id, game.Players.LocalPlayer)
+			return
+		end
+	end
+end
 
 -- MAIN WHILE LOOP
 
@@ -276,7 +307,7 @@ function GlobalEggWebhook(Island, Luck, Timer, IslandHeight)
 					},
 					{
 						["name"] = "🎈 Height",
-						["value"] = "```" .. IslandHeight .. "```",
+						["value"] = "```" .. math.floor(IslandHeight) .. "```",
 					},
 					{
 						["name"] = "🔑 Server Link",
@@ -763,6 +794,16 @@ task.spawn(function()
 					local Height = island[5]
 					local IslandObject = island[6]
 					
+					Rayfield:Notify({
+						Title = "Island found!",
+						Content = "Traveling to: " .. Name,
+						Image = 0,
+
+						OnClick = function()
+
+						end,
+					})
+					
 					GlobalEggWebhook(island[1], Luck, Timer, Height)
 					
 					task.spawn(function()
@@ -801,13 +842,41 @@ task.spawn(function()
 					end)
 					
 					IslandObject.Destroying:Connect(function()
-						warn("EGG IS DESTROYING")
+						warn("Island is despawning! Looking for a new server!")
+						
+						Rayfield:Notify({
+							Title = "Island disappeared!",
+							Content = "Attempting to joing a new server!",
+							Image = 0,
+
+							OnClick = function()
+
+							end,
+						})
+						
+						task.wait(5)
+						
+						HopServer()
 					end)
+				else
+					warn("Island not found!")
+					
+					Rayfield:Notify({
+						Title = "Island not found...",
+						Content = "Attempting to joing a new server!",
+						Image = 0,
+
+						OnClick = function()
+
+						end,
+					})
+					
+					task.wait(5)
+					
+					HopServer()
 				end
 			end
 		end
-
-		Check_LF_Islands_Matches()
 	end
 end)
 
