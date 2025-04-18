@@ -257,10 +257,8 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	local Luck = nil
 	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
 	
-	if IslandObject:FindFirstChild("Display") then
-		if IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck") then
-			Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
-		end
+	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon") then
+		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
 	end
 
 	if Setting_IslandSpawnNotifications == true then
