@@ -1,4 +1,4 @@
-local _Version_ = "0.1.09v"
+local _Version_ = "0.1.1v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -132,7 +132,7 @@ end
 -- MAIN WHILE LOOP
 
 local Loop = task.spawn(function()
-	while true do
+	while Window do
 
 		if Setting_AutoVoidChest == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
@@ -181,7 +181,7 @@ local Loop = task.spawn(function()
 end)
 
 local Loop_Fast = task.spawn(function()
-	while true do
+	while Window do
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
 		end
@@ -229,14 +229,20 @@ local TweenService = game:GetService("TweenService")
 
 local Humanoid = game.Players.LocalPlayer.Character.Humanoid
 
---[[local Loop_PickupablesAuto = task.spawn(function()
-	while true do
-		for _, pickupable in  do
-				
+local Loop_PickupablesAuto = task.spawn(function()
+	while Window do
+		if Setting_SilentAutoPickupables == true then
+			for _, pickupable in workspace.Rendered:GetChildren()[14] do
+				local Name = pickupable.Name
+
+				game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
+				pickupable:Destroy()
+			end
+
+			task.wait(0.5)
 		end
-		task.wait(2)
 	end
-end)]]
+end)
 
 -- FUNCTIONS
 
@@ -498,23 +504,13 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
 	
 		local Toggle_SilentAutoPickupables = Tab_Farming:CreateToggle({
-			Name = "Silently Pickup Coins & Gems That Spawn Near You",
+			Name = "Collect Pickupables Near You",
 			CurrentValue = false,	
 			Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_SilentAutoPickupables = Value
 			end,
 		})
-		
-		local Toggle_TeleportToPickupables = Tab_Farming:CreateToggle({
-			Name = "Pickupables Autofarm (Zen)",
-			CurrentValue = false,	
-			Flag = "Flag_TeleportToPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				Setting_TeleportToPickupables = Value
-			end,
-		})
-
 
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
@@ -849,6 +845,8 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 	
 	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "Discord Server", Content = "https://discord.gg/P49rCFQ7FX"})
 	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
+	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Server ID", Content = game.JobId})
+
 
 
 --- AFTER JOINING SERVER
