@@ -1,4 +1,4 @@
-local _Version_ = "0.1.076v"
+local _Version_ = "0.1.077v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -109,7 +109,7 @@ local function ServerHop_IY()
 
 	if body and body.data then
 		for _, v in ipairs(body.data) do
-			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and (v.maxPlayers - v.playing) >= 2 and v.id ~= game.JobId then
+			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
 				table.insert(servers, v.id)
 			end
 		end
@@ -1055,10 +1055,18 @@ task.spawn(function()
 				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 				task.spawn(function()
-					game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(
-						"Teleport",
-						"Workspace.Worlds.The Overworld.Islands.Zen.Island.Portal.Spawn"
-					)
+					if Height < 3000 then
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Floating Island.Island.Portal.Spawn")
+					elseif Height > 12000 then
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Zen.Island.Portal.Spawn")
+					elseif Height > 8000 then
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
+					elseif Height > 5000 then
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
+					elseif Height > 3000 then
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Outer Space.Island.Portal.Spawn")
+					
+					end
 				end)
 
 				task.wait(1)
