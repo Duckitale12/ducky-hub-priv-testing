@@ -1,4 +1,4 @@
-local _Version_ = "0.1.121v"
+local _Version_ = "0.1.13v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -515,7 +515,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
 	
-		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "<b>Auto chests require buffs mastery level 15 to work!</b>"})
+local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "Auto chests require buffs mastery level 15 to work!"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
@@ -606,9 +606,9 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "This feature is experimental. It can break at any time!"})
-		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
-		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
+		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "This feature is experimental. It can break at any time!"})
+		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "<b>How does this work?</b>", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
 
