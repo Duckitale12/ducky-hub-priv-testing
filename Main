@@ -1,4 +1,4 @@
-local _Version_ = "0.1.088v"
+local _Version_ = "0.1.089v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -435,7 +435,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
 	
 
-	if IslandObject == "event-1" or IslandObject == "event-2" then
+	if tostring(IslandObject) == "event-1" or tostring(IslandObject) == "event-2" then
 		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, false)
 	end
 	
@@ -1052,7 +1052,7 @@ task.spawn(function()
 
 				SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height, true)
 				
-				if Name == "event-1" or Name == "event-2" then
+				if tostring(Name) == "event-1" or tostring(Name) == "event-2" then
 					SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height, false)
 				end
 				
