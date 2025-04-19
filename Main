@@ -1,4 +1,4 @@
-local _Version_ = "0.1.071v"
+local _Version_ = "0.1.072v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -346,20 +346,16 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	end
 
 	local Embed = {
-		["title"] = "✨ Rare Egg Found!",
+		["title"] = "✨ Rift Found!",
 		["description"] = "",
 		["fields"] = {
 			{
-				["name"] = "🥚 Egg Name",
+				["name"] = "🥚 Rift Name",
 				["value"] = "```" .. tostring(Island) .. "```",
 			},
 			{
 				["name"] = "⌚ Time Left",
-				["value"] = "```" .. Timer .. "```",
-			},
-			{
-				["name"] = "🍀 Luck Multiplier",
-				["value"] = "```" .. Luck .. "```",
+				["value"] = "```" .. tostring(Timer) .. "```",
 			},
 			{
 				["name"] = "🎈 Height",
@@ -376,6 +372,31 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 			["text"] = tostring(os.date("%H:%M:%S")) 
 		},
 	}
+	
+	if Luck then
+		Embed["fields"] = {
+			{
+				["name"] = "🥚 Rift Name",
+				["value"] = "```" .. tostring(Island) .. "```",
+			},
+			{
+				["name"] = "⌚ Time Left",
+				["value"] = "```" .. tostring(Timer) .. "```",
+			},
+			{
+				["name"] = "🍀 Luck Multiplier",
+				["value"] = "```" .. tostring(Luck) .. "```",
+			},
+			{
+				["name"] = "🎈 Height",
+				["value"] = "```" .. math.floor(IslandHeight) .. "```",
+			},
+			{
+				["name"] = "🔑 Server Link",
+				["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+			},
+		}
+	end
 	
 	if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
 		Message(Webhook, "@everyone")
@@ -444,11 +465,9 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	end
 	
 	if Setting_IslandSpawnWebhookNotifications == true then
-		local SendToWebhook = Setting_IslandSpawnWebhook
-		warn(Setting_IslandSpawnWebhook)
-		
-		if SendToWebhook ~= nil or SendToWebhook ~= "" or SendToWebhook ~= "000" then
-			SendEggWebhook(SendToWebhook, IslandObject, Luck, Timer, IslandHeight, false)
+		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight, false)
+			
 		end
 	end
 
@@ -1030,6 +1049,7 @@ task.spawn(function()
 				})
 
 				SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height, true)
+				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 				task.spawn(function()
 					game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(
