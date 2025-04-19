@@ -1,4 +1,4 @@
-local _Version_ = "0.1.084v"
+local _Version_ = "0.1.085v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -227,7 +227,7 @@ end)]]
 local Logs_Hook = "https://discord.com/api/webhooks/1362702270084550780/1TK0CX2K2hy3pVLdzcVLWxY-POhbWi9if-89JZqVWVh0OaS1ykwzBYbtYlkhTq7lDbSj"
 local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
 local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
-
+local Event_Islands_Hook = "https://discord.com/api/webhooks/1363151340364366066/j0S4ioUPagpdOawbcZJ_sxhGn2hhGeDwVfNw0ILLgvm6ovaOjaA-YPjGB_2wZNpohiuV"
 
 function Message(url, message)
 	local http = game:GetService("HttpService")
@@ -417,6 +417,11 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	end
 	
 	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
+	
+
+	if Name == "event-1" or Name == "event-2" then
+		SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height, false)
+	end
 	
 	if Setting_IslandSpawnWebhookNotifications == true then
 		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
@@ -1001,6 +1006,11 @@ task.spawn(function()
 				})
 
 				SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height, true)
+				
+				if Name == "event-1" or Name == "event-2" then
+					SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height, false)
+				end
+				
 				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 				task.spawn(function()
