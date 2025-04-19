@@ -1,4 +1,4 @@
-local _Version_ = "0.1.08v"
+local _Version_ = "0.1.081v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -1046,7 +1046,7 @@ task.spawn(function()
 				-- change humanoid state to stitting 
 				
 				CharacterCanColide(false)
-				CharacterIsAnchored(true)
+				--CharacterIsAnchored(true)
 				
 				LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
 
@@ -1058,7 +1058,7 @@ task.spawn(function()
 				task.wait(tweenTime + 0.7)
 
 				CharacterCanColide(true)
-				CharacterIsAnchored(false)
+				--CharacterIsAnchored(false)
 
 				task.wait(0.5)
 
