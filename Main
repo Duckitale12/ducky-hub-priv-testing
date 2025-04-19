@@ -1,4 +1,4 @@
-local _Version_ = "0.1.073v"
+local _Version_ = "0.1.074v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -334,14 +334,28 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	
 	warn(Webhook_)
 
-	if RaresOnly == true then
-		if Luck == "x25" then
-			if Island == "void-egg" or Island == "rainbow-egg" or Island == "nightmare-egg" or Island == "aura-egg" or Island == "event-1" or Island == "event-2" then
-			else
-				return
+	if RaresOnly == true then -- condition for sending to global
+		if Island == "void-egg"
+			or Island == "rainbow-egg" 
+			or Island == "nightmare-egg" 
+			or Island == "aura-egg" 
+			or Island == "event-1" 
+			or Island == "event-2" 
+			or Island == "royal-chest" then
+			
+			if Luck then 
+				if Luck == "x25" then
+				else
+					return
+				end
 			end
 		else
 			return
+	end
+	
+	if Rare_Islands_Hook == Rare_Islands_Hook then
+		
+			Message(Webhook_, "✨ <@1363079984511717426> ✨")
 		end
 	end
 
@@ -399,9 +413,10 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	end
 	
 	if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
-		Message(Webhook_, "@everyone")
+		if Luck and Luck == "x25" or Island == "aura-egg" or Island == "royal-chest" then
+			Message(Webhook_, "@everyone")
+		end
 	end
-	
 	
 	Webhook(Webhook_, Embed)
 end
