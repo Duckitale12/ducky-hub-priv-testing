@@ -1,4 +1,4 @@
-local _Version_ = "0.1.01v"
+local _Version_ = "0.1.03v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -67,7 +67,7 @@ local Setting_AutoBuyBlackmarketItems = false
 local Setting_SilentAutoPickupables = false
 local Setting_IslandSpawnNotifications = false
 local Setting_IslandSpawnWebhookNotifications = false
-local Setting_IslandSpawnWebhook = ""
+local Setting_IslandSpawnWebhook = nil
 local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
 local Setting_TeleportToPickupables = false
 local Setting_IslandESP = false
@@ -92,8 +92,6 @@ local Setting_FallbackServerHopper = false
 
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
-
-httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
@@ -332,6 +330,7 @@ function Webhook(url, embed)
 end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
+	if Webhook_ then else return end
 	
 	if RaresOnly == true then
 		if Luck == "x25" then
@@ -379,19 +378,22 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
 		Message(Webhook, "@everyone")
 	end
-
+	
+	
 	Webhook(Webhook_, Embed)
 end
 
 function ChangeRiftESP()
 	if Setting_IslandESP == true then
 		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			HighlightIsland(Island, Island.Name)
+			if not Island:FindFirstChildOfClass("Highlight") then
+				HighlightIsland(Island, Island.Name)
+			end
 		end
 	else
 		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			if Island:FindFirstChild("ESP_HIGHLIGHT") then
-				Island:FindFirstChild("ESP_HIGHLIGHT"):Destroy()
+			if Island:FindFirstChildOfClass("Highlight") then
+				Island:FindFirstChildOfClass("Highlight"):Destroy()
 			end
 		end
 	end
@@ -402,9 +404,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	task.wait(10)
 	
 	if Setting_IslandESP == true then
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			HighlightIsland(Island, Island.Name)
-		end
+		HighlightIsland(IslandObject, IslandObject.Name)
 	end
 	
 	local IslandName = IslandObject.Name
@@ -444,7 +444,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	if Setting_IslandSpawnWebhookNotifications == true then
 		local SendToWebhook = Setting_IslandSpawnWebhook
 		
-		if SendToWebhook ~= "" then
+		if SendToWebhook ~= nil or SendToWebhook ~= "" then
 			SendEggWebhook(SendToWebhook, IslandObject, Luck, Timer, IslandHeight, false)
 		end
 	end
@@ -615,14 +615,14 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local Paragraph_2 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. Not reccomended to afk for longer periods of time!"})
-		local Paragraph_3 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. Not reccomended to afk for longer periods of time!"})
+		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
 		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
 						
-		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "It is reccomended to set bubble gravity to 0% in BGSI settings for better efficiency!", Content = ""})
-		local Paragraph_7 = Tab_EggFarm:CreateParagraph({Title = "", Content = "Please NOT select 25x luck eggs only, this will lead to you most likely getting rate limited by Roblox (Server hop will fail faster)"})
+		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "It is reccomended to set bubble gravity to 0% in BGSI settings for better efficiency!"})
+		local Paragraph_7 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "Please NOT select 25x luck eggs only, this will lead to you most likely getting rate limited by Roblox (Server hop will fail faster)"})
 
 
 		local Toggle_Flag_ServerHopFarm_BunnyEgg10x = Tab_EggFarm:CreateToggle({
@@ -864,22 +864,22 @@ function HighlightIsland(IslandModel)
 	Highlight.Name = "ESP_HIGHLIGHT"
 	Highlight.Parent = IslandModel
 	Highlight.Adornee = IslandModel
-	Highlight.FillColor = Color3.fromRGB(255, 255, 255)
-	Highlight.FillTransparency = 0.5
+	Highlight.FillColor = Color3.fromRGB(255, 53, 46)
+	Highlight.FillTransparency = 0.8
 	Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
 	Highlight.OutlineTransparency = 0
 	
 	local Gui = Instance.new("BillboardGui")
 	Gui.Parent = Highlight
 	Gui.Adornee = IslandModel
-	Gui.Size = UDim2.new(10,0,7,0)
+	Gui.Size = UDim2.new(500,0,40,0)
 	Gui.AlwaysOnTop = true
 	
 	local Text_name = Instance.new("TextLabel")
 	Text_name.Parent = Gui
-	Text_name.Size = UDim2.new(1,0,0.7,0)
+	Text_name.Size = UDim2.new(1,0,0.5,0)
 	Text_name.BackgroundTransparency = 1
-	Text_name.TextColor3 = Color3.new(1, 1, 1)
+	Text_name.TextColor3 = Color3.new(1, 0, 0)
 	Text_name.TextScaled = true
 	Text_name.Text = IslandModel.Name
 	
@@ -888,12 +888,12 @@ function HighlightIsland(IslandModel)
 		if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
 			local Text_luck = Instance.new("TextLabel")
 			Text_luck.Parent = Gui
-			Text_luck.Position = UDim2.new(0,0,0.7,0)
-			Text_luck.Size = UDim2.new(1,0,0.3,0)
+			Text_luck.Position = UDim2.new(0,0,0.5,0)
+			Text_luck.Size = UDim2.new(1,0,0.5,0)
 			Text_luck.BackgroundTransparency = 1
-			Text_luck.TextColor3 = Color3.new(1, 1, 1)
+			Text_luck.TextColor3 = Color3.new(1, 0, 0)
 			Text_luck.TextScaled = true
-			Text_luck.Text = IslandModel.Name
+			Text_luck.Text = gui.Icon.Luck.Text .. " Luck"
 		end
 	end
 end
