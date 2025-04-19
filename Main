@@ -1,4 +1,4 @@
-local _Version_ = "0.1.082v"
+local _Version_ = "0.1.083v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -1049,6 +1049,7 @@ task.spawn(function()
 				local HRP = LocalPlayer.Character.HumanoidRootPart
 				-- change humanoid state to stitting 
 				
+				HRP.Anchored = true
 				CharacterCanColide(false)
 				--CharacterIsAnchored(true)
 				
@@ -1057,11 +1058,12 @@ task.spawn(function()
 				local distance = (HRP.Position - Position).Magnitude
 				local tweenTime = distance / 80
 			
-				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 20, 0)}):Play()
+				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
 
-				task.wait(tweenTime + 0.7)
+				task.wait(tweenTime + 1)
 
-				CharacterCanColide(true)
+				CharacterCanColide(true)	
+				HRP.Anchored = false
 				--CharacterIsAnchored(false)
 
 				task.wait(0.5)
