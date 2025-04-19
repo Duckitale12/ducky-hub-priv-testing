@@ -1,4 +1,4 @@
-local _Version_ = "0.1.083v"
+local _Version_ = "0.1.084v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -213,41 +213,14 @@ local TweenService = game:GetService("TweenService")
 
 local Humanoid = game.Players.LocalPlayer.Character.Humanoid
 
-local Loop_PickupablesAuto = task.spawn(function()
+--[[local Loop_PickupablesAuto = task.spawn(function()
 	while true do
-		if Setting_TeleportToPickupables == true then			
-			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-				if Setting_TeleportToPickupables == true then
-					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
-					local Name = Pickupable.Name
-					local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
-
-					if PickupablePart then
-						-- Use MoveTo to walk to the part
-						Humanoid:MoveTo(PickupablePart.Position)
-
-						-- Wait until the character reaches the part or times out
-						local reached = false
-						local conn
-						conn = Humanoid.MoveToFinished:Connect(function(success)
-							reached = true
-							conn:Disconnect()
-						end)
-
-						local timeout = 6 -- seconds
-						local timer = 0
-						while not reached and timer < timeout do
-							task.wait(0.1)
-							timer += 0.1
-						end
-					end
-				end	
-			end
+		for _, pickupable in  do
+				
 		end
-
-		task.wait(1)
+		task.wait(2)
 	end
-end)
+end)]]
 
 -- FUNCTIONS
 
@@ -1034,7 +1007,7 @@ task.spawn(function()
 					if Height < 2640 then
 						print("no tp")
 					elseif Height > 10130 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.The Void.Island.Portal.Spawn")
 					elseif Height > 6850 then
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
 					elseif Height > 2650 then
@@ -1049,7 +1022,6 @@ task.spawn(function()
 				local HRP = LocalPlayer.Character.HumanoidRootPart
 				-- change humanoid state to stitting 
 				
-				HRP.Anchored = true
 				CharacterCanColide(false)
 				--CharacterIsAnchored(true)
 				
@@ -1060,10 +1032,9 @@ task.spawn(function()
 			
 				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
 
-				task.wait(tweenTime + 1)
+				task.wait(tweenTime + 0.1)
 
 				CharacterCanColide(true)	
-				HRP.Anchored = false
 				--CharacterIsAnchored(false)
 
 				task.wait(0.5)
