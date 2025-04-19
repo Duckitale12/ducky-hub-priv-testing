@@ -1,4 +1,4 @@
-local _Version_ = "0.1.074v"
+local _Version_ = "0.1.076v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -330,31 +330,19 @@ function Webhook(url, embed)
 end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
-	if Webhook_ then else return end
-	
-	warn(Webhook_)
-
 	if RaresOnly == true then -- condition for sending to global
-		if Island == "void-egg"
-			or Island == "rainbow-egg" 
-			or Island == "nightmare-egg" 
-			or Island == "aura-egg" 
-			or Island == "event-1" 
-			or Island == "event-2" 
-			or Island == "royal-chest" then
+		if Island == "void-egg" or Island == "rainbow-egg"  or Island == "nightmare-egg"  or Island == "aura-egg" or Island == "event-1" or Island == "event-2" or Island == "royal-chest" then
 			
-			if Luck then 
-				if Luck == "x25" then
-				else
+			if Luck then
+				if Luck ~= "x25" then
 					return
 				end
 			end
 		else
 			return
-	end
+		end
 	
-	if Rare_Islands_Hook == Rare_Islands_Hook then
-		
+		if Rare_Islands_Hook == Rare_Islands_Hook then
 			Message(Webhook_, "✨ <@1363079984511717426> ✨")
 		end
 	end
@@ -528,14 +516,14 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 			end,
 		})
 
-		local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
+		--[[local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
 			Name = "Auto Sell Bubbles",
 			CurrentValue = false,
 			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_AutoSellBubble = Value
 			end,
-		})
+		})]]
 	
 	local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
 	
@@ -659,7 +647,6 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
 						
 		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "It is reccomended to set bubble gravity to 0% in BGSI settings for better efficiency!"})
-		local Paragraph_7 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "Please NOT select 25x luck eggs only, this will lead to you most likely getting rate limited by Roblox (Server hop will fail faster)"})
 
 
 		local Toggle_Flag_ServerHopFarm_BunnyEgg10x = Tab_EggFarm:CreateToggle({
@@ -933,6 +920,7 @@ function HighlightIsland(IslandModel)
 			Text_luck.BackgroundTransparency = 1
 			Text_luck.TextColor3 = Color3.new(1, 0, 0)
 			Text_luck.TextScaled = true
+			Text_luck.RichText = true
 			Text_luck.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
 			Text_luck.TextStrokeTransparency = 0
 			Text_luck.TextStrokeColor3 = Color3.new(1, 1, 1)
