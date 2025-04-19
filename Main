@@ -1,4 +1,4 @@
-local _Version_ = "0.1.087v"
+local _Version_ = "0.1.088v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -819,7 +819,7 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 		
 	local Section_Unlockables = Tab_Misc:CreateSection("QOL")
 	
-		local Toggle_AutoMysteryBox = Tab_Islands:CreateToggle({
+		local Toggle_AutoMysteryBox = Tab_Misc:CreateToggle({
 			Name = "Auto Use Mystery Box",
 			CurrentValue = false,
 			Flag = "Flag_AutoMysteryBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -828,7 +828,7 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 			end,
 		})
 				
-		local Toggle_AutoOpenGoldenChest = Tab_Islands:CreateToggle({
+		local Toggle_AutoOpenGoldenChest = Tab_Misc:CreateToggle({
 			Name = "Auto Open Golden Chest (When Close)",
 			CurrentValue = false,
 			Flag = "Flag_AutoOpenGoldenChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -837,7 +837,7 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 			end,
 		})
 		
-		local Toggle_AutoOpenRoyalChest = Tab_Islands:CreateToggle({
+		local Toggle_AutoOpenRoyalChest = Tab_Misc:CreateToggle({
 			Name = "Auto Open Royal Chest (When Close)",
 			CurrentValue = false,
 			Flag = "Flag_AutoOpenRoyalChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
