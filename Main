@@ -1,4 +1,4 @@
-local _Version_ = "0.1.03v"
+local _Version_ = "0.1.04v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -875,13 +875,16 @@ function HighlightIsland(IslandModel)
 	Gui.Size = UDim2.new(500,0,40,0)
 	Gui.AlwaysOnTop = true
 	
-	local Text_name = Instance.new("TextLabel")
+	local Text_name : TextLabel = Instance.new("TextLabel")
 	Text_name.Parent = Gui
 	Text_name.Size = UDim2.new(1,0,0.5,0)
 	Text_name.BackgroundTransparency = 1
 	Text_name.TextColor3 = Color3.new(1, 0, 0)
 	Text_name.TextScaled = true
-	Text_name.Text = IslandModel.Name
+	Text_name.RichText = true
+	Text_name.Text = "<b>" .. IslandModel.Name  .. "</b>"
+	Text_name.TextStrokeTransparency = 0
+	Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
 	
 	if IslandModel:FindFirstChild("Display") and IslandModel.Display:FindFirstChild("SurfaceGui") then
 		local gui = IslandModel.Display.SurfaceGui
@@ -893,7 +896,9 @@ function HighlightIsland(IslandModel)
 			Text_luck.BackgroundTransparency = 1
 			Text_luck.TextColor3 = Color3.new(1, 0, 0)
 			Text_luck.TextScaled = true
-			Text_luck.Text = gui.Icon.Luck.Text .. " Luck"
+			Text_name.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
+			Text_name.TextStrokeTransparency = 0
+			Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
 		end
 	end
 end
@@ -1108,3 +1113,5 @@ function CharacterCanColide(value)
 		end
 	end
 end
+
+ChangeRiftESP()
