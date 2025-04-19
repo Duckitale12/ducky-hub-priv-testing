@@ -1,4 +1,4 @@
-local _Version_ = "0.1.1v"
+local _Version_ = "0.1.11v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -11,8 +11,7 @@ local EggNames = {
 
 local placeId = game.PlaceId
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Duckitale12/UI_Library/refs/heads/main/main'))()
-
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub [BGSI]",
@@ -238,9 +237,9 @@ local Loop_PickupablesAuto = task.spawn(function()
 				game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
 				pickupable:Destroy()
 			end
-
-			task.wait(0.5)
 		end
+		
+		task.wait(0.5)
 	end
 end)
 
