@@ -1,4 +1,4 @@
-local _Version_ = "0.1.14v"
+local _Version_ = "0.1.15v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -411,7 +411,7 @@ function ChangeDrawLines()
 			if not Island:FindFirstChild("LineAttachment") then
 				local Attachment__ = Instance.new("Attachment")
 				Attachment__.Name = "LineAttachment"
-				Attachment__.Parent = Island
+				Attachment__.Parent = Island:FindFirstChildOfClass("Part")
 				
 			end
 			
@@ -420,7 +420,7 @@ function ChangeDrawLines()
 				Beam.Name = "BeamESP"
 				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
 				Beam.Attachment0 = Island:FindFirstChild("LineAttachment")
-				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart
+				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
 				Beam.Color = Color3.fromRGB(255, 0, 0)
 				Beam.Width0 = 0.3
 				Beam.Width1 = 0.3
