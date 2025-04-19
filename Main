@@ -1,4 +1,4 @@
-local _Version_ = "0.1.11v"
+local _Version_ = "0.1.12v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -231,7 +231,7 @@ local Humanoid = game.Players.LocalPlayer.Character.Humanoid
 local Loop_PickupablesAuto = task.spawn(function()
 	while Window do
 		if Setting_SilentAutoPickupables == true then
-			for _, pickupable in workspace.Rendered:GetChildren()[14] do
+			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
 				local Name = pickupable.Name
 
 				game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
