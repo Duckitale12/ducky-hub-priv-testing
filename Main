@@ -1,4 +1,4 @@
-local _Version_ = "0.1.081v"
+local _Version_ = "0.1.082v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -303,10 +303,14 @@ end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	if RaresOnly == true then -- condition for sending to global
+		warn("RARES ONLY #1")
+		warn(tostring(Island) .. " | " .. tostring(Luck))
 		if Island == "void-egg" or Island == "rainbow-egg"  or Island == "nightmare-egg"  or Island == "aura-egg" or Island == "event-1" or Island == "event-2" or Island == "royal-chest" then
-			
+			warn("CP1")
 			if Luck then
+				warn("CP2")
 				if Luck ~= "x25" then
+					warn("CP3")
 					return
 				end
 			end
