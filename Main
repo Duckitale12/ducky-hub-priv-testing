@@ -1,4 +1,4 @@
-local _Version_ = "0.1.17v"
+local _Version_ = "0.1.18v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -424,8 +424,8 @@ function ChangeDrawLines()
 				Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
 				Beam.Enabled = true
 				Beam.LightEmission = 0
-				Beam.Width0 = 0.3
-				Beam.Width1 = 0.3
+				Beam.Width0 = 0.05
+				Beam.Width1 = 0.05
 				Beam.LightInfluence = 0
 				Beam.FaceCamera = true
 			end
