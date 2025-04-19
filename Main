@@ -1,4 +1,4 @@
-local _Version_ = "0.1.078v"
+local _Version_ = "0.1.079v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -121,6 +121,8 @@ local function ServerHop_IY()
 		warn("Serverhop", "Couldn't find a server.")
 	end
 end
+
+--------
 
 
 local function getPublicServers()
@@ -1109,7 +1111,7 @@ task.spawn(function()
 
 					task.wait(10)
 					
-					ServerHop_IY()
+					HopServer()
 				end)
 
 				FOUND = true
@@ -1129,7 +1131,7 @@ task.spawn(function()
 
 			task.wait(15)
 			
-			ServerHop_IY()
+			HopServer()
 		end
 	end
 end)
