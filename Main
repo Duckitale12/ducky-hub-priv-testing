@@ -1,4 +1,4 @@
-local _Version_ = "0.1.072v"
+local _Version_ = "0.1.073v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -399,7 +399,7 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	end
 	
 	if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
-		Message(Webhook, "@everyone")
+		Message(Webhook_, "@everyone")
 	end
 	
 	
