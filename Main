@@ -1,4 +1,4 @@
-local _Version_ = "0.0.96v"
+local _Version_ = "0.0.97v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -10,6 +10,7 @@ local EggNames = {
 local placeId = game.PlaceId
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub " .. _Version_,
@@ -66,6 +67,7 @@ local Setting_IslandSpawnNotifications = false
 local Setting_TeleportToPickupables = false
 
 local Setting_ServerHopFarm = false
+
 -- HOP FARM EGGS
 local Setting_Flag_ServerHopFarm_VoidEgg25x = false
 local Setting_Flag_ServerHopFarm_VoidEgg10x = false
@@ -572,7 +574,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
 	
-		local WarningLabel = Tab_Farming:CreateLabel("Auto chests require buffs mastery level 15 to work!", 117867052193434, Color3.fromRGB(255, 170, 51), false) -- Title, Icon, Color, IgnoreTheme
+		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "Auto chests require buffs mastery level 15 to work!"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
@@ -659,18 +661,18 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 
 
 		
-local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
+local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
-	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Server Hop Farm - Info")
+	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local WarningLabel = Tab_EggFarm:CreateLabel("This feature is experimental. Not reccomended to afk for longer periods of time!", 117867052193434, Color3.fromRGB(255, 170, 51), false) -- Title, Icon, Color, IgnoreTheme
-		local WarningLabel2 = Tab_EggFarm:CreateLabel("You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!", 117867052193434, Color3.fromRGB(255, 170, 51), false) -- Title, Icon, Color, IgnoreTheme
-		local HopFarmParagraph = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. This feature is currently being developed. The teleport can fail at any time."})
+		local Paragraph_2 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. Not reccomended to afk for longer periods of time!"})
+		local Paragraph_3 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
 						
-		local InfoLabel = Tab_EggFarm:CreateLabel("It is NOT reccomended to select 25x luck eggs only due to the possibility of getting rate limited by roblox while searching for the server (High chance of breaking)", 77255405757835, Color3.fromRGB(172, 215, 255), true) -- Title, Icon, Color, IgnoreTheme
-		local InfoLabel3 = Tab_EggFarm:CreateLabel("It is reccomended to turn OFF bubble gravity in BGSI settings for better efficiency!", 77255405757835, Color3.fromRGB(172, 215, 255), false) -- Title, Icon, Color, IgnoreTheme
+		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "It is reccomended to set bubble gravity to 0% in BGSI settings for better efficiency!", Content = ""})
+		local Paragraph_7 = Tab_EggFarm:CreateParagraph({Title = "", Content = "Please NOT select 25x luck eggs only, this will lead to you most likely getting rate limited by Roblox (Server hop will fail faster)"})
 
 
 		local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_EggFarm:CreateToggle({
@@ -736,9 +738,7 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 			end,
 		})
 		
-	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Server Hop Farm - Toggle")
-
-		local WarningLabel4 = Tab_EggFarm:CreateLabel("Make sure to select the eggs you want to hatch before turning on!", 117867052193434, Color3.fromRGB(255, 170, 51), false) -- Title, Icon, Color, IgnoreTheme
+	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Toggle")
 
 		local Button_Rejoin = Tab_EggFarm:CreateButton({
 			Name = "Rejoin Server (Use after enabling)",
@@ -756,9 +756,10 @@ local Tab_EggFarm = Window:CreateTab("Egg Farm") -- Title, Image
 			end,
 		})
 		
-	local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Server Hop Farm - Fallback")
-	
-local InfoLabel2 = Tab_EggFarm:CreateLabel("Auto start opening void eggs when there is an error with the server hop farm. (HIGHLY RECOMMENDED)", 77255405757835, Color3.fromRGB(172, 215, 255), false) -- Title, Icon, Color, IgnoreTheme
+	--[[local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Fallback")
+		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "", Content = "Auto start opening void eggs when there is an error with the server hop farm. (HIGHLY RECOMMENDED)"})
+
+		local InfoLabel2 = Tab_EggFarm:CreateLabel("", 77255405757835, Color3.fromRGB(172, 215, 255), false) -- Title, Icon, Color, IgnoreTheme
 		
 		local Toggle_FallbackServerHopper = Tab_EggFarm:CreateToggle({
 			Name = "Fallback To Void Egg",
@@ -767,7 +768,7 @@ local InfoLabel2 = Tab_EggFarm:CreateLabel("Auto start opening void eggs when th
 			Callback = function(Value)
 				Setting_FallbackServerHopper = Value
 			end,
-		})
+		})]]
 
 
 local Tab_Islands = Window:CreateTab("Islands") -- Title, Image
