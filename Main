@@ -1,4 +1,4 @@
-local _Version_ = "0.1.077v"
+local _Version_ = "0.1.078v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -236,41 +236,38 @@ end)
 
 local TweenService = game:GetService("TweenService")
 
+local Humanoid = game.Players.LocalPlayer.Character.Humanoid
+
 local Loop_PickupablesAuto = task.spawn(function()
 	while true do
-		if Setting_TeleportToPickupables == true then
-			
-			game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
-			
+		if Setting_TeleportToPickupables == true then			
 			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
 				if Setting_TeleportToPickupables == true then
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					local Name = Pickupable.Name
-					local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
-					local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
+					local PickupablePart = Pickupable:FindFirstChildOfClass("Part") or Pickupable:FindFirstChildOfClass("MeshPart")
 
 					if PickupablePart then
-						local distance = (HRP.Position - PickupablePart.Position).Magnitude
-						local tweenTime = (distance / 60)
-						
-						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupablePart.CFrame}):Play()
-						
-						task.wait(tweenTime + 0.4)
-					elseif PickupableMeshPart then
-						local distance = (HRP.Position - PickupableMeshPart.Position).Magnitude
-						local tweenTime = (distance / 60)
-						
-						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = PickupableMeshPart.CFrame}):Play()
-						
-						task.wait(tweenTime + 0.4)
+						-- Use MoveTo to walk to the part
+						Humanoid:MoveTo(PickupablePart.Position)
+
+						-- Wait until the character reaches the part or times out
+						local reached = false
+						local conn
+						conn = Humanoid.MoveToFinished:Connect(function(success)
+							reached = true
+							conn:Disconnect()
+						end)
+
+						local timeout = 6 -- seconds
+						local timer = 0
+						while not reached and timer < timeout do
+							task.wait(0.1)
+							timer += 0.1
+						end
 					end
-			
-				else
-					game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 				end	
 			end
-		else
-			game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 		end
 
 		task.wait(1)
@@ -343,7 +340,7 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 		end
 	
 		if Rare_Islands_Hook == Rare_Islands_Hook then
-			Message(Webhook_, "✨ <@1363079984511717426> ✨")
+			Message(Webhook_, "✨ <@&1363079984511717426> ✨")
 		end
 	end
 
@@ -467,15 +464,13 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		end
 	end
 	
+	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
+	
 	if Setting_IslandSpawnWebhookNotifications == true then
 		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
 			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight, false)
-			
 		end
 	end
-
-
-	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
 end)
 
 function test_print_table(tbl_)
@@ -537,7 +532,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 		})
 		
 		local Toggle_TeleportToPickupables = Tab_Farming:CreateToggle({
-			Name = "Fly To Nearby Pickupables",
+			Name = "Pickupables Autofarm (Zen)",
 			CurrentValue = false,	
 			Flag = "Flag_TeleportToPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
@@ -1074,19 +1069,21 @@ task.spawn(function()
 				-- Fly to island
 				local HRP = LocalPlayer.Character.HumanoidRootPart
 				-- change humanoid state to stitting 
-				LocalPlayer.Character.Humanoid:ChangeState()
-				HRP.Anchored = true
+				
 				CharacterCanColide(false)
+				CharacterIsAnchored(true)
+				
+				LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
 
 				local distance = (HRP.Position - Position).Magnitude
 				local tweenTime = distance / 80
 			
-				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 10, 0)}):Play()
+				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 20, 0)}):Play()
 
 				task.wait(tweenTime + 0.7)
 
 				CharacterCanColide(true)
-				HRP.Anchored = false
+				CharacterIsAnchored(false)
 
 				task.wait(0.5)
 
@@ -1138,7 +1135,13 @@ task.spawn(function()
 end)
 
 
-
+function CharacterIsAnchored(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.Anchored == not value then
+			part.Anchored = value
+		end
+	end
+end
 
 function CharacterCanColide(value)
 	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
