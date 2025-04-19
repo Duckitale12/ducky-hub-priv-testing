@@ -1,4 +1,4 @@
-local _Version_ = "0.1.05v"
+local _Version_ = "0.1.07v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -67,7 +67,7 @@ local Setting_AutoBuyBlackmarketItems = false
 local Setting_SilentAutoPickupables = false
 local Setting_IslandSpawnNotifications = false
 local Setting_IslandSpawnWebhookNotifications = false
-local Setting_IslandSpawnWebhook = nil
+local Setting_IslandSpawnWebhook = "000"
 local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
 local Setting_TeleportToPickupables = false
 local Setting_IslandESP = false
@@ -332,6 +332,8 @@ end
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	if Webhook_ then else return end
 	
+	warn(Webhook_)
+
 	if RaresOnly == true then
 		if Luck == "x25" then
 			if Island == "void-egg" or Island == "rainbow-egg" or Island == "nightmare-egg" or Island == "aura-egg" or Island == "event-1" or Island == "event-2" then
@@ -444,7 +446,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	if Setting_IslandSpawnWebhookNotifications == true then
 		local SendToWebhook = Setting_IslandSpawnWebhook
 		
-		if SendToWebhook ~= nil or SendToWebhook ~= "" then
+		if SendToWebhook ~= nil or SendToWebhook ~= "" or SendToWebhook ~= "000" then
 			SendEggWebhook(SendToWebhook, IslandObject, Luck, Timer, IslandHeight, false)
 		end
 	end
@@ -793,7 +795,7 @@ local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
 		
 		local WebhookInput = Tab_Islands:CreateInput({
 			Name = "Webhook Link",
-			CurrentValue = "",
+			CurrentValue = "000",
 			PlaceholderText = "Put Webhook Here",
 			RemoveTextAfterFocusLost = false,
 			Flag = "Flag_IslandSpawnWebhookWebhookString",
