@@ -1,4 +1,4 @@
-local _Version_ = "0.1.13v"
+local _Version_ = "0.1.14v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -71,6 +71,7 @@ local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
 local Setting_TeleportToPickupables = false
 local Setting_IslandESP = false
 
+local Setting_DrawLinesToIslands = false
 local Setting_AutoOpenRoyalChest = false
 local Setting_AutoOpenGoldenChest = false
 local Setting_AutoMysteryBox = false
@@ -398,12 +399,54 @@ function ChangeRiftESP()
 	end
 end
 
+function ChangeDrawLines()
+	if not game.Workspace:FindFirstChild("BeamFolder") then
+		local BeamsFolder = Instance.new("Folder")
+		BeamsFolder.Name = "BeamFolder"
+		BeamsFolder.Parent = game.workspace
+	end
+	
+	if Setting_DrawLinesToIslands == true then
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if not Island:FindFirstChild("LineAttachment") then
+				local Attachment__ = Instance.new("Attachment")
+				Attachment__.Name = "LineAttachment"
+				Attachment__.Parent = Island
+				
+			end
+			
+			if not Island:FindFirstChild("BeamESP") then
+				local Beam = Instance.new("Beam")
+				Beam.Name = "BeamESP"
+				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
+				Beam.Attachment0 = Island:FindFirstChild("LineAttachment")
+				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart
+				Beam.Color = Color3.fromRGB(255, 0, 0)
+				Beam.Width0 = 0.3
+				Beam.Width1 = 0.3
+				Beam.LightInfluence = 0
+				Beam.FaceCamera = true
+			end
+		end
+	else
+		local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
+		
+		for _, Beam_ in BeamsFolder:GetChildren() do
+			Beam_:Destroy()
+		end
+	end
+end
+
 
 workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	task.wait(10)
 	
 	if Setting_IslandESP == true then
 		HighlightIsland(IslandObject, IslandObject.Name)
+	end
+	
+	if Setting_DrawLinesToIslands == true then
+		ChangeDrawLines()
 	end
 	
 	local IslandName = IslandObject.Name
@@ -515,7 +558,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
 	
-local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "Auto chests require buffs mastery level 15 to work!"})
+local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>Warning!</b>", Content = "Auto chests require buffs mastery level 15 to work!"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
@@ -606,8 +649,8 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "This feature is experimental. It can break at any time!"})
-		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "<b>❗ Warning </b>", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "This feature is experimental. It can break at any time!"})
+		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
 		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "<b>How does this work?</b>", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
@@ -767,6 +810,16 @@ local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
 			end,
 		})
 		
+		local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
+			Name = "Draw Lines To Rifts [ESP+]",
+			CurrentValue = false,
+			Flag = "Flag_DrawLinesToIslands", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_DrawLinesToIslands  = Value
+				ChangeDrawLines()
+			end,
+		})
+		
 	local Section_NotificationsDiscord = Tab_Islands:CreateSection("Discord Notifications")
 		
 		local Toggle_IslandSpawnWebhookNotifications = Tab_Islands:CreateToggle({
@@ -843,9 +896,9 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 				
 	local Section_Info = Tab_Misc:CreateSection("Info")
 	
-	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "Discord Server", Content = "https://discord.gg/P49rCFQ7FX"})
-	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Script Version", Content = _Version_})
-	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "Server ID", Content = game.JobId})
+	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "<b>Discord Server</b>", Content = "https://discord.gg/P49rCFQ7FX"})
+	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Script Version</b>", Content = _Version_})
+	local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Server ID</b>", Content = game.JobId})
 
 
 
@@ -1158,3 +1211,4 @@ function CharacterCanColide(value)
 end
 
 ChangeRiftESP()
+ChangeDrawLines()
