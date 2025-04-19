@@ -1,4 +1,4 @@
-local _Version_ = "0.1.079v"
+local _Version_ = "0.1.08v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -124,33 +124,6 @@ end
 
 --------
 
-
-local function getPublicServers()
-	local url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100"):format(placeId)
-	local success, response = pcall(function()
-		return HttpService:JSONDecode(game:HttpGet(url))
-	end)
-
-	if success and response and response.data then
-		return response.data
-	else
-		return {}
-	end
-end
-
-local function HopServer()
-	local servers = getPublicServers()
-	local currentJobId = game.JobId
-
-	warn("Attempting to hop server!")
-
-	for _, server in pairs(servers) do
-		if server.playing < server.maxPlayers and server.id ~= currentJobId then
-			TeleportService:TeleportToPlaceInstance(placeId, server.id, game.Players.LocalPlayer)
-			return
-		end
-	end
-end
 
 -- MAIN WHILE LOOP
 
@@ -931,10 +904,12 @@ task.spawn(function()
 		local LocalPlayer = Players.LocalPlayer
 		local TweenService = game:GetService("TweenService")
 
-		LocalPlayer.PlayerGui.Intro.Enabled = false
-		LocalPlayer.PlayerGui.ScreenGui.Enabled = true
-		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
-
+		if LocalPlayer.PlayerGui:FindFirstChild("Intro") then
+			LocalPlayer.PlayerGui.Intro.Enabled = false
+			LocalPlayer.PlayerGui.ScreenGui.Enabled = true
+			game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+		end
+		
 		Rayfield:Notify({
 			Title = "Egg Farm: ON",
 			Content = "Looking for eggs...",
@@ -1052,15 +1027,13 @@ task.spawn(function()
 				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 				task.spawn(function()
-					if Height < 3000 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Floating Island.Island.Portal.Spawn")
-					elseif Height > 12000 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Zen.Island.Portal.Spawn")
-					elseif Height > 8000 then
+					if Height < 2640 then
+						print("no tp")
+					elseif Height > 10130 then
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
-					elseif Height > 5000 then
+					elseif Height > 6850 then
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
-					elseif Height > 3000 then
+					elseif Height > 2650 then
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Outer Space.Island.Portal.Spawn")
 					
 					end
@@ -1111,7 +1084,7 @@ task.spawn(function()
 
 					task.wait(10)
 					
-					HopServer()
+					ServerHop_IY()
 				end)
 
 				FOUND = true
@@ -1131,7 +1104,7 @@ task.spawn(function()
 
 			task.wait(15)
 			
-			HopServer()
+			ServerHop_IY()
 		end
 	end
 end)
