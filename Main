@@ -1,4 +1,4 @@
-local _Version_ = "0.1.12v"
+local _Version_ = "0.1.121v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -194,7 +194,8 @@ local Loop_Fast = task.spawn(function()
 		end
 		
 		if Setting_AutoMysteryBox == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", "10")
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
+			--rs.shared.framework.network.remote.event.fire
 		end
 
 		task.wait(0.25)
@@ -514,7 +515,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
 	
-		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "Auto chests require buffs mastery level 15 to work!"})
+		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "<b>Auto chests require buffs mastery level 15 to work!</b>"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
