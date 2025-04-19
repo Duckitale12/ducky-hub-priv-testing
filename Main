@@ -1,4 +1,4 @@
-local _Version_ = "0.0.99v"
+local _Version_ = "0.1.01v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -383,6 +383,21 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	Webhook(Webhook_, Embed)
 end
 
+function ChangeRiftESP()
+	if Setting_IslandESP == true then
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			HighlightIsland(Island, Island.Name)
+		end
+	else
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if Island:FindFirstChild("ESP_HIGHLIGHT") then
+				Island:FindFirstChild("ESP_HIGHLIGHT"):Destroy()
+			end
+		end
+	end
+end
+
+
 workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	task.wait(10)
 	
@@ -761,6 +776,7 @@ local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
 			Flag = "Flag_IslandSpawnESP", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
 				Setting_IslandESP  = Value
+				ChangeRiftESP()
 			end,
 		})
 		
@@ -845,6 +861,7 @@ Rayfield:LoadConfiguration()
 
 function HighlightIsland(IslandModel)
 	local Highlight = Instance.new("Highlight")
+	Highlight.Name = "ESP_HIGHLIGHT"
 	Highlight.Parent = IslandModel
 	Highlight.Adornee = IslandModel
 	Highlight.FillColor = Color3.fromRGB(255, 255, 255)
@@ -853,7 +870,7 @@ function HighlightIsland(IslandModel)
 	Highlight.OutlineTransparency = 0
 	
 	local Gui = Instance.new("BillboardGui")
-	Gui.Parent = IslandModel
+	Gui.Parent = Highlight
 	Gui.Adornee = IslandModel
 	Gui.Size = UDim2.new(10,0,7,0)
 	Gui.AlwaysOnTop = true
@@ -880,14 +897,6 @@ function HighlightIsland(IslandModel)
 		end
 	end
 end
-
-task.spawn(function()
-	if Setting_IslandESP == true then
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			HighlightIsland(Island, Island.Name)
-		end
-	end
-end)
 
 task.spawn(function()
 	if Setting_ServerHopFarm == true then
