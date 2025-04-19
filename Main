@@ -1,4 +1,4 @@
-local _Version_ = "0.1.04v"
+local _Version_ = "0.1.05v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -16,7 +16,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub " .. _Version_,
-	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	Icon = 92280379340968, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
 	LoadingTitle = "Ducky-Hub",
 	LoadingSubtitle = "Welcome!",
 	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
@@ -422,7 +422,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Rayfield:Notify({
 				Title = "New Island Detected!",
 				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 0,
+				Image = 92280379340968,
 
 				OnClick = function()
 
@@ -432,7 +432,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 			Rayfield:Notify({
 				Title = "New Island Detected!",
 				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 0,
+				Image = 92280379340968,
 
 				OnClick = function()
 
@@ -896,9 +896,9 @@ function HighlightIsland(IslandModel)
 			Text_luck.BackgroundTransparency = 1
 			Text_luck.TextColor3 = Color3.new(1, 0, 0)
 			Text_luck.TextScaled = true
-			Text_name.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
-			Text_name.TextStrokeTransparency = 0
-			Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
+			Text_luck.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
+			Text_luck.TextStrokeTransparency = 0
+			Text_luck.TextStrokeColor3 = Color3.new(1, 1, 1)
 		end
 	end
 end
@@ -916,7 +916,7 @@ task.spawn(function()
 		Rayfield:Notify({
 			Title = "Egg Farm: ON",
 			Content = "Looking for eggs...",
-			Image = 0,
+			Image = 92280379340968,
 			OnClick = function()
 				Toggle_ServerHopFarm:Set(false)
 			end,
@@ -1022,7 +1022,7 @@ task.spawn(function()
 				Rayfield:Notify({
 					Title = "Island found!",
 					Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
-					Image = 0,
+					Image = 92280379340968,
 					OnClick = function() end,
 				})
 
@@ -1072,7 +1072,7 @@ task.spawn(function()
 					Rayfield:Notify({
 						Title = "Island disappeared!",
 						Content = "Attempting to join a new server in 10s!",
-						Image = 0,
+						Image = 92280379340968,
 						OnClick = function() end,
 					})
 
@@ -1092,7 +1092,7 @@ task.spawn(function()
 			Rayfield:Notify({
 				Title = "Island not found...",
 				Content = "Attempting to join a new server in 15s!",
-				Image = 0,
+				Image = 92280379340968,
 				OnClick = function() end,
 			})
 
