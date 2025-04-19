@@ -1,4 +1,4 @@
-local _Version_ = "0.1.085v"
+local _Version_ = "0.1.087v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -71,6 +71,10 @@ local Setting_IslandSpawnWebhook = "000"
 local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
 local Setting_TeleportToPickupables = false
 local Setting_IslandESP = false
+
+local Setting_AutoOpenRoyalChest = false
+local Setting_AutoOpenGoldenChest = false
+local Setting_AutoMysteryBox = false
 
 local Setting_ServerHopFarm = false
 
@@ -180,6 +184,18 @@ local Loop_Fast = task.spawn(function()
 	while true do
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+		end
+		
+		if Setting_AutoOpenGoldenChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+		end
+		
+		if Setting_AutoOpenRoyalChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+		end
+		
+		if Setting_AutoMysteryBox == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", "10")
 		end
 
 		task.wait(0.25)
@@ -419,8 +435,8 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
 	
 
-	if Name == "event-1" or Name == "event-2" then
-		SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height, false)
+	if IslandObject == "event-1" or IslandObject == "event-2" then
+		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, false)
 	end
 	
 	if Setting_IslandSpawnWebhookNotifications == true then
@@ -592,7 +608,7 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. Not reccomended to afk for longer periods of time!"})
+		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. It can break at any time!"})
 		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
 		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
@@ -791,16 +807,45 @@ local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
 
 	local Section_Unlockables = Tab_Misc:CreateSection("Unlockables")
 			
-	local Button_UnlockIslands = Tab_Misc:CreateButton({
-			Name = "Unlock All Islands",
-			Callback = function()
-				for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
-					task.wait(0.5)
-				end
-			end,
-	})
+		local Button_UnlockIslands = Tab_Misc:CreateButton({
+				Name = "Unlock All Islands",
+				Callback = function()
+					for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
+						task.wait(0.5)
+					end
+				end,
+		})
+		
+	local Section_Unlockables = Tab_Misc:CreateSection("QOL")
 	
+		local Toggle_AutoMysteryBox = Tab_Islands:CreateToggle({
+			Name = "Auto Use Mystery Box",
+			CurrentValue = false,
+			Flag = "Flag_AutoMysteryBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_AutoMysteryBox  = Value
+			end,
+		})
+				
+		local Toggle_AutoOpenGoldenChest = Tab_Islands:CreateToggle({
+			Name = "Auto Open Golden Chest (When Close)",
+			CurrentValue = false,
+			Flag = "Flag_AutoOpenGoldenChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_AutoOpenGoldenChest  = Value
+			end,
+		})
+		
+		local Toggle_AutoOpenRoyalChest = Tab_Islands:CreateToggle({
+			Name = "Auto Open Royal Chest (When Close)",
+			CurrentValue = false,
+			Flag = "Flag_AutoOpenRoyalChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_AutoOpenRoyalChest  = Value
+			end,
+		})
+				
 	local Section_Info = Tab_Misc:CreateSection("Info")
 	
 	local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "Discord Server", Content = "https://discord.gg/P49rCFQ7FX"})
@@ -1014,6 +1059,23 @@ task.spawn(function()
 				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 				task.spawn(function()
+					IslandObject.Destroying:Connect(function()
+						warn("Island is despawning! Looking for a new server!")
+
+						Rayfield:Notify({
+							Title = "Island disappeared!",
+							Content = "Attempting to join a new server in 10s!",
+							Image = 92280379340968,
+							OnClick = function() end,
+						})
+
+						task.wait(10)
+
+						ServerHop_IY()
+					end)
+				end)
+
+				task.spawn(function()
 					if Height < 2640 then
 						print("no tp")
 					elseif Height > 10130 then
@@ -1025,7 +1087,7 @@ task.spawn(function()
 					
 					end
 				end)
-
+				
 				task.wait(1)
 
 				-- Fly to island
@@ -1058,21 +1120,6 @@ task.spawn(function()
 					end
 				end)
 
-				-- Handle island despawn
-				IslandObject.Destroying:Connect(function()
-					warn("Island is despawning! Looking for a new server!")
-
-					Rayfield:Notify({
-						Title = "Island disappeared!",
-						Content = "Attempting to join a new server in 10s!",
-						Image = 92280379340968,
-						OnClick = function() end,
-					})
-
-					task.wait(10)
-					
-					ServerHop_IY()
-				end)
 
 				FOUND = true
 				break
