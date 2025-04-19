@@ -784,7 +784,7 @@ local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
 	local Section_Notifications = Tab_Islands:CreateSection("Rifts")
 
 		local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
-			Name = "In-Game Notifications",
+			Name = "Rift Spawn: In-Game Notifications",
 			CurrentValue = false,
 			Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
@@ -805,7 +805,7 @@ local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
 	local Section_NotificationsDiscord = Tab_Islands:CreateSection("Discord Notifications")
 		
 		local Toggle_IslandSpawnWebhookNotifications = Tab_Islands:CreateToggle({
-			Name = "Discord Webhook Notifications",
+			Name = "Rift Spawn: Discord Webhook Notifications",
 			CurrentValue = false,
 			Flag = "Flag_IslandSpawnWebhookNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 			Callback = function(Value)
