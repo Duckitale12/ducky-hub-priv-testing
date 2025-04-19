@@ -1,4 +1,4 @@
-local _Version_ = "0.1.15v"
+local _Version_ = "0.1.16v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -421,7 +421,9 @@ function ChangeDrawLines()
 				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
 				Beam.Attachment0 = Island:FindFirstChild("LineAttachment")
 				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
-				Beam.Color = Color3.fromRGB(255, 0, 0)
+				Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
+				Beam.Enabled = true
+				Beam.LightEmission = 0
 				Beam.Width0 = 0.3
 				Beam.Width1 = 0.3
 				Beam.LightInfluence = 0
