@@ -1,4 +1,4 @@
-local _Version_ = "0.1.07v"
+local _Version_ = "0.1.071v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -445,6 +445,7 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 	
 	if Setting_IslandSpawnWebhookNotifications == true then
 		local SendToWebhook = Setting_IslandSpawnWebhook
+		warn(Setting_IslandSpawnWebhook)
 		
 		if SendToWebhook ~= nil or SendToWebhook ~= "" or SendToWebhook ~= "000" then
 			SendEggWebhook(SendToWebhook, IslandObject, Luck, Timer, IslandHeight, false)
