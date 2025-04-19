@@ -1,4 +1,4 @@
-local _Version_ = "0.1.089v"
+local _Version_ = "0.1.091v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -11,7 +11,7 @@ local EggNames = {
 
 local placeId = game.PlaceId
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Duckitale12/UI_Library/refs/heads/main/main'))()
 
 
 local Window = Rayfield:CreateWindow({
@@ -43,8 +43,8 @@ local Window = Rayfield:CreateWindow({
 		Note = "Join our discord to get the key! (https://discord.gg/P49rCFQ7FX)", -- Use this to tell the user how to get a key
 		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
 		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = {"Free_Kd89KCD2SP9a8jRNK86YCs", "adminaccess"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+		GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = "https://pastebin.com/raw/P9pqpWJ5" -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
 	}
 })
 
@@ -291,87 +291,89 @@ function Webhook(url, embed)
 end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
-	if RaresOnly == true then -- condition for sending to global
-		warn("RARES ONLY #1")
-		warn(tostring(Island) .. " | " .. tostring(Luck))
-		if Island == "void-egg" or Island == "rainbow-egg"  or Island == "nightmare-egg"  or Island == "aura-egg" or Island == "event-1" or Island == "event-2" or Island == "royal-chest" then
-			warn("CP1")
-			if Luck then
-				warn("CP2")
-				if Luck ~= "x25" then
-					warn("CP3")
-					return
+	task.spawn(function()
+		if RaresOnly == true then -- condition for sending to global
+			warn("RARES ONLY #1")
+			warn(tostring(Island) .. " | " .. tostring(Luck))
+			if Island == "void-egg" or Island == "rainbow-egg"  or Island == "nightmare-egg"  or Island == "aura-egg" or Island == "event-1" or Island == "event-2" or Island == "royal-chest" then
+				warn("CP1")
+				if Luck then
+					warn("CP2")
+					if Luck ~= "x25" then
+						warn("CP3")
+						return
+					end
 				end
+			else
+				return
 			end
-		else
-			return
-		end
-	
-		if Rare_Islands_Hook == Rare_Islands_Hook then
-			Message(Webhook_, "✨ <@&1363079984511717426> ✨")
-		end
-	end
 
-	local Embed = {
-		["title"] = "✨ Rift Found!",
-		["description"] = "",
-		["fields"] = {
-			{
-				["name"] = "🥚 Rift Name",
-				["value"] = "```" .. tostring(Island) .. "```",
-			},
-			{
-				["name"] = "⌚ Time Left",
-				["value"] = "```" .. tostring(Timer) .. "```",
-			},
-			{
-				["name"] = "🎈 Height",
-				["value"] = "```" .. math.floor(IslandHeight) .. "```",
-			},
-			{
-				["name"] = "🔑 Server Link",
-				["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-			},
+			if Rare_Islands_Hook == Rare_Islands_Hook then
+				Message(Webhook_, "✨ <@&1363079984511717426> ✨")
+			end
+		end
 
-		},
-		["color"] = 16777215,
-		["footer"] = {
-			["text"] = tostring(os.date("%H:%M:%S")) 
-		},
-	}
-	
-	if Luck then
-		Embed["fields"] = {
-			{
-				["name"] = "🥚 Rift Name",
-				["value"] = "```" .. tostring(Island) .. "```",
+		local Embed = {
+			["title"] = "✨ Rift Found!",
+			["description"] = "",
+			["fields"] = {
+				{
+					["name"] = "🥚 Rift Name",
+					["value"] = "```" .. tostring(Island) .. "```",
+				},
+				{
+					["name"] = "⌚ Time Left",
+					["value"] = "```" .. tostring(Timer) .. "```",
+				},
+				{
+					["name"] = "🎈 Height",
+					["value"] = "```" .. math.floor(IslandHeight) .. "```",
+				},
+				{
+					["name"] = "🔑 Server Link",
+					["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+				},
+
 			},
-			{
-				["name"] = "⌚ Time Left",
-				["value"] = "```" .. tostring(Timer) .. "```",
-			},
-			{
-				["name"] = "🍀 Luck Multiplier",
-				["value"] = "```" .. tostring(Luck) .. "```",
-			},
-			{
-				["name"] = "🎈 Height",
-				["value"] = "```" .. math.floor(IslandHeight) .. "```",
-			},
-			{
-				["name"] = "🔑 Server Link",
-				["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+			["color"] = 16777215,
+			["footer"] = {
+				["text"] = tostring(os.date("%H:%M:%S")) 
 			},
 		}
-	end
-	
-	if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
-		if Luck and Luck == "x25" or Island == "aura-egg" or Island == "royal-chest" then
-			Message(Webhook_, "@everyone")
+
+		if Luck then
+			Embed["fields"] = {
+				{
+					["name"] = "🥚 Rift Name",
+					["value"] = "```" .. tostring(Island) .. "```",
+				},
+				{
+					["name"] = "⌚ Time Left",
+					["value"] = "```" .. tostring(Timer) .. "```",
+				},
+				{
+					["name"] = "🍀 Luck Multiplier",
+					["value"] = "```" .. tostring(Luck) .. "```",
+				},
+				{
+					["name"] = "🎈 Height",
+					["value"] = "```" .. math.floor(IslandHeight) .. "```",
+				},
+				{
+					["name"] = "🔑 Server Link",
+					["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+				},
+			}
 		end
-	end
-	
-	Webhook(Webhook_, Embed)
+
+		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
+			if Luck and Luck == "x25" or Island == "aura-egg" or Island == "royal-chest" then
+				Message(Webhook_, "@everyone")
+			end
+		end
+
+		Webhook(Webhook_, Embed)
+	end)
 end
 
 function ChangeRiftESP()
@@ -517,7 +519,7 @@ local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
 	
 	local Section_Automatic = Tab_Farming:CreateSection("Chests")
 	
-		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ Warning", Content = "Auto chests require buffs mastery level 15 to work!"})
+		local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "Auto chests require buffs mastery level 15 to work!"})
 
 		local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
 			Name = "Auto Void Chest",
@@ -608,14 +610,11 @@ local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
 
 	local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
 		
-		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "This feature is experimental. It can break at any time!"})
-		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+		local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "This feature is experimental. It can break at any time!"})
+		local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "⚠ WARNING ⚠", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
 		local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "How does this work?", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
 			
 	local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
-						
-		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "⚠ Warning", Content = "It is reccomended to set bubble gravity to 0% in BGSI settings for better efficiency!"})
-
 
 		local Toggle_Flag_ServerHopFarm_BunnyEgg10x = Tab_EggFarm:CreateToggle({
 			Name = "✨ Bunny Egg (x10)",
