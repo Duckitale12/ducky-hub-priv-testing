@@ -14,7 +14,7 @@ local AllowedEventEggs = {"event-1", "event-2"}
 
 local placeId = game.PlaceId
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub-BGSI/refs/heads/main/Library'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub [BGSI]",
@@ -46,7 +46,7 @@ local Window = Rayfield:CreateWindow({
 		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
 		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
 		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = "PERM-Xi9DFGY8" -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+		Key = {"adminaccess", "1"}-- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
 	}
 })
 
