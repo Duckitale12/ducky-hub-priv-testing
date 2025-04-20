@@ -14,7 +14,7 @@ local AllowedEventEggs = {"event-1", "event-2"}
 
 local placeId = game.PlaceId
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Duckitale12/UI_Library/refs/heads/main/main'))()
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub-BGSI/refs/heads/main/Library'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub [BGSI]",
