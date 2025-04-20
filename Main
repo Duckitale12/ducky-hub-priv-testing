@@ -1,4 +1,4 @@
-local _Version_ = "0.1.22v"
+local _Version_ = "0.1.23v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -14,7 +14,7 @@ local AllowedEventEggs = {"event-1", "event-2"}
 
 local placeId = game.PlaceId
 
-local Rayfield = loadstring(game:HttpGet('https://github.com/Duckitale12/UI_Library/blob/main/main'))()
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Duckitale12/UI_Library/refs/heads/main/main'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Ducky-Hub [BGSI]",
