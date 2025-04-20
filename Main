@@ -1,4 +1,4 @@
-local _Version_ = "0.1.18v"
+local _Version_ = "0.1.19v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -8,6 +8,9 @@ local EggNames = {
 	["event-1"] = "Bunny Egg",
 	["event-2"] = "Pastel Egg",
 } 
+
+local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "aura-egg"}
+local AllowedEventEggs = {"event-1", "event-2"}
 
 local placeId = game.PlaceId
 
@@ -299,27 +302,6 @@ end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	task.spawn(function()
-		if RaresOnly == true then -- condition for sending to global
-			warn("RARES ONLY #1")
-			warn(tostring(Island) .. " | " .. tostring(Luck))
-			if Island == "void-egg" or Island == "rainbow-egg"  or Island == "nightmare-egg"  or Island == "aura-egg" or Island == "event-1" or Island == "event-2" or Island == "royal-chest" then
-				warn("CP1")
-				if Luck then
-					warn("CP2")
-					if Luck ~= "x25" then
-						warn("CP3")
-						return
-					end
-				end
-			else
-				return
-			end
-
-			if Rare_Islands_Hook == Rare_Islands_Hook then
-				Message(Webhook_, "✨ <@&1363079984511717426> ✨")
-			end
-		end
-
 		local Embed = {
 			["title"] = "✨ Rift Found!",
 			["description"] = "",
@@ -371,12 +353,6 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 					["value"] = "```roblox://placeId=" .. tostring(placeId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
 				},
 			}
-		end
-
-		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true and Webhook_ ~= Rare_Islands_Hook then
-			if Luck and Luck == "x25" or Island == "aura-egg" or Island == "royal-chest" then
-				Message(Webhook_, "@everyone")
-			end
 		end
 
 		Webhook(Webhook_, Embed)
@@ -485,16 +461,32 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 		end
 	end
 	
-	SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, true)
+
 	
 
-	if tostring(IslandObject) == "event-1" or tostring(IslandObject) == "event-2" then
-		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight, false)
+	if table.find(tostring(IslandObject), AllowedEventEggs) then
+		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+	end
+
+	
+	if table.find(tostring(IslandObject), AllowedRareEggs) then
+		if Luck and Luck == "x25" then
+			SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+		end
 	end
 	
 	if Setting_IslandSpawnWebhookNotifications == true then
+		
+		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+			if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+				if Luck and Luck == "x25" or IslandObject == "aura-egg" or IslandObject == "royal-chest" then
+					Message(Setting_IslandSpawnWebhook, "@everyone")
+				end
+			end
+		end
+		
 		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight, false)
+			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight)
 		end
 	end
 end)
@@ -1032,6 +1024,37 @@ task.spawn(function()
 					local IslandObject = Island
 
 					table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
+					
+					---------- webhooks
+					
+					if table.find(Name, AllowedEventEggs) then
+						SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height)
+					end
+
+
+					if table.find(Name, AllowedRareEggs) then
+						if Luck and Luck == "x25" then
+							SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height)
+						end
+					end
+
+					if Setting_IslandSpawnWebhookNotifications == true then
+
+						if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+							if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+								if Luck and Luck == "x25" or Name == "aura-egg" or Name == "royal-chest" then
+									Message(Setting_IslandSpawnWebhook, "@everyone")
+								end
+							end
+						end
+
+						if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+							SendEggWebhook(Setting_IslandSpawnWebhook, Name, Luck, Timer, Height)
+						end
+					end
+					
+					
+					---------
 				end
 			end
 		end
@@ -1101,12 +1124,6 @@ task.spawn(function()
 					Image = 92280379340968,
 					OnClick = function() end,
 				})
-
-				SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height, true)
-				
-				if tostring(Name) == "event-1" or tostring(Name) == "event-2" then
-					SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height, false)
-				end
 				
 				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
@@ -1183,12 +1200,12 @@ task.spawn(function()
 
 			Rayfield:Notify({
 				Title = "Island not found...",
-				Content = "Attempting to join a new server in 15s!",
+				Content = "Attempting to join a new server in 30s!",
 				Image = 92280379340968,
 				OnClick = function() end,
 			})
 
-			task.wait(15)
+			task.wait(30)
 			
 			ServerHop_IY()
 		end
