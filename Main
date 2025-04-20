@@ -1,4 +1,4 @@
-local _Version_ = "0.1.19v"
+local _Version_ = "0.1.2v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -464,12 +464,12 @@ workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
 
 	
 
-	if table.find(tostring(IslandObject), AllowedEventEggs) then
+	if table.find(AllowedEventEggs, tostring(IslandObject)) then
 		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
 	end
 
 	
-	if table.find(tostring(IslandObject), AllowedRareEggs) then
+	if table.find(AllowedRareEggs, tostring(IslandObject)) then
 		if Luck and Luck == "x25" then
 			SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
 		end
@@ -969,248 +969,248 @@ function HighlightIsland(IslandModel)
 	end
 end
 
-task.spawn(function()
-	if Setting_ServerHopFarm == true then
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local TweenService = game:GetService("TweenService")
+function EggFinder_MainSearch()
+	task.spawn(function()
+		if Setting_ServerHopFarm == true then
+			local Players = game:GetService("Players")
+			local LocalPlayer = Players.LocalPlayer
+			local TweenService = game:GetService("TweenService")
 
-		if LocalPlayer.PlayerGui:FindFirstChild("Intro") then
-			LocalPlayer.PlayerGui.Intro.Enabled = false
-			LocalPlayer.PlayerGui.ScreenGui.Enabled = true
-			game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
-		end
-		
-		Rayfield:Notify({
-			Title = "Egg Farm: ON",
-			Content = "Looking for eggs...",
-			Image = 92280379340968,
-			OnClick = function()
-				Toggle_ServerHopFarm:Set(false)
-			end,
-		})
+			if LocalPlayer.PlayerGui:FindFirstChild("Intro") then
+				LocalPlayer.PlayerGui.Intro.Enabled = false
+				LocalPlayer.PlayerGui.ScreenGui.Enabled = true
+				game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+			end
 
-		warn("Autofarm Searching...")
-		task.wait(2)
+			Rayfield:Notify({
+				Title = "Egg Farm: ON",
+				Content = "Looking for eggs...",
+				Image = 92280379340968,
+				OnClick = function()
+					Toggle_ServerHopFarm:Set(false)
+				end,
+			})
 
-		local Islands = {}
-		local LF_Eggs_Table = {}
+			warn("Autofarm Searching...")
+			task.wait(2)
 
-		-- Priorities
-		local LuckPriority = {
-			["x25"] = 1, -- Highest priority
-			["x10"] = 2,
-		}
+			local Islands = {}
+			local LF_Eggs_Table = {}
 
-		local EggTypePriority = {
-			["aura-egg"] = 1, -- Highest priority
-			["event-1"] = 2, -- Highest priority
-			["event-2"] = 3, -- Highest priority
-			["void-egg"] = 4,
-			["nightmare-egg"] = 5,
-			["rainbow-egg"] = 6,
-		}
+			-- Priorities
+			local LuckPriority = {
+				["x25"] = 1, -- Highest priority
+				["x10"] = 2,
+			}
 
-		-- Get islands
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			if Island:FindFirstChild("Display") and Island.Display:FindFirstChild("SurfaceGui") then
-				local gui = Island.Display.SurfaceGui
-				if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
-					local Name = Island.Name
-					local Luck = gui.Icon.Luck.Text
-					local Timer = gui:FindFirstChild("Timer") and gui.Timer.Text or "?"
-					local Height = Island.Display.CFrame.Y
-					local EggCFrame = Island.Display.CFrame
-					local IslandObject = Island
+			local EggTypePriority = {
+				["aura-egg"] = 1, -- Highest priority
+				["event-1"] = 2, -- Highest priority
+				["event-2"] = 3, -- Highest priority
+				["void-egg"] = 4,
+				["nightmare-egg"] = 5,
+				["rainbow-egg"] = 6,
+			}
 
-					table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
-					
-					---------- webhooks
-					
-					if table.find(Name, AllowedEventEggs) then
-						SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height)
-					end
+			-- Get islands
+			for _, Island in workspace.Rendered.Rifts:GetChildren() do
+				if Island:FindFirstChild("Display") and Island.Display:FindFirstChild("SurfaceGui") then
+					local gui = Island.Display.SurfaceGui
+					if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
+						local Name = Island.Name
+						local Luck = gui.Icon.Luck.Text
+						local Timer = gui:FindFirstChild("Timer") and gui.Timer.Text or "?"
+						local Height = Island.Display.CFrame.Y
+						local EggCFrame = Island.Display.CFrame
+						local IslandObject = Island
 
+						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
 
-					if table.find(Name, AllowedRareEggs) then
-						if Luck and Luck == "x25" then
-							SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height)
+						---------- webhooks
+
+						if table.find(AllowedEventEggs, Name) then
+							SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height)
 						end
-					end
 
-					if Setting_IslandSpawnWebhookNotifications == true then
 
-						if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
-							if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-								if Luck and Luck == "x25" or Name == "aura-egg" or Name == "royal-chest" then
-									Message(Setting_IslandSpawnWebhook, "@everyone")
-								end
+						if table.find(AllowedRareEggs, Name) then
+							if Luck and Luck == "x25" then
+								SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height)
 							end
 						end
 
-						if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-							SendEggWebhook(Setting_IslandSpawnWebhook, Name, Luck, Timer, Height)
+						if Setting_IslandSpawnWebhookNotifications == true then
+
+							if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+								if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+									if Luck and Luck == "x25" or Name == "aura-egg" or Name == "royal-chest" then
+										Message(Setting_IslandSpawnWebhook, "@everyone")
+									end
+								end
+							end
+
+							if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+								SendEggWebhook(Setting_IslandSpawnWebhook, Name, Luck, Timer, Height)
+							end
 						end
+
+
+						---------
 					end
-					
-					
-					---------
 				end
 			end
-		end
 
-		-- Egg search preferences
-		local EggFlags = {
-			{Setting_Flag_ServerHopFarm_VoidEgg25x,      "void-egg",      "x25"},
-			{Setting_Flag_ServerHopFarm_VoidEgg10x,      "void-egg",      "x10"},
-			{Setting_Flag_ServerHopFarm_NightmareEgg25x, "nightmare-egg", "x25"},
-			{Setting_Flag_ServerHopFarm_NightmareEgg10x, "nightmare-egg", "x10"},
-			{Setting_Flag_ServerHopFarm_BunnyEgg25x, "event-1", "x25"},
-			{Setting_Flag_ServerHopFarm_BunnyEgg10x, "event-1", "x10"},
-			{Setting_Flag_ServerHopFarm_PastelEgg25x, "event-2", "x25"},
-			{Setting_Flag_ServerHopFarm_PastelEgg10x, "event-2", "x10"},
-			{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
-			{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
-			{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
-		}
+			-- Egg search preferences
+			local EggFlags = {
+				{Setting_Flag_ServerHopFarm_VoidEgg25x,      "void-egg",      "x25"},
+				{Setting_Flag_ServerHopFarm_VoidEgg10x,      "void-egg",      "x10"},
+				{Setting_Flag_ServerHopFarm_NightmareEgg25x, "nightmare-egg", "x25"},
+				{Setting_Flag_ServerHopFarm_NightmareEgg10x, "nightmare-egg", "x10"},
+				{Setting_Flag_ServerHopFarm_BunnyEgg25x, "event-1", "x25"},
+				{Setting_Flag_ServerHopFarm_BunnyEgg10x, "event-1", "x10"},
+				{Setting_Flag_ServerHopFarm_PastelEgg25x, "event-2", "x25"},
+				{Setting_Flag_ServerHopFarm_PastelEgg10x, "event-2", "x10"},
+				{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
+				{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
+				{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
+			}
 
-		for _, flagData in ipairs(EggFlags) do
-			local flag, eggName, luck = table.unpack(flagData)
-			if flag then
-				table.insert(LF_Eggs_Table, {eggName, luck})
+			for _, flagData in ipairs(EggFlags) do
+				local flag, eggName, luck = table.unpack(flagData)
+				if flag then
+					table.insert(LF_Eggs_Table, {eggName, luck})
+				end
 			end
-		end
 
-		-- Create lookup table for matching
-		local LF_Eggs_Lookup = {}
-		for _, lf in LF_Eggs_Table do
-			LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
-		end
-
-		-- Sort islands by egg priority, then luck priority
-		table.sort(Islands, function(a, b)
-			local aEgg, aLuck = a[1], a[2]
-			local bEgg, bLuck = b[1], b[2]
-			local aEggPri = EggTypePriority[aEgg] or 0
-			local bEggPri = EggTypePriority[bEgg] or 0
-			if aEggPri == bEggPri then
-				return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
-			else
-				return aEggPri > bEggPri
+			-- Create lookup table for matching
+			local LF_Eggs_Lookup = {}
+			for _, lf in LF_Eggs_Table do
+				LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
 			end
-		end)
 
-		-- Attempt to find and teleport to matching island
-		local FOUND = false
+			-- Sort islands by egg priority, then luck priority
+			table.sort(Islands, function(a, b)
+				local aEgg, aLuck = a[1], a[2]
+				local bEgg, bLuck = b[1], b[2]
+				local aEggPri = EggTypePriority[aEgg] or 0
+				local bEggPri = EggTypePriority[bEgg] or 0
+				if aEggPri == bEggPri then
+					return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
+				else
+					return aEggPri > bEggPri
+				end
+			end)
 
-		for _, island in Islands do
-			local Name = island[1]
-			local Luck = island[2]
-			local key = Name .. "|" .. Luck
+			-- Attempt to find and teleport to matching island
+			local FOUND = false
 
-			if LF_Eggs_Lookup[key] then
-				local EggCFrame = island[3]
-				local Timer = island[4]
-				local Height = island[5]
-				local IslandObject = island[6]
-				local Position = EggCFrame.Position
+			for _, island in Islands do
+				local Name = island[1]
+				local Luck = island[2]
+				local key = Name .. "|" .. Luck
 
-				local msg = string.format("Egg Matched: %s | %s", Name, Luck)
-				warn(msg)
+				if LF_Eggs_Lookup[key] then
+					local EggCFrame = island[3]
+					local Timer = island[4]
+					local Height = island[5]
+					local IslandObject = island[6]
+					local Position = EggCFrame.Position
+
+					local msg = string.format("Egg Matched: %s | %s", Name, Luck)
+					warn(msg)
+
+					Rayfield:Notify({
+						Title = "Rift found!",
+						Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
+						Image = 92280379340968,
+						OnClick = function() end,
+					})
+
+					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
+
+					task.spawn(function()
+						IslandObject.Destroying:Connect(function()
+							warn("Island is despawning! Checking server again!")
+
+							Rayfield:Notify({
+								Title = "Rift disappeared!",
+								Content = "Checking server for any new islands!",
+								Image = 92280379340968,
+								OnClick = function() end,
+							})
+							
+							EggFinder_MainSearch()
+						end)
+					end)
+
+					task.spawn(function()
+						if Height < 2640 then
+							print("no tp")
+						elseif Height > 10130 then
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.The Void.Island.Portal.Spawn")
+						elseif Height > 6850 then
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
+						elseif Height > 2650 then
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Outer Space.Island.Portal.Spawn")
+
+						end
+					end)
+
+					task.wait(1)
+
+					-- Fly to island
+					local HRP = LocalPlayer.Character.HumanoidRootPart
+					-- change humanoid state to stitting 
+
+					CharacterCanColide(false)
+					--CharacterIsAnchored(true)
+
+					LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+
+					local distance = (HRP.Position - Position).Magnitude
+					local tweenTime = distance / 80
+
+					TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+
+					task.wait(tweenTime + 0.1)
+
+					CharacterCanColide(true)	
+					--CharacterIsAnchored(false)
+
+					task.wait(0.5)
+
+					-- Start hatching
+					local EggName = EggNames[Name]
+					task.spawn(function()
+						while IslandObject do
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
+							task.wait(0.25)
+						end
+					end)
+
+
+					FOUND = true
+					break
+				end
+			end
+
+			if not FOUND then
+				warn("Island not found!")
 
 				Rayfield:Notify({
-					Title = "Island found!",
-					Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
+					Title = "Island not found...",
+					Content = "Attempting to join a new server in 30s!",
 					Image = 92280379340968,
 					OnClick = function() end,
 				})
-				
-				------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
-				task.spawn(function()
-					IslandObject.Destroying:Connect(function()
-						warn("Island is despawning! Looking for a new server!")
+				task.wait(30)
 
-						Rayfield:Notify({
-							Title = "Island disappeared!",
-							Content = "Attempting to join a new server in 10s!",
-							Image = 92280379340968,
-							OnClick = function() end,
-						})
-
-						task.wait(10)
-
-						ServerHop_IY()
-					end)
-				end)
-
-				task.spawn(function()
-					if Height < 2640 then
-						print("no tp")
-					elseif Height > 10130 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.The Void.Island.Portal.Spawn")
-					elseif Height > 6850 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
-					elseif Height > 2650 then
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Outer Space.Island.Portal.Spawn")
-					
-					end
-				end)
-				
-				task.wait(1)
-
-				-- Fly to island
-				local HRP = LocalPlayer.Character.HumanoidRootPart
-				-- change humanoid state to stitting 
-				
-				CharacterCanColide(false)
-				--CharacterIsAnchored(true)
-				
-				LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
-
-				local distance = (HRP.Position - Position).Magnitude
-				local tweenTime = distance / 80
-			
-				TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
-
-				task.wait(tweenTime + 0.1)
-
-				CharacterCanColide(true)	
-				--CharacterIsAnchored(false)
-
-				task.wait(0.5)
-
-				-- Start hatching
-				local EggName = EggNames[Name]
-				task.spawn(function()
-					while IslandObject do
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
-						task.wait(0.25)
-					end
-				end)
-
-
-				FOUND = true
-				break
+				ServerHop_IY()
 			end
 		end
-
-		if not FOUND then
-			warn("Island not found!")
-
-			Rayfield:Notify({
-				Title = "Island not found...",
-				Content = "Attempting to join a new server in 30s!",
-				Image = 92280379340968,
-				OnClick = function() end,
-			})
-
-			task.wait(30)
-			
-			ServerHop_IY()
-		end
-	end
-end)
+	end)
+end
 
 
 function CharacterIsAnchored(value)
@@ -1229,5 +1229,6 @@ function CharacterCanColide(value)
 	end
 end
 
+EggFinder_MainSearch()
 ChangeRiftESP()
 ChangeDrawLines()
