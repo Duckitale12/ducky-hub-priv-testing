@@ -1,4 +1,4 @@
-local _Version_ = "0.1.23v"
+local _Version_ = "0.1.24v"
  
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -46,7 +46,7 @@ local Window = Rayfield:CreateWindow({
 		FileName = "Key_DUCKY_HUB", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
 		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
 		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = {"FREE_Kd89KCD2SP9a8jRNK86YCs", "adminaccess"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+		Key = "PERM-Xi9DFGY8" -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
 	}
 })
 
