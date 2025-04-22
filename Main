@@ -9,12 +9,13 @@
 
 ]]--
 
+local TABLE_TableIndirection = {};
 bit32 = {};
-local N = 32;
-local P = 2 ^ N;
+TABLE_TableIndirection["N%0"] = 32;
+TABLE_TableIndirection["P%0"] = 2 ^ TABLE_TableIndirection["N%0"];
 bit32.bnot = function(x)
-	x = x % P;
-	return (P - 1) - x;
+	x = x % TABLE_TableIndirection["P%0"];
+	return (TABLE_TableIndirection["P%0"] - 1) - x;
 end;
 bit32.band = function(x, y)
 	if (y == 255) then
@@ -26,18 +27,18 @@ bit32.band = function(x, y)
 	if (y == 4294967295) then
 		return x % 4294967296;
 	end
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
+	x, y = x % TABLE_TableIndirection["P%0"], y % TABLE_TableIndirection["P%0"];
+	TABLE_TableIndirection["r%0"] = 0;
+	TABLE_TableIndirection["p%0"] = 1;
+	for i = 1, TABLE_TableIndirection["N%0"] do
 		local a, b = x % 2, y % 2;
 		x, y = math.floor(x / 2), math.floor(y / 2);
 		if ((a + b) == 2) then
-			r = r + p;
+			TABLE_TableIndirection["r%0"] = TABLE_TableIndirection["r%0"] + TABLE_TableIndirection["p%0"];
 		end
-		p = 2 * p;
+		TABLE_TableIndirection["p%0"] = 2 * TABLE_TableIndirection["p%0"];
 	end
-	return r;
+	return TABLE_TableIndirection["r%0"];
 end;
 bit32.bor = function(x, y)
 	if (y == 255) then
@@ -49,71 +50,70 @@ bit32.bor = function(x, y)
 	if (y == 4294967295) then
 		return 4294967295;
 	end
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
+	x, y = x % TABLE_TableIndirection["P%0"], y % TABLE_TableIndirection["P%0"];
+	TABLE_TableIndirection["r%0"] = 0;
+	TABLE_TableIndirection["p%0"] = 1;
+	for i = 1, TABLE_TableIndirection["N%0"] do
 		local a, b = x % 2, y % 2;
 		x, y = math.floor(x / 2), math.floor(y / 2);
 		if ((a + b) >= 1) then
-			r = r + p;
+			TABLE_TableIndirection["r%0"] = TABLE_TableIndirection["r%0"] + TABLE_TableIndirection["p%0"];
 		end
-		p = 2 * p;
+		TABLE_TableIndirection["p%0"] = 2 * TABLE_TableIndirection["p%0"];
 	end
-	return r;
+	return TABLE_TableIndirection["r%0"];
 end;
 bit32.bxor = function(x, y)
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
+	x, y = x % TABLE_TableIndirection["P%0"], y % TABLE_TableIndirection["P%0"];
+	TABLE_TableIndirection["r%0"] = 0;
+	TABLE_TableIndirection["p%0"] = 1;
+	for i = 1, TABLE_TableIndirection["N%0"] do
 		local a, b = x % 2, y % 2;
 		x, y = math.floor(x / 2), math.floor(y / 2);
 		if ((a + b) == 1) then
-			r = r + p;
+			TABLE_TableIndirection["r%0"] = TABLE_TableIndirection["r%0"] + TABLE_TableIndirection["p%0"];
 		end
-		p = 2 * p;
+		TABLE_TableIndirection["p%0"] = 2 * TABLE_TableIndirection["p%0"];
 	end
-	return r;
+	return TABLE_TableIndirection["r%0"];
 end;
 bit32.lshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
+	if (math.abs(s_amount) >= TABLE_TableIndirection["N%0"]) then
 		return 0;
 	end
-	x = x % P;
+	x = x % TABLE_TableIndirection["P%0"];
 	if (s_amount < 0) then
 		return math.floor(x * (2 ^ s_amount));
 	else
-		return (x * (2 ^ s_amount)) % P;
+		return (x * (2 ^ s_amount)) % TABLE_TableIndirection["P%0"];
 	end
 end;
 bit32.rshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
+	if (math.abs(s_amount) >= TABLE_TableIndirection["N%0"]) then
 		return 0;
 	end
-	x = x % P;
+	x = x % TABLE_TableIndirection["P%0"];
 	if (s_amount > 0) then
 		return math.floor(x * (2 ^ -s_amount));
 	else
-		return (x * (2 ^ -s_amount)) % P;
+		return (x * (2 ^ -s_amount)) % TABLE_TableIndirection["P%0"];
 	end
 end;
 bit32.arshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
+	if (math.abs(s_amount) >= TABLE_TableIndirection["N%0"]) then
 		return 0;
 	end
-	x = x % P;
+	x = x % TABLE_TableIndirection["P%0"];
 	if (s_amount > 0) then
-		local add = 0;
-		if (x >= (P / 2)) then
-			add = P - (2 ^ (N - s_amount));
+		TABLE_TableIndirection["add%0"] = 0;
+		if (x >= (TABLE_TableIndirection["P%0"] / 2)) then
+			TABLE_TableIndirection["add%0"] = TABLE_TableIndirection["P%0"] - (2 ^ (TABLE_TableIndirection["N%0"] - s_amount));
 		end
-		return math.floor(x * (2 ^ -s_amount)) + add;
+		return math.floor(x * (2 ^ -s_amount)) + TABLE_TableIndirection["add%0"];
 	else
-		return (x * (2 ^ -s_amount)) % P;
+		return (x * (2 ^ -s_amount)) % TABLE_TableIndirection["P%0"];
 	end
 end;
-local TABLE_TableIndirection = {};
 TABLE_TableIndirection["obf_stringchar%0"] = string.char;
 TABLE_TableIndirection["obf_stringbyte%0"] = string.byte;
 TABLE_TableIndirection["obf_stringsub%0"] = string.sub;
@@ -174,38 +174,33 @@ TABLE_TableIndirection["TeleportService%0"] = game:GetService(LUAOBFUSACTOR_DECR
 TABLE_TableIndirection["HttpService%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\170\57\177\90\239\69\3\148\36\166\79", "\113\226\77\197\42\188\32"));
 TABLE_TableIndirection["Loop%0"] = task.spawn(function()
 	while TABLE_TableIndirection["Window%0"] do
-		if (TABLE_TableIndirection["Setting_AutoVoidChest%0"] ~= true) then
-		else
+		if ((4513 > 2726) and (TABLE_TableIndirection["Setting_AutoVoidChest%0"] == true)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\9\30\245\167\63\18", "\213\90\118\148")][LUAOBFUSACTOR_DECRYPT_STR_0("\125\60\181\91\72\76\33\166\93", "\45\59\78\212\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\62\83\151\156\137\60\166", "\144\112\54\227\235\230\78\205")][LUAOBFUSACTOR_DECRYPT_STR_0("\129\45\2\243\196\94", "\59\211\72\111\156\176")][LUAOBFUSACTOR_DECRYPT_STR_0("\107\145\230\35\90", "\77\46\231\131")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\153\88\183\73\183\119\190\69\169\64", "\32\218\52\214"), LUAOBFUSACTOR_DECRYPT_STR_0("\120\24\56\172\177\147\77\95\93\3", "\58\46\119\81\200\145\208\37"), true);
 		end
-		if (TABLE_TableIndirection["Setting_AutoInfinityChest%0"] ~= true) then
-		else
+		if ((TABLE_TableIndirection["Setting_AutoInfinityChest%0"] == true) or (1481 >= 2658)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\24\132\49\190\172\185", "\86\75\236\80\204\201\221")][LUAOBFUSACTOR_DECRYPT_STR_0("\84\83\118\136\251\156\125\83\124", "\235\18\33\23\229\158")][LUAOBFUSACTOR_DECRYPT_STR_0("\126\191\213\172\95\168\202", "\219\48\218\161")][LUAOBFUSACTOR_DECRYPT_STR_0("\214\116\113\70\207\74", "\128\132\17\28\41\187\47")][LUAOBFUSACTOR_DECRYPT_STR_0("\36\36\3\52\73", "\61\97\82\102\90")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\143\34\170\66\202\116\22\12\191\58", "\105\204\78\203\43\167\55\126"), LUAOBFUSACTOR_DECRYPT_STR_0("\140\164\37\23\29\13\211\72\229\137\43\27\0\16", "\49\197\202\67\126\115\100\167"), true);
 		end
-		if ((TABLE_TableIndirection["Setting_AutoGiantChest%0"] == true) or (4593 <= 2672)) then
+		if ((TABLE_TableIndirection["Setting_AutoGiantChest%0"] == true) or (3220 == 1364)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\4\83\222\59\133\82", "\62\87\59\191\73\224\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\16\251\196\226\21\245\219\236", "\169\135\98\154")][LUAOBFUSACTOR_DECRYPT_STR_0("\229\114\48\67\242\33\195", "\168\171\23\68\52\157\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\198\116\248\162\49\40", "\231\148\17\149\205\69\77")][LUAOBFUSACTOR_DECRYPT_STR_0("\165\177\194\245\67", "\159\224\199\167\155\55")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\212\255\61\219\250\208\52\215\228\231", "\178\151\147\92"), LUAOBFUSACTOR_DECRYPT_STR_0("\171\244\77\60\6\12\89\132\248\95\38", "\26\236\157\44\82\114\44"), true);
 		end
 		if (TABLE_TableIndirection["Setting_AutoFreeWheelSpin%0"] ~= true) then
 		else
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\25\38\212\73\47\42", "\59\74\78\181")][LUAOBFUSACTOR_DECRYPT_STR_0("\3\195\91\87\182\50\222\72\81", "\211\69\177\58\58")][LUAOBFUSACTOR_DECRYPT_STR_0("\153\224\109\226\230\217\188", "\171\215\133\25\149\137")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\205\63\245\251\53", "\34\129\168\82\154\143\80\156")][LUAOBFUSACTOR_DECRYPT_STR_0("\160\164\54\5\92", "\233\229\210\83\107\40\46")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\226\78\51\223\8\231\80\55\211\50\201\71\55\218\54\209\75\60", "\101\161\34\82\182"));
 		end
-		if (TABLE_TableIndirection["Setting_AutoClaimPlaytime%0"] ~= true) then
-		else
+		if ((TABLE_TableIndirection["Setting_AutoClaimPlaytime%0"] == true) or (1054 > 3392)) then
 			for Index = 1, 9 do
 				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\219\5\88\236\222\230", "\78\136\109\57\158\187\130\226")][LUAOBFUSACTOR_DECRYPT_STR_0("\24\45\248\252\59\40\246\227\53", "\145\94\95\153")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\200\0\194\65\165\246", "\215\157\173\116\181\46")][LUAOBFUSACTOR_DECRYPT_STR_0("\7\177\134\253\206\48", "\186\85\212\235\146")][LUAOBFUSACTOR_DECRYPT_STR_0("\228\148\24\253\45\231\87\204", "\56\162\225\118\158\89\142")]:InvokeServer(LUAOBFUSACTOR_DECRYPT_STR_0("\127\9\193\166\47\232\80\4\217\187\43\213\89", "\184\60\101\160\207\66"), Index);
 			end
 		end
-		if (TABLE_TableIndirection["Setting_AutoSellBubble%0"] ~= true) then
-		else
+		if (TABLE_TableIndirection["Setting_AutoSellBubble%0"] == true) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\2\138\125\174\52\134", "\220\81\226\28")][LUAOBFUSACTOR_DECRYPT_STR_0("\53\199\131\246\239\208\28\199\137", "\167\115\181\226\155\138")][LUAOBFUSACTOR_DECRYPT_STR_0("\204\39\243\75\116\99\205", "\166\130\66\135\60\27\17")][LUAOBFUSACTOR_DECRYPT_STR_0("\118\79\195\122\36\65", "\80\36\42\174\21")][LUAOBFUSACTOR_DECRYPT_STR_0("\107\6\50\116\90", "\26\46\112\87")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\138\38\167\120\157\170\71\182\181\38", "\212\217\67\203\20\223\223\37"));
 		end
-		if ((TABLE_TableIndirection["Setting_AutoBuyBlackmarketItems%0"] == true) or (1168 > 3156)) then
+		if ((TABLE_TableIndirection["Setting_AutoBuyBlackmarketItems%0"] == true) or (4593 <= 2672)) then
 			for Index = 1, 3 do
 				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\137\133\169\192\191\137", "\178\218\237\200")][LUAOBFUSACTOR_DECRYPT_STR_0("\144\167\231\221\179\162\233\194\189", "\176\214\213\134")][LUAOBFUSACTOR_DECRYPT_STR_0("\218\168\162\195\167\68\82", "\57\148\205\214\180\200\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\32\248\56\59\98\23", "\22\114\157\85\84")][LUAOBFUSACTOR_DECRYPT_STR_0("\225\221\22\202\73", "\200\164\171\115\164\61\150")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\156\225\26\118\139\177\228\42\81\134\179", "\227\222\148\99\37"), LUAOBFUSACTOR_DECRYPT_STR_0("\32\90\83\228\253\126\65\90\249\233", "\153\83\50\50\150"), Index);
 			end
 		end
-		if (TABLE_TableIndirection["Setting_AutoBuyAlienShop%0"] ~= true) then
-		else
+		if ((TABLE_TableIndirection["Setting_AutoBuyAlienShop%0"] == true) or (1168 > 3156)) then
 			for Index = 1, 3 do
 				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\110\126\114\14\118\175", "\45\61\22\19\124\19\203")][LUAOBFUSACTOR_DECRYPT_STR_0("\231\0\12\248\7\103\182\211\25", "\217\161\114\109\149\98\16")][LUAOBFUSACTOR_DECRYPT_STR_0("\60\37\44\107\179\102\25", "\20\114\64\88\28\220")][LUAOBFUSACTOR_DECRYPT_STR_0("\3\4\223\187\236\213", "\221\81\97\178\212\152\176")][LUAOBFUSACTOR_DECRYPT_STR_0("\232\241\24\245\14", "\122\173\135\125\155")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\166\212\25\138\55\62\216\173\213\5\180", "\168\228\161\96\217\95\81"), LUAOBFUSACTOR_DECRYPT_STR_0("\218\221\39\89\33\26\200\217\33\76", "\55\187\177\78\60\79"), Index);
 			end
@@ -215,17 +210,17 @@ TABLE_TableIndirection["Loop%0"] = task.spawn(function()
 end);
 TABLE_TableIndirection["Loop_Fast%0"] = task.spawn(function()
 	while TABLE_TableIndirection["Window%0"] do
-		if (TABLE_TableIndirection["Setting_AutoBlowBubble%0"] ~= true) then
-		else
+		if ((TABLE_TableIndirection["Setting_AutoBlowBubble%0"] == true) or (572 > 4486) or (676 >= 1642)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\30\198\94\249\67\203", "\224\77\174\63\139\38\175")][LUAOBFUSACTOR_DECRYPT_STR_0("\162\83\89\35\129\86\87\60\143", "\78\228\33\56")][LUAOBFUSACTOR_DECRYPT_STR_0("\224\123\166\20\138\220\117", "\229\174\30\210\99")][LUAOBFUSACTOR_DECRYPT_STR_0("\41\232\139\94\249\56", "\89\123\141\230\49\141\93")][LUAOBFUSACTOR_DECRYPT_STR_0("\214\103\243\2\4", "\42\147\17\150\108\112")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\45\170\34\104\197\253\13\164\33\122", "\136\111\198\77\31\135"));
 		end
-		if ((TABLE_TableIndirection["Setting_AutoOpenGoldenChest%0"] == true) or (572 > 4486)) then
+		if (TABLE_TableIndirection["Setting_AutoOpenGoldenChest%0"] ~= true) then
+		else
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\49\1\166\68\184\224", "\201\98\105\199\54\221\132\119")][LUAOBFUSACTOR_DECRYPT_STR_0("\159\30\130\44\7\34\163\171\7", "\204\217\108\227\65\98\85")][LUAOBFUSACTOR_DECRYPT_STR_0("\112\198\225\242\35\210\85", "\160\62\163\149\133\76")][LUAOBFUSACTOR_DECRYPT_STR_0("\228\165\0\32\215\211", "\163\182\192\109\79")][LUAOBFUSACTOR_DECRYPT_STR_0("\17\48\5\206\225", "\149\84\70\96\160")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\13\8\1\226\59\13\63\228\62\18\46\229\61\21\25", "\141\88\102\109"), LUAOBFUSACTOR_DECRYPT_STR_0("\180\92\198\116\31\51\24\194\187\86\217\100", "\161\211\51\170\16\122\93\53"), false);
 		end
 		if ((1404 == 1404) and (TABLE_TableIndirection["Setting_AutoOpenRoyalChest%0"] == true)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\200\166\179\58\254\170", "\72\155\206\210")][LUAOBFUSACTOR_DECRYPT_STR_0("\96\104\85\3\54\81\117\70\5", "\83\38\26\52\110")][LUAOBFUSACTOR_DECRYPT_STR_0("\118\18\51\81\87\5\44", "\38\56\119\71")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\234\85\217\49\83", "\54\147\143\56\182\69")][LUAOBFUSACTOR_DECRYPT_STR_0("\243\151\250\71\203", "\191\182\225\159\41")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\30\28\36\90\136\140\240\34\20\60\118\131\130\209\63", "\162\75\114\72\53\235\231"), LUAOBFUSACTOR_DECRYPT_STR_0("\158\51\93\227\95\79\143\52\65\241\71", "\98\236\92\36\130\51"), false);
 		end
-		if ((TABLE_TableIndirection["Setting_AutoMysteryBox%0"] == true) or (3748 < 2212)) then
+		if ((4136 > 2397) and (TABLE_TableIndirection["Setting_AutoMysteryBox%0"] == true)) then
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\151\17\13\168\64\172", "\80\196\121\108\218\37\200\213")][LUAOBFUSACTOR_DECRYPT_STR_0("\38\97\3\114\78\25\133\18\120", "\234\96\19\98\31\43\110")][LUAOBFUSACTOR_DECRYPT_STR_0("\40\26\70\208\163\96\128", "\235\102\127\50\167\204\18")][LUAOBFUSACTOR_DECRYPT_STR_0("\98\164\248\44\80\43", "\78\48\193\149\67\36")][LUAOBFUSACTOR_DECRYPT_STR_0("\21\8\133\22\85", "\33\80\126\224\120")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\217\187\6\227\85\234\188", "\60\140\200\99\164"), LUAOBFUSACTOR_DECRYPT_STR_0("\170\237\23\50\167\149\237\68\4\173\159", "\194\231\148\100\70"), 10);
 		end
 		task.wait(0.25);
@@ -235,8 +230,7 @@ TABLE_TableIndirection["TweenService%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT
 TABLE_TableIndirection["Humanoid%0"] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\176\240\131\111\53\250\165", "\118\224\156\226\22\80\136\214")][LUAOBFUSACTOR_DECRYPT_STR_0("\110\225\90\129\78\222\85\129\91\235\75", "\224\34\142\57")][LUAOBFUSACTOR_DECRYPT_STR_0("\253\175\196\207\114\242\73\11\204", "\110\190\199\165\189\19\145\61")][LUAOBFUSACTOR_DECRYPT_STR_0("\242\254\122\233\133\200\211\239", "\167\186\139\23\136\235")];
 TABLE_TableIndirection["Loop_PickupablesAuto%0"] = task.spawn(function()
 	while TABLE_TableIndirection["Window%0"] do
-		if (TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] ~= true) then
-		else
+		if ((TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] == true) or (4334 == 4245)) then
 			for _, pickupable in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\40\176\134\9\31\167\141\9", "\109\122\213\232")]:GetChildren()[14]:GetChildren() do
 				TABLE_TableIndirection["Name%0"] = pickupable[LUAOBFUSACTOR_DECRYPT_STR_0("\192\246\175\53", "\80\142\151\194")];
 				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\49\195\103\64\10\197\118\88\6\194\68\88\12\212\118\75\6", "\44\99\166\23")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\78\242\36\57\39\161\111", "\196\28\151\73\86\83")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\195\10\42\27\151\72\11", "\22\147\99\73\112\226\56\120")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\155\122\238\249\136\187\97\210\252\142\179\96\242", "\237\216\21\130\149")):FireServer(TABLE_TableIndirection["Name%0"]);
@@ -254,7 +248,7 @@ function EggFinderFallback()
 	task.spawn(function()
 		warn(TABLE_TableIndirection["Setting_FallbackServerHopper%0"]);
 		warn(TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1]);
-		if ((TABLE_TableIndirection["Setting_FallbackServerHopper%0"] and (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] ~= "")) or (1180 == 2180)) then
+		if ((TABLE_TableIndirection["Setting_FallbackServerHopper%0"] and (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] ~= "")) or (3748 < 2212)) then
 			local function TravelToEgg(pos)
 				warn(LUAOBFUSACTOR_DECRYPT_STR_0("\159\209\74\80\70\70", "\45\203\163\43\38\35\42\91"));
 				game[LUAOBFUSACTOR_DECRYPT_STR_0("\226\137\221\58\130\187\71", "\52\178\229\188\67\231\201")][LUAOBFUSACTOR_DECRYPT_STR_0("\13\78\83\5\251\108\47\32\88\85\22", "\67\65\33\48\100\151\60")][LUAOBFUSACTOR_DECRYPT_STR_0("\252\239\175\202\242\220\243\171\202", "\147\191\135\206\184")][LUAOBFUSACTOR_DECRYPT_STR_0("\172\61\171\192\214\92\187\128", "\210\228\72\198\161\184\51")]:MoveTo(pos);
@@ -265,7 +259,7 @@ function EggFinderFallback()
 					task.wait(0.25);
 				end
 			end
-			if ((4090 < 4653) and ((TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\61\48\38\105\8\114\77\20\50\122", "\30\109\81\85\29\109")) or (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\221\100\90\184\47\158\217\248\118", "\156\159\17\52\214\86\190")))) then
+			if ((TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\61\48\38\105\8\114\77\20\50\122", "\30\109\81\85\29\109")) or (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\221\100\90\184\47\158\217\248\118", "\156\159\17\52\214\86\190")) or (1180 == 2180)) then
 				TABLE_TableIndirection["PositionToTravel%0"] = Vector3.new(-397, 12013, -62);
 				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\156\234\173\176\167\236\188\168\171\235\142\168\161\253\188\187\171", "\220\206\143\221"))[LUAOBFUSACTOR_DECRYPT_STR_0("\181\117\44\5\221\200", "\178\230\29\77\119\184\172")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\172\11\22\114\239\250\172\1", "\152\149\222\106\123\23")][LUAOBFUSACTOR_DECRYPT_STR_0("\243\35\226\84\186\207\45", "\213\189\70\150\35")][LUAOBFUSACTOR_DECRYPT_STR_0("\125\80\121\7\91\80", "\104\47\53\20")][LUAOBFUSACTOR_DECRYPT_STR_0("\134\90\132\18\168", "\111\195\44\225\124\220")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\236\67\12\118\187\164\202\82", "\203\184\38\96\19\203"), LUAOBFUSACTOR_DECRYPT_STR_0("\14\124\107\74\221\41\114\122\68\128\28\101\124\79\218\119\67\118\83\218\56\127\55\114\222\56\100\119", "\174\89\19\25\33"));
 				task.wait(0.5);
@@ -274,8 +268,7 @@ function EggFinderFallback()
 				TravelToEgg(TABLE_TableIndirection["PositionToTravel%0"]);
 				StartOpeningLoop();
 			end
-			if (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\1\27\85\70\227\138\10\61\23\18\107\240\128", "\107\79\114\50\46\151\231")) then
-			else
+			if ((4090 < 4653) and (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\1\27\85\70\227\138\10\61\23\18\107\240\128", "\107\79\114\50\46\151\231"))) then
 				TABLE_TableIndirection["PositionToTravel%0"] = Vector3.new(-141, 10, -44);
 				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\11\163\165\37\131\58\182\212\60\162\134\61\133\43\182\199\60", "\160\89\198\213\73\234\89\215"))[LUAOBFUSACTOR_DECRYPT_STR_0("\123\121\181\236\192\76", "\165\40\17\212\158")][LUAOBFUSACTOR_DECRYPT_STR_0("\195\203\9\62\35\242\214\26\56", "\70\133\185\104\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\42\64\80\61\198\22\78", "\169\100\37\36\74")][LUAOBFUSACTOR_DECRYPT_STR_0("\50\130\175\95\20\130", "\48\96\231\194")][LUAOBFUSACTOR_DECRYPT_STR_0("\237\76\11\35\13", "\227\168\58\110\77\121\184\207")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\79\57\179\69\161\212\99\177", "\197\27\92\223\32\209\187\17"), LUAOBFUSACTOR_DECRYPT_STR_0("\52\80\209\240\16\79\194\248\6\17\244\244\17\83\199\232\77\107\203\254\67\112\213\254\17\72\204\233\15\91\141\203\12\77\215\250\15\108\211\250\20\81", "\155\99\63\163"));
 				task.wait(0.5);
@@ -306,7 +299,7 @@ function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	end);
 end
 function ChangeRiftESP()
-	if (TABLE_TableIndirection["Setting_IslandESP%0"] == true) then
+	if ((TABLE_TableIndirection["Setting_IslandESP%0"] == true) or (4276 <= 3031)) then
 		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\206\82\243\81\86\104\249\83", "\26\156\55\157\53\51")][LUAOBFUSACTOR_DECRYPT_STR_0("\190\209\16\205\171", "\48\236\184\118\185\216")]:GetChildren() do
 			if ((4135 < 4817) and not Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\205\180\80\56\195\61\226\181\67", "\84\133\221\55\80\175"))) then
 				HighlightIsland(Island, Island.Name);
@@ -314,26 +307,26 @@ function ChangeRiftESP()
 		end
 	else
 		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\143\226\42\162\194\78\184\227", "\60\221\135\68\198\167")][LUAOBFUSACTOR_DECRYPT_STR_0("\220\180\254\151\81", "\185\142\221\152\227\34")]:GetChildren() do
-			if ((272 == 272) and Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\112\204\80\242\79\58\240\80\209", "\151\56\165\55\154\35\83"))) then
+			if (Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\112\204\80\242\79\58\240\80\209", "\151\56\165\55\154\35\83")) or (4782 <= 1199)) then
 				Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\136\74\2\230\172\74\2\230\180", "\142\192\35\101")):Destroy();
 			end
 		end
 	end
 end
 function ChangeDrawLines()
-	if not game[LUAOBFUSACTOR_DECRYPT_STR_0("\225\122\59\168\244\156\173\21\211", "\118\182\21\73\195\135\236\204")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\42\57\27\77\34\2\241\12\57\8", "\157\104\92\122\32\100\109")) then
+	if (not game[LUAOBFUSACTOR_DECRYPT_STR_0("\225\122\59\168\244\156\173\21\211", "\118\182\21\73\195\135\236\204")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\42\57\27\77\34\2\241\12\57\8", "\157\104\92\122\32\100\109")) or (4864 < 1902)) then
 		TABLE_TableIndirection["BeamsFolder%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\133\169\195\206\56\53", "\203\195\198\175\170\93\71\237"));
 		TABLE_TableIndirection["BeamsFolder%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\0\74\51\208", "\156\78\43\94\181\49\113")] = LUAOBFUSACTOR_DECRYPT_STR_0("\80\237\197\174\45\76\117\118\237\214", "\25\18\136\164\195\107\35");
 		TABLE_TableIndirection["BeamsFolder%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\216\44\187\74\124\168", "\216\136\77\201\47\18\220\161")] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\58\227\57\209\27\204\131\46\233", "\226\77\140\75\186\104\188")];
 	end
 	if (TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] == true) then
 		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\139\203\222\59\74\171\203\212", "\47\217\174\176\95")][LUAOBFUSACTOR_DECRYPT_STR_0("\138\212\112\22\161", "\70\216\189\22\98\210\52\24")]:GetChildren() do
-			if not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\246\214\173\130\242\206\203\162\132\219\215\218\173\147", "\179\186\191\195\231")) then
+			if ((4839 >= 3700) and not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\246\214\173\130\242\206\203\162\132\219\215\218\173\147", "\179\186\191\195\231"))) then
 				TABLE_TableIndirection["Attachment__%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\216\43\12\229\250\55\21\225\247\43", "\132\153\95\120"));
 				TABLE_TableIndirection["Attachment__%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\159\179\3\40", "\192\209\210\110\77\151\186")] = LUAOBFUSACTOR_DECRYPT_STR_0("\204\10\44\236\222\208\244\2\33\225\242\193\238\23", "\164\128\99\66\137\159");
 				TABLE_TableIndirection["Attachment__%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\48\136\251\187\14\157", "\222\96\233\137")] = Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\150\166\179\15\157\231", "\144\217\211\199\127\232\147"));
 			end
-			if not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\218\42\63\37\240\118\50", "\36\152\79\94\72\181\37\98")) then
+			if ((272 == 272) and not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\218\42\63\37\240\118\50", "\36\152\79\94\72\181\37\98"))) then
 				TABLE_TableIndirection["Beam%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\245\221\70\50", "\95\183\184\39"));
 				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\155\62\234\35", "\98\213\95\135\70\52\224")] = LUAOBFUSACTOR_DECRYPT_STR_0("\220\166\200\122\113\205\147", "\52\158\195\169\23");
 				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\74\189\32\113\136\33", "\235\26\220\82\20\230\85\27")] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\191\174\251\201\103\152\160\234\199", "\20\232\193\137\162")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\0\218\196\171\193\131\27\117\39\205", "\17\66\191\165\198\135\236\119"));
@@ -348,7 +341,8 @@ function ChangeDrawLines()
 				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\0\42\38\186\194\39\38\32\173\224", "\129\70\75\69\223")] = true;
 				if (Island[LUAOBFUSACTOR_DECRYPT_STR_0("\104\202\254\236", "\143\38\171\147\137\28")] == LUAOBFUSACTOR_DECRYPT_STR_0("\194\141\160\242\15\174\215\216\135\170\231", "\180\176\226\217\147\99\131")) then
 					TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\240\182\35\8\193", "\103\179\217\79")] = ColorSequence.new(Color3.fromRGB(204, 0, 255));
-				elseif ((100 <= 3123) and (Island[LUAOBFUSACTOR_DECRYPT_STR_0("\100\182\17\208", "\195\42\215\124\181\33\236")] == LUAOBFUSACTOR_DECRYPT_STR_0("\10\86\59\58\32\246\64\90\63\59\54\236", "\152\109\57\87\94\69"))) then
+				elseif (Island[LUAOBFUSACTOR_DECRYPT_STR_0("\100\182\17\208", "\195\42\215\124\181\33\236")] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\10\86\59\58\32\246\64\90\63\59\54\236", "\152\109\57\87\94\69")) then
+				else
 					TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\218\216\6\172\172", "\200\153\183\106\195\222\178\52")] = ColorSequence.new(Color3.fromRGB(255, 213, 0));
 				end
 			end
@@ -362,45 +356,45 @@ function ChangeDrawLines()
 end
 workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\42\123\45\79\174\10\123\39", "\203\120\30\67\43")][LUAOBFUSACTOR_DECRYPT_STR_0("\195\44\75\251\202", "\185\145\69\45\143")][LUAOBFUSACTOR_DECRYPT_STR_0("\169\23\16\170\216\171\27\29\163\216", "\188\234\127\121\198")]:Connect(function(IslandObject)
 	task.wait(10);
-	if (TABLE_TableIndirection["Setting_IslandESP%0"] ~= true) then
-	else
+	if ((100 <= 3123) and (TABLE_TableIndirection["Setting_IslandESP%0"] == true)) then
 		HighlightIsland(IslandObject, IslandObject.Name);
 	end
-	if ((TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] == true) or (1369 > 4987)) then
+	if ((TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] == true) or (1369 > 4987) or (1075 > 1918)) then
 		ChangeDrawLines();
 	end
 	TABLE_TableIndirection["IslandName%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\22\51\30\134", "\227\88\82\115")];
 	TABLE_TableIndirection["IslandHeight%0"] = math.floor(IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\103\22\169\183\14\114\90", "\19\35\127\218\199\98")][LUAOBFUSACTOR_DECRYPT_STR_0("\63\221\24\227\17\254", "\130\124\155\106")].Y);
 	TABLE_TableIndirection["Luck%0"] = nil;
 	TABLE_TableIndirection["Timer%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\241\194\229\191\175\247\101", "\223\181\171\150\207\195\150\28")][LUAOBFUSACTOR_DECRYPT_STR_0("\127\47\241\168\8\79\63\196\187\0", "\105\44\90\131\206")][LUAOBFUSACTOR_DECRYPT_STR_0("\203\233\191\188\26", "\94\159\128\210\217\104")][LUAOBFUSACTOR_DECRYPT_STR_0("\100\252\30\171", "\26\48\153\102\223\63\31\153")];
-	if (IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\38\73\254\227\14\65\244", "\147\98\32\141")][LUAOBFUSACTOR_DECRYPT_STR_0("\43\86\241\204\7\85\78\63\86\234", "\43\120\35\131\170\102\54")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\125\5\136\184", "\228\52\102\231\214\197\208")) or (863 >= 4584)) then
+	if ((396 <= 3804) and IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\38\73\254\227\14\65\244", "\147\98\32\141")][LUAOBFUSACTOR_DECRYPT_STR_0("\43\86\241\204\7\85\78\63\86\234", "\43\120\35\131\170\102\54")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\125\5\136\184", "\228\52\102\231\214\197\208"))) then
 		TABLE_TableIndirection["Luck%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\58\233\102\218\230\138\0", "\182\126\128\21\170\138\235\121")][LUAOBFUSACTOR_DECRYPT_STR_0("\184\207\39\224\135\16\53\33\158\211", "\102\235\186\85\134\230\115\80")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\126\15\49\81", "\66\55\108\94\63\18\180")):FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\56\152\134\60", "\57\116\237\229\87\71"))[LUAOBFUSACTOR_DECRYPT_STR_0("\158\180\245\243", "\39\202\209\141\135\23\142")];
 	end
-	if (TABLE_TableIndirection["Setting_IslandSpawnNotifications%0"] ~= true) then
-	elseif (TABLE_TableIndirection["Luck%0"] or (724 >= 1668)) then
-		TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\203\58\29\6\55", "\152\159\83\105\106\82")]=LUAOBFUSACTOR_DECRYPT_STR_0("\175\195\70\178\224\79\141\199\95\246\137\120\132\210\84\241\221\89\133\135", "\60\225\166\49\146\169"),[LUAOBFUSACTOR_DECRYPT_STR_0("\12\17\33\62\4\9\59", "\103\79\126\79\74\97")]=(TABLE_TableIndirection["IslandName%0"] .. " " .. TABLE_TableIndirection["Luck%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\250\55", "\122\218\31\179\19\62") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\190\159\141\137", "\37\211\182\173\161\169\193") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\222\55\76\222\45", "\217\151\90\45\185\72\27")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\236\114\196\30\95\192\119", "\54\163\28\135\114")]=function()
-		end});
-	else
-		TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\28\210\73\142\75", "\31\72\187\61\226\46")]=LUAOBFUSACTOR_DECRYPT_STR_0("\237\3\84\146\110\109\40\194\8\71\146\99\123\48\198\5\87\215\67\63", "\68\163\102\35\178\39\30"),[LUAOBFUSACTOR_DECRYPT_STR_0("\157\127\212\211\6\187\151", "\113\222\16\186\167\99\213\227")]=(TABLE_TableIndirection["IslandName%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\110\70", "\150\78\110\155") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\136\140\103\169", "\32\229\165\71\129\196\126\223") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\234\132\197\134\132", "\181\163\233\164\225\225")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\127\133\29\123\89\136\53", "\23\48\235\94")]=function()
-		end});
+	if ((TABLE_TableIndirection["Setting_IslandSpawnNotifications%0"] == true) or (863 >= 4584)) then
+		if (TABLE_TableIndirection["Luck%0"] or (724 >= 1668) or (4169 == 2187)) then
+			TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\203\58\29\6\55", "\152\159\83\105\106\82")]=LUAOBFUSACTOR_DECRYPT_STR_0("\175\195\70\178\224\79\141\199\95\246\137\120\132\210\84\241\221\89\133\135", "\60\225\166\49\146\169"),[LUAOBFUSACTOR_DECRYPT_STR_0("\12\17\33\62\4\9\59", "\103\79\126\79\74\97")]=(TABLE_TableIndirection["IslandName%0"] .. " " .. TABLE_TableIndirection["Luck%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\250\55", "\122\218\31\179\19\62") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\190\159\141\137", "\37\211\182\173\161\169\193") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\222\55\76\222\45", "\217\151\90\45\185\72\27")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\236\114\196\30\95\192\119", "\54\163\28\135\114")]=function()
+			end});
+		else
+			TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\28\210\73\142\75", "\31\72\187\61\226\46")]=LUAOBFUSACTOR_DECRYPT_STR_0("\237\3\84\146\110\109\40\194\8\71\146\99\123\48\198\5\87\215\67\63", "\68\163\102\35\178\39\30"),[LUAOBFUSACTOR_DECRYPT_STR_0("\157\127\212\211\6\187\151", "\113\222\16\186\167\99\213\227")]=(TABLE_TableIndirection["IslandName%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\110\70", "\150\78\110\155") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\136\140\103\169", "\32\229\165\71\129\196\126\223") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\234\132\197\134\132", "\181\163\233\164\225\225")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\127\133\29\123\89\136\53", "\23\48\235\94")]=function()
+			end});
+		end
 	end
-	if ((428 < 1804) and table.find(TABLE_TableIndirection["AllowedEventEggs%0"], tostring(IslandObject))) then
+	if ((1406 == 1406) and (428 < 1804) and table.find(TABLE_TableIndirection["AllowedEventEggs%0"], tostring(IslandObject))) then
 		SendEggWebhook(TABLE_TableIndirection["Event_Islands_Hook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
 	end
-	if (table.find(TABLE_TableIndirection["AllowedRareEggs%0"], tostring(IslandObject)) or (3325 > 4613)) then
-		if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\100\136\141", "\178\28\186\184\61\55\83"))) or (4950 <= 4553)) then
+	if ((1531 < 4271) and table.find(TABLE_TableIndirection["AllowedRareEggs%0"], tostring(IslandObject))) then
+		if (TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\100\136\141", "\178\28\186\184\61\55\83"))) then
 			SendEggWebhook(TABLE_TableIndirection["Rare_Islands_Hook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
 		end
 	end
-	if ((2665 <= 3933) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true)) then
-		if ((3273 == 3273) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true)) then
-			if ((3824 > 409) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\148\157\23", "\149\164\173\39\92\146\110")))) then
-				if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\235\117\69", "\123\147\71\112\127\122"))) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\205\216\144\112\11\201\202\133", "\38\172\173\226\17")) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\95\30\53\238\65\92\47\231\72\2\56", "\143\45\113\76"))) then
+	if ((635 == 635) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true) or (3325 > 4613))) then
+		if ((TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true) or (4950 <= 4553)) then
+			if ((2665 <= 3933) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\148\157\23", "\149\164\173\39\92\146\110")))) then
+				if ((3373 <= 3556) and ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\235\117\69", "\123\147\71\112\127\122"))) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\205\216\144\112\11\201\202\133", "\38\172\173\226\17")) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\95\30\53\238\65\92\47\231\72\2\56", "\143\45\113\76")))) then
 					TABLE_TableIndirection["ExploitFunctions%0"].Message(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], LUAOBFUSACTOR_DECRYPT_STR_0("\152\189\10\57\170\161\19\50\189", "\92\216\216\124"));
 				end
 			end
 		end
-		if ((2087 == 2087) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\11\98\252", "\157\59\82\204\32")))) then
+		if ((3273 == 3273) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\11\98\252", "\157\59\82\204\32")))) then
 			SendEggWebhook(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
 		end
 	end
@@ -415,8 +409,7 @@ function test_print_table(tbl_)
 	end
 end
 workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\10\59\237\254\236\248\214\181", "\209\88\94\131\154\137\138\179")]:GetChildren()[12][LUAOBFUSACTOR_DECRYPT_STR_0("\11\169\205\112\26\2\53\38\45\165", "\66\72\193\164\28\126\67\81")]:Connect(function(Pickupable)
-	if (TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] ~= true) then
-	else
+	if ((3824 > 409) and (TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] == true)) then
 		task.spawn(function()
 			TABLE_TableIndirection["Name%0"] = Pickupable[LUAOBFUSACTOR_DECRYPT_STR_0("\201\45\165\93", "\22\135\76\200\56\70")];
 			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\191\53\245\43\73\228\158", "\129\237\80\152\68\61")][LUAOBFUSACTOR_DECRYPT_STR_0("\97\161\7\248\9\7\75", "\56\49\200\100\147\124\119")][LUAOBFUSACTOR_DECRYPT_STR_0("\239\49\179\252\201\61\171\192\197\61\180\229\220", "\144\172\94\223")]:FireServer(TABLE_TableIndirection["Name%0"]);
@@ -562,12 +555,12 @@ TABLE_TableIndirection["LogEmbed%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\20\77\185
 TABLE_TableIndirection["Rayfield%0"]:LoadConfiguration();
 task.spawn(function()
 	task.wait(10);
-	if TABLE_TableIndirection["ExploitFunctions%0"] then
+	if (TABLE_TableIndirection["ExploitFunctions%0"] or (3291 < 3280)) then
 		TABLE_TableIndirection["ExploitFunctions%0"].Webhook(TABLE_TableIndirection["Logs_Hook%0"], TABLE_TableIndirection["LogEmbed%0"]);
 	end
 end);
 function HighlightIsland(IslandModel)
-	if IslandModel then
+	if ((4386 >= 873) and IslandModel) then
 		TABLE_TableIndirection["Highlight%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\50\180\63\115\58\66\35\118\14", "\30\122\221\88\27\86\43\68"));
 		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\22\41\230\131", "\230\88\72\139")] = LUAOBFUSACTOR_DECRYPT_STR_0("\87\135\38\36\43\33\127\90\152\63\60\43\60", "\56\18\212\118\123\99\104");
 		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\46\232\234\214\209\202", "\190\126\137\152\179\191")] = IslandModel;
@@ -591,7 +584,7 @@ function HighlightIsland(IslandModel)
 		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\252\10\1\69", "\81\168\111\121\49\117\79\56")] = LUAOBFUSACTOR_DECRYPT_STR_0("\155\8\187", "\214\167\106\133") .. IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\7\57\65\74", "\185\73\88\44\47\84\31")] .. LUAOBFUSACTOR_DECRYPT_STR_0("\212\152\24\254", "\159\232\183\122\192\179");
 		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\16\55\176\53\23\38\186\46\47\55\156\51\37\60\187\49\37\32\173\47\39\43", "\65\68\82\200")] = 0;
 		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\17\85\106\52\252\219\108\42\91\119\3\192\195\113\55\3", "\30\69\48\18\64\175\175")] = Color3.new(1, 1, 1);
-		if (IslandModel:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\212\37\12\252\55\241\53", "\91\144\76\127\140")) and IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\196\1\85\49\223\187\204", "\176\128\104\38\65\179\218\181")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\227\209\208\19\209\199\199\50\197\205", "\117\176\164\162"))) then
+		if ((921 <= 1102) and IslandModel:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\212\37\12\252\55\241\53", "\91\144\76\127\140")) and IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\196\1\85\49\223\187\204", "\176\128\104\38\65\179\218\181")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\227\209\208\19\209\199\199\50\197\205", "\117\176\164\162"))) then
 			TABLE_TableIndirection["gui%0"] = IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\160\203\22\224\214\120\157", "\25\228\162\101\144\186")][LUAOBFUSACTOR_DECRYPT_STR_0("\123\35\171\8\243\231\77\17\172\7", "\132\40\86\217\110\146")];
 			if (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\87\200\40\178", "\62\30\171\71\220\199\19\156")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\105\70\163\56", "\45\32\37\204\86\61\169\79")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\121\64\6\183", "\28\53\53\101\220\213"))) then
 				TABLE_TableIndirection["Text_luck%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\57\89\16\85\118\160\82\218\1", "\191\109\60\104\33\58\193\48"));
@@ -611,8 +604,7 @@ function HighlightIsland(IslandModel)
 end
 function EggFinder_MainSearch()
 	task.spawn(function()
-		if (TABLE_TableIndirection["Setting_ServerHopFarm%0"] ~= true) then
-		else
+		if ((4706 >= 963) and (2087 == 2087) and (TABLE_TableIndirection["Setting_ServerHopFarm%0"] == true)) then
 			TABLE_TableIndirection["Players%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\26\51\95\212\47\45\77", "\173\74\95\62"));
 			TABLE_TableIndirection["LocalPlayer%0"] = TABLE_TableIndirection["Players%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\234\22\95\55\199\55\176\199\0\89\36", "\220\166\121\60\86\171\103")];
 			TABLE_TableIndirection["TweenService%1"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\221\21\56\181\53\249\31\251\20\52\179\62", "\122\137\98\93\208\91\170"));
@@ -633,7 +625,7 @@ function EggFinder_MainSearch()
 			for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\227\37\203\127\250\90\72\213", "\45\177\64\165\27\159\40")][LUAOBFUSACTOR_DECRYPT_STR_0("\47\31\9\190\97", "\18\125\118\111\202")]:GetChildren() do
 				if ((Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\116\53\74\234\60\172\222", "\155\48\92\57\154\80\205\167")) and Island[LUAOBFUSACTOR_DECRYPT_STR_0("\157\196\168\175\244\170\92", "\37\217\173\219\223\152\203")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\58\16\13\48\78\171\243\46\16\22", "\150\105\101\127\86\47\200"))) or (3506 <= 1309)) then
 					TABLE_TableIndirection["gui%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\234\251\224\165\203\193\215", "\160\174\146\147\213\167")][LUAOBFUSACTOR_DECRYPT_STR_0("\115\241\8\66\13\66\69\195\15\77", "\33\32\132\122\36\108")];
-					if (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\144\23\125\69", "\28\217\116\18\43")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\251\84\217\90", "\92\178\55\182\52\176\206")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\54\32\114\30", "\117\122\85\17"))) then
+					if (((2955 == 2955) and TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\144\23\125\69", "\28\217\116\18\43")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\251\84\217\90", "\92\178\55\182\52\176\206")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\54\32\114\30", "\117\122\85\17"))) or (960 <= 876)) then
 						TABLE_TableIndirection["Name%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\166\238\39\65", "\189\232\143\74\36\198")];
 						TABLE_TableIndirection["Luck%0"] = TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\213\169\5\64", "\106\156\202\106\46\183")][LUAOBFUSACTOR_DECRYPT_STR_0("\17\12\120\56", "\74\93\121\27\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\73\190\254\106", "\30\29\219\134")];
 						TABLE_TableIndirection["Timer%0"] = (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\97\174\20\255\230", "\110\53\199\121\154\148\63\120")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\53\19\242\58\75", "\156\97\122\159\95\57")][LUAOBFUSACTOR_DECRYPT_STR_0("\250\179\194\236", "\95\174\214\186\152\107\98")]) or "?";
@@ -641,23 +633,23 @@ function EggFinder_MainSearch()
 						TABLE_TableIndirection["EggCFrame%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\127\202\69\53\87\194\79", "\69\59\163\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\147\142\216\75\62\200", "\214\208\200\170\42\83\173")];
 						TABLE_TableIndirection["IslandObject%0"] = Island;
 						table.insert(TABLE_TableIndirection["Islands%0"], {TABLE_TableIndirection["Name%0"],TABLE_TableIndirection["Luck%0"],TABLE_TableIndirection["EggCFrame%0"],TABLE_TableIndirection["Timer%0"],TABLE_TableIndirection["Height%0"],TABLE_TableIndirection["IslandObject%0"]});
-						if ((2955 == 2955) and table.find(TABLE_TableIndirection["AllowedEventEggs%0"], TABLE_TableIndirection["Name%0"])) then
+						if (table.find(TABLE_TableIndirection["AllowedEventEggs%0"], TABLE_TableIndirection["Name%0"]) or (2903 == 1495)) then
 							SendEggWebhook(TABLE_TableIndirection["Event_Islands_Hook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 						end
-						if (table.find(TABLE_TableIndirection["AllowedRareEggs%0"], TABLE_TableIndirection["Name%0"]) or (2903 == 1495)) then
-							if (TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\193\115\39", "\21\185\65\18\192"))) then
+						if (((4546 >= 2275) and table.find(TABLE_TableIndirection["AllowedRareEggs%0"], TABLE_TableIndirection["Name%0"])) or (2066 == 932)) then
+							if ((819 >= 22) and TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\193\115\39", "\21\185\65\18\192"))) then
 								SendEggWebhook(TABLE_TableIndirection["Rare_Islands_Hook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 							end
 						end
-						if ((4546 >= 2275) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true)) then
-							if ((819 >= 22) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true)) then
-								if ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\174\6\13", "\193\158\54\61\123"))) then
-									if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\45\67\117", "\217\85\113\64"))) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\74\26\222\193\162\135\226\76", "\133\43\111\172\160\143\226")) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\217\172\73\208\204\134\160\88\212\211\223", "\160\171\195\48\177"))) then
+						if ((4825 < 4843) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true)) then
+							if ((3162 == 3162) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true)) then
+								if ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\174\6\13", "\193\158\54\61\123")) or (2369 > 4429) or (3877 >= 4537)) then
+									if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\45\67\117", "\217\85\113\64"))) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\74\26\222\193\162\135\226\76", "\133\43\111\172\160\143\226")) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\217\172\73\208\204\134\160\88\212\211\223", "\160\171\195\48\177")) or (4315 < 1726)) then
 										TABLE_TableIndirection["ExploitFunctions%0"].Message(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], LUAOBFUSACTOR_DECRYPT_STR_0("\243\6\96\40\78\216\160\201\214", "\167\179\99\22\77\60\161\207"));
 									end
 								end
 							end
-							if ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\81\47\219", "\44\97\31\235\56"))) then
+							if (((4095 >= 3183) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\81\47\219", "\44\97\31\235\56")))) or (3679 < 625)) then
 								SendEggWebhook(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 							end
 						end
@@ -667,7 +659,7 @@ function EggFinder_MainSearch()
 			TABLE_TableIndirection["EggFlags%0"] = {{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\231\1\241\160\188\11\255\163", "\196\145\110\152"),LUAOBFUSACTOR_DECRYPT_STR_0("\64\124\171", "\146\56\78\158")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\59\212\70\226\23\40\220\72", "\58\77\187\47\134"),LUAOBFUSACTOR_DECRYPT_STR_0("\10\100\241", "\126\114\85\193\103\133\78\52")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\202\210\53\112\208\214\51\106\193\150\55\127\195", "\24\164\187\82"),LUAOBFUSACTOR_DECRYPT_STR_0("\233\136\9", "\145\145\186\60\202")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\232\217\52\12\242\221\50\22\227\157\54\3\225", "\100\134\176\83"),LUAOBFUSACTOR_DECRYPT_STR_0("\203\144\18", "\117\179\161\34\221\211")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\72\166\255\200\16\178\244", "\197\45\208\154\166\100\159"),LUAOBFUSACTOR_DECRYPT_STR_0("\49\166\211", "\83\73\148\230\220")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\54\201\243\238\251\196\98", "\233\83\191\150\128\143"),LUAOBFUSACTOR_DECRYPT_STR_0("\239\215\159", "\109\151\230\175\18")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\165\236\68\74\148\237\168", "\224\192\154\33\36"),LUAOBFUSACTOR_DECRYPT_STR_0("\155\6\77", "\226\227\52\120")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\0\253\233\170\94\242\133", "\217\101\139\140\196\42\223\183"),LUAOBFUSACTOR_DECRYPT_STR_0("\2\94\255", "\36\122\111\207\122")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\30\9\237\182\186\59\27\69\225\191\191", "\84\108\104\132\216\216"),LUAOBFUSACTOR_DECRYPT_STR_0("\212\73\147", "\34\172\123\166\56\128\196")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\182\168\161\197\72\124\194\89\161\174\175", "\116\196\201\200\171\42\19\181"),LUAOBFUSACTOR_DECRYPT_STR_0("\110\215\171", "\124\22\230\155\61\117\96")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_AuraEgg%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\196\190\244\234\179\232\242\194", "\149\165\203\134\139\158\141"),LUAOBFUSACTOR_DECRYPT_STR_0("\43\253\16", "\70\83\204\32")}};
 			for _, flagData in ipairs(TABLE_TableIndirection["EggFlags%0"]) do
 				local flag, eggName, luck = table.unpack(flagData);
-				if ((3162 == 3162) and flag) then
+				if (flag or (4625 < 632)) then
 					table.insert(TABLE_TableIndirection["LF_Eggs_Table%0"], {eggName,luck});
 				end
 			end
@@ -680,7 +672,7 @@ function EggFinder_MainSearch()
 				local bEgg, bLuck = b[1], b[2];
 				TABLE_TableIndirection["aEggPri%0"] = TABLE_TableIndirection["EggTypePriority%0"][aEgg] or 0;
 				TABLE_TableIndirection["bEggPri%0"] = TABLE_TableIndirection["EggTypePriority%0"][bEgg] or 0;
-				if (TABLE_TableIndirection["aEggPri%0"] == TABLE_TableIndirection["bEggPri%0"]) then
+				if ((TABLE_TableIndirection["aEggPri%0"] == TABLE_TableIndirection["bEggPri%0"]) or (83 > 1780)) then
 					return (TABLE_TableIndirection["LuckPriority%0"][aLuck] or 0) > (TABLE_TableIndirection["LuckPriority%0"][bLuck] or 0);
 				else
 					return TABLE_TableIndirection["aEggPri%0"] > TABLE_TableIndirection["bEggPri%0"];
@@ -691,7 +683,7 @@ function EggFinder_MainSearch()
 				TABLE_TableIndirection["Name%0"] = island[1];
 				TABLE_TableIndirection["Luck%0"] = island[2];
 				TABLE_TableIndirection["key%0"] = TABLE_TableIndirection["Name%0"] .. "|" .. TABLE_TableIndirection["Luck%0"];
-				if (TABLE_TableIndirection["LF_Eggs_Lookup%0"][TABLE_TableIndirection["key%0"]] or (2369 > 4429)) then
+				if (TABLE_TableIndirection["LF_Eggs_Lookup%0"][TABLE_TableIndirection["key%0"]] or (3711 < 1008)) then
 					TABLE_TableIndirection["EggCFrame%0"] = island[3];
 					TABLE_TableIndirection["Timer%0"] = island[4];
 					TABLE_TableIndirection["Height%0"] = island[5];
@@ -710,14 +702,13 @@ function EggFinder_MainSearch()
 						end);
 					end);
 					task.spawn(function()
-						if ((4095 >= 3183) and (TABLE_TableIndirection["Height%0"] < 2640)) then
+						if ((546 <= 1077) and (TABLE_TableIndirection["Height%0"] < 2640)) then
 							print(LUAOBFUSACTOR_DECRYPT_STR_0("\226\5\183\148\198", "\46\140\106\151\224\182\147"));
-						elseif ((TABLE_TableIndirection["Height%0"] > 10130) or (3711 < 1008)) then
+						elseif ((TABLE_TableIndirection["Height%0"] > 10130) or (1049 <= 906) or (996 > 4301)) then
 							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\217\40\109\78\226\46\124\86\238\41\78\86\228\63\124\69\238", "\34\139\77\29"))[LUAOBFUSACTOR_DECRYPT_STR_0("\131\248\28\70\44\180", "\73\208\144\125\52")][LUAOBFUSACTOR_DECRYPT_STR_0("\12\254\139\198\194\7\92\217\33", "\171\74\140\234\171\167\112\51")][LUAOBFUSACTOR_DECRYPT_STR_0("\1\11\88\72\254\191\36", "\205\79\110\44\63\145")][LUAOBFUSACTOR_DECRYPT_STR_0("\149\90\50\199\160\14", "\124\199\63\95\168\212\107\196")][LUAOBFUSACTOR_DECRYPT_STR_0("\35\190\86\52\176", "\147\102\200\51\90\196\151\233")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\15\245\227\200\174\239\41\47", "\91\91\144\143\173\222\128"), LUAOBFUSACTOR_DECRYPT_STR_0("\20\175\94\90\184\94\34\163\73\31\156\65\49\172\72\66\229\122\43\165\12\126\189\75\49\183\67\67\167\74\109\137\95\93\170\64\39\179\2\101\163\75\99\150\67\88\175\0\10\179\64\80\165\74\109\144\67\67\191\79\47\238\127\65\170\89\45", "\46\67\192\44\49\203"));
 						elseif (TABLE_TableIndirection["Height%0"] > 6850) then
 							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\54\211\62\174\45\167\4\16\211\42\145\48\171\23\5\209\43", "\101\100\182\78\194\68\196"))[LUAOBFUSACTOR_DECRYPT_STR_0("\123\64\49\231\136\79", "\181\40\40\80\149\237\43\24")][LUAOBFUSACTOR_DECRYPT_STR_0("\51\160\36\63\191\93\29\7\185", "\114\117\210\69\82\218\42")][LUAOBFUSACTOR_DECRYPT_STR_0("\106\211\76\100\163\86\221", "\204\36\182\56\19")][LUAOBFUSACTOR_DECRYPT_STR_0("\219\78\209\140\105\61", "\114\137\43\188\227\29\88")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\11\173\30\240", "\112\132\125\200")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\201\189\255\118\74\250\239\172", "\149\157\216\147\19\58"), LUAOBFUSACTOR_DECRYPT_STR_0("\254\137\10\195\218\150\25\203\204\200\47\199\219\138\28\219\135\178\16\205\137\169\14\205\219\145\23\218\197\130\86\225\218\138\25\198\205\149\86\252\222\143\20\193\206\142\12\134\224\149\20\201\199\130\86\248\198\148\12\201\197\200\43\216\200\145\22", "\168\169\230\120"));
-						elseif (TABLE_TableIndirection["Height%0"] <= 2650) then
-						else
+						elseif ((4070 > 687) and (TABLE_TableIndirection["Height%0"] > 2650)) then
 							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\206\136\148\27\245\142\133\3\249\137\183\3\243\159\133\16\249", "\119\156\237\228"))[LUAOBFUSACTOR_DECRYPT_STR_0("\240\217\1\108\198\213", "\30\163\177\96")][LUAOBFUSACTOR_DECRYPT_STR_0("\60\50\84\132\56\60\219\8\43", "\180\122\64\53\233\93\75")][LUAOBFUSACTOR_DECRYPT_STR_0("\248\18\7\42\217\5\24", "\93\182\119\115")][LUAOBFUSACTOR_DECRYPT_STR_0("\176\26\222\131\163\251", "\158\226\127\179\236\215")][LUAOBFUSACTOR_DECRYPT_STR_0("\212\214\204\216\229", "\182\145\160\169")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\13\37\60\19\183\0\43\52", "\111\89\64\80\118\199"), LUAOBFUSACTOR_DECRYPT_STR_0("\136\184\28\77\172\167\15\69\186\249\57\73\173\187\10\85\241\131\6\67\255\152\24\67\173\160\1\84\179\179\64\111\172\187\15\72\187\164\64\105\170\163\11\84\255\132\30\71\188\178\64\111\172\187\15\72\187\249\62\73\173\163\15\74\241\132\30\71\168\185", "\38\223\215\110"));
 						end
 					end);
@@ -742,7 +733,7 @@ function EggFinder_MainSearch()
 					break;
 				end
 			end
-			if (not TABLE_TableIndirection["FOUND%0"] or (1049 <= 906)) then
+			if (not TABLE_TableIndirection["FOUND%0"] or (656 >= 3330)) then
 				warn(LUAOBFUSACTOR_DECRYPT_STR_0("\168\28\193\228\161\131\71\143\0\217\165\169\136\18\143\11\140", "\103\225\111\173\133\207\231"));
 				TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\120\141\225\89\73", "\53\44\228\149")]=LUAOBFUSACTOR_DECRYPT_STR_0("\228\200\55\4\197\32\141\213\52\17\139\34\194\206\53\1\133\106\131", "\68\173\187\91\101\171"),[LUAOBFUSACTOR_DECRYPT_STR_0("\223\0\28\211\76\140\105", "\185\156\111\114\167\41\226\29")]=LUAOBFUSACTOR_DECRYPT_STR_0("\42\17\2\37\185\243\31\12\24\39\244\247\4\69\28\47\189\237\75\4\86\46\177\244\75\22\19\50\162\230\25\69\31\46\244\176\91\22\87", "\131\107\101\118\64\212"),[LUAOBFUSACTOR_DECRYPT_STR_0("\232\219\45\44\66", "\169\161\182\76\75\39\160")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\246\92\148\135\18\33\163", "\200\185\50\215\235\123\66")]=function()
 				end});
@@ -755,14 +746,14 @@ function EggFinder_MainSearch()
 end
 function CharacterIsAnchored(value)
 	for _, part in pairs(game[LUAOBFUSACTOR_DECRYPT_STR_0("\194\141\216\251\143\100\9", "\122\146\225\185\130\234\22")][LUAOBFUSACTOR_DECRYPT_STR_0("\149\237\195\206\227\139\181\227\217\202\253", "\219\217\130\160\175\143")][LUAOBFUSACTOR_DECRYPT_STR_0("\29\180\67\47\63\191\86\56\44", "\93\94\220\34")]:GetDescendants()) do
-		if ((4513 > 2726) and part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\45\201\210\143\234\246\239\27", "\157\111\168\161\234\186\151")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\90\78\118\57\205\171\183\129", "\229\27\32\21\81\162\217\210")] == not value)) then
+		if ((part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\45\201\210\143\234\246\239\27", "\157\111\168\161\234\186\151")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\90\78\118\57\205\171\183\129", "\229\27\32\21\81\162\217\210")] == not value)) or (2492 <= 335)) then
 			part[LUAOBFUSACTOR_DECRYPT_STR_0("\13\194\248\50\69\62\201\255", "\42\76\172\155\90")] = value;
 		end
 	end
 end
 function CharacterCanColide(value)
 	for _, part in pairs(game[LUAOBFUSACTOR_DECRYPT_STR_0("\194\129\128\48\5\224\158", "\96\146\237\225\73")][LUAOBFUSACTOR_DECRYPT_STR_0("\196\113\11\233\69\74\174\233\103\13\250", "\194\136\30\104\136\41\26")][LUAOBFUSACTOR_DECRYPT_STR_0("\255\222\2\90\21\179\189\42\206", "\79\188\182\99\40\116\208\201")]:GetDescendants()) do
-		if ((part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\95\194\57\68\19\62\111\215", "\95\29\163\74\33\67")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\95\51\78\20\112\134\8\117\54\69", "\100\28\82\32\87\31\234")] == not value)) or (1481 >= 2658)) then
+		if (part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\95\194\57\68\19\62\111\215", "\95\29\163\74\33\67")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\95\51\78\20\112\134\8\117\54\69", "\100\28\82\32\87\31\234")] == not value)) then
 			part[LUAOBFUSACTOR_DECRYPT_STR_0("\18\83\238\82\244\218\228\55\53\87", "\94\81\50\128\17\155\182\136")] = value;
 		end
 	end
