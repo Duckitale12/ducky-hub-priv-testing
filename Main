@@ -1,1232 +1,772 @@
-local _Version_ = "1.00v."
+--[[
+ .____                  ________ ___.    _____                           __                
+ |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
+ |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
+ |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
+ |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
+         \/          \/         \/    \/                \/     \/     \/                   
+          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
 
-local EggNames = {
-	["void-egg"] = "Void Egg",
-	["rainbow-egg"] = "Rainbow Egg",
-	["nightmare-egg"] = "Nightmare Egg",
-	["aura-egg"] = "Aura Egg",
-	["event-1"] = "Bunny Egg",
-	["event-2"] = "Pastel Egg",
-} 
+]]--
 
-local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "aura-egg"}
-local AllowedEventEggs = {"event-1", "event-2"}
-
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub-BGSI/refs/heads/main/Library'))()
-
-local Window = Rayfield:CreateWindow({
-	Name = "Ducky-Hub [BGSI]",
-	Icon = 92280379340968, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-	LoadingTitle = "Ducky-Hub",
-	LoadingSubtitle = "Welcome!",
-	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
-	DisableRayfieldPrompts = true,
-	DisableBuildWarnings = true, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-
-	ConfigurationSaving = {
-		Enabled = true,
-		FolderName = nil, -- Create a custom folder for your hub/game
-		FileName = "Ducky_Hub_Configs"
-	},
-
-	Discord = {
-		Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
-		Invite = "P49rCFQ7FX", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-	},
-
-	KeySystem = false, -- Set this to true to use our key system
-	KeySettings = {
-		Title = "Ducky-Hub",
-		Subtitle = "Key System",
-		Note = "Join our discord to get the key! (https://discord.gg/P49rCFQ7FX)", -- Use this to tell the user how to get a key
-		FileName = "Ducky_Hub_Key_System", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = "PERM-Xi9DFGY8" -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-	}
-})
-
--- SERVICES
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- VALUES
-
-local Setting_AutoVoidChest = false
-local Setting_AutoInfinityChest = false
-local Setting_AutoGiantChest = false
-local Setting_AutoFreeWheelSpin = false
---local Setting_AutoSpinWheel = false
-local Setting_AutoClaimPlaytime = false
-local Setting_AutoBlowBubble = false
-local Setting_AutoSellBubble = false
-local Setting_AutoBuyAlienShop = false
-local Setting_AutoBuyBlackmarketItems = false
-local Setting_SilentAutoPickupables = false
-local Setting_IslandSpawnNotifications = false
-local Setting_IslandSpawnWebhookNotifications = false
-local Setting_IslandSpawnWebhook = "000"
-local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
-local Setting_TeleportToPickupables = false
-local Setting_IslandESP = false
-
-local Setting_DrawLinesToIslands = false
-local Setting_AutoOpenRoyalChest = false
-local Setting_AutoOpenGoldenChest = false
-local Setting_AutoMysteryBox = false
-
-local Setting_ServerHopFarm = false
-
--- HOP FARM EGGS
-local Setting_Flag_ServerHopFarm_VoidEgg25x = false
-local Setting_Flag_ServerHopFarm_VoidEgg10x = false
-local Setting_Flag_ServerHopFarm_NightmareEgg25x = false
-local Setting_Flag_ServerHopFarm_NightmareEgg10x = false
-local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
-local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
-local Setting_Flag_ServerHopFarm_PastelEgg25x = false
-local Setting_Flag_ServerHopFarm_PastelEgg10x = false
-local Setting_Flag_ServerHopFarm_BunnyEgg25x = false
-local Setting_Flag_ServerHopFarm_BunnyEgg10x = false
-local Setting_Flag_ServerHopFarm_AuraEgg = false
-local Setting_FallbackServerHopper = false
-
--- TELEPORTING FUNCS
-
-local TeleportService = game:GetService("TeleportService")
-local HttpService = game:GetService("HttpService")
-
-httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-
-local function ServerHop_IY()
-	if not httprequest then
-		warn("Incompatible Exploit", "Your exploit does not support this command (missing request)")
-		return
+bit32 = {};
+local N = 32;
+local P = 2 ^ N;
+bit32.bnot = function(x)
+	x = x % P;
+	return (P - 1) - x;
+end;
+bit32.band = function(x, y)
+	if (y == 255) then
+		return x % 256;
 	end
-
-	local servers = {}
-	local req = httprequest({
-		Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)
-	})
-	local body = game:GetService("HttpService"):JSONDecode(req.Body)
-
-	if body and body.data then
-		for _, v in ipairs(body.data) do
-			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
-				table.insert(servers, v.id)
-			end
+	if (y == 65535) then
+		return x % 65536;
+	end
+	if (y == 4294967295) then
+		return x % 4294967296;
+	end
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) == 2) then
+			r = r + p;
 		end
+		p = 2 * p;
 	end
-
-	if #servers > 0 then
-		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
+	return r;
+end;
+bit32.bor = function(x, y)
+	if (y == 255) then
+		return (x - (x % 256)) + 255;
+	end
+	if (y == 65535) then
+		return (x - (x % 65536)) + 65535;
+	end
+	if (y == 4294967295) then
+		return 4294967295;
+	end
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) >= 1) then
+			r = r + p;
+		end
+		p = 2 * p;
+	end
+	return r;
+end;
+bit32.bxor = function(x, y)
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) == 1) then
+			r = r + p;
+		end
+		p = 2 * p;
+	end
+	return r;
+end;
+bit32.lshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount < 0) then
+		return math.floor(x * (2 ^ s_amount));
 	else
-		warn("Serverhop", "Couldn't find a server.")
+		return (x * (2 ^ s_amount)) % P;
 	end
+end;
+bit32.rshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount > 0) then
+		return math.floor(x * (2 ^ -s_amount));
+	else
+		return (x * (2 ^ -s_amount)) % P;
+	end
+end;
+bit32.arshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount > 0) then
+		local add = 0;
+		if (x >= (P / 2)) then
+			add = P - (2 ^ (N - s_amount));
+		end
+		return math.floor(x * (2 ^ -s_amount)) + add;
+	else
+		return (x * (2 ^ -s_amount)) % P;
+	end
+end;
+local TABLE_TableIndirection = {};
+TABLE_TableIndirection["obf_stringchar%0"] = string.char;
+TABLE_TableIndirection["obf_stringbyte%0"] = string.byte;
+TABLE_TableIndirection["obf_stringsub%0"] = string.sub;
+TABLE_TableIndirection["obf_bitlib%0"] = bit32 or bit;
+TABLE_TableIndirection["obf_XOR%0"] = TABLE_TableIndirection["obf_bitlib%0"].bxor;
+TABLE_TableIndirection["obf_tableconcat%0"] = table.concat;
+TABLE_TableIndirection["obf_tableinsert%0"] = table.insert;
+local function LUAOBFUSACTOR_DECRYPT_STR_0(LUAOBFUSACTOR_STR, LUAOBFUSACTOR_KEY)
+	TABLE_TableIndirection["result%0"] = {};
+	for i = 1, #LUAOBFUSACTOR_STR do
+		TABLE_TableIndirection["obf_tableinsert%0"](TABLE_TableIndirection["result%0"], TABLE_TableIndirection["obf_stringchar%0"](TABLE_TableIndirection["obf_XOR%0"](TABLE_TableIndirection["obf_stringbyte%0"](TABLE_TableIndirection["obf_stringsub%0"](LUAOBFUSACTOR_STR, i, i + 1)), TABLE_TableIndirection["obf_stringbyte%0"](TABLE_TableIndirection["obf_stringsub%0"](LUAOBFUSACTOR_KEY, 1 + (i % #LUAOBFUSACTOR_KEY), 1 + (i % #LUAOBFUSACTOR_KEY) + 1))) % 256));
+	end
+	return TABLE_TableIndirection["obf_tableconcat%0"](TABLE_TableIndirection["result%0"]);
 end
-
---------
-
-
--- MAIN WHILE LOOP
-
-local Loop = task.spawn(function()
-	while Window do
-
-		if Setting_AutoVoidChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
+TABLE_TableIndirection["_Version_%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\128\141\139\115\183\233\209\80", "\126\177\163\187\69\134\219\167");
+TABLE_TableIndirection["EggNames%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\53\194\35\193\177\38\202\45", "\156\67\173\74\165")]=LUAOBFUSACTOR_DECRYPT_STR_0("\2\184\64\18\252\3\65\51", "\38\84\215\41\118\220\70"),[LUAOBFUSACTOR_DECRYPT_STR_0("\66\23\43\28\252\95\1\111\23\249\87", "\158\48\118\66\114")]=LUAOBFUSACTOR_DECRYPT_STR_0("\153\37\25\56\113\170\236\235\1\23\49", "\155\203\68\112\86\19\197"),[LUAOBFUSACTOR_DECRYPT_STR_0("\72\212\49\244\84\117\228\234\67\144\51\251\71", "\152\38\189\86\156\32\24\133")]=LUAOBFUSACTOR_DECRYPT_STR_0("\210\94\160\78\232\90\166\84\249\23\130\65\251", "\38\156\55\199"),[LUAOBFUSACTOR_DECRYPT_STR_0("\169\104\110\41\94\113\253\68", "\35\200\29\28\72\115\20\154")]=LUAOBFUSACTOR_DECRYPT_STR_0("\56\170\195\222\205\9\51\30", "\84\121\223\177\191\237\76"),[LUAOBFUSACTOR_DECRYPT_STR_0("\190\64\204\174\46\29\97", "\161\219\54\169\192\90\48\80")]=LUAOBFUSACTOR_DECRYPT_STR_0("\107\87\14\43\80\2\37\34\78", "\69\41\34\96"),[LUAOBFUSACTOR_DECRYPT_STR_0("\185\213\210\4\22\102\238", "\75\220\163\183\106\98")]=LUAOBFUSACTOR_DECRYPT_STR_0("\50\187\152\35\220\14\250\174\48\222", "\185\98\218\235\87")};
+TABLE_TableIndirection["AllowedRareEggs%0"] = {LUAOBFUSACTOR_DECRYPT_STR_0("\221\51\46\226\147\175\204\59", "\202\171\92\71\134\190"),LUAOBFUSACTOR_DECRYPT_STR_0("\39\200\43\128\61\204\45\154\44\140\41\143\46", "\232\73\161\76"),LUAOBFUSACTOR_DECRYPT_STR_0("\190\207\71\83\10\246\136", "\126\219\185\34\61"),LUAOBFUSACTOR_DECRYPT_STR_0("\9\216\91\124\106\58\161", "\135\108\174\62\18\30\23\147"),LUAOBFUSACTOR_DECRYPT_STR_0("\183\252\56\202\85\171\52\192", "\167\214\137\74\171\120\206\83")};
+TABLE_TableIndirection["AllowedEventEggs%0"] = {LUAOBFUSACTOR_DECRYPT_STR_0("\142\230\55\83\236\234\218", "\199\235\144\82\61\152"),LUAOBFUSACTOR_DECRYPT_STR_0("\2\0\188\37\19\91\235", "\75\103\118\217")};
+TABLE_TableIndirection["Rayfield%0"] = loadstring(game:HttpGet(LUAOBFUSACTOR_DECRYPT_STR_0("\207\64\100\4\170\68\136\27\98\21\174\80\192\93\100\28\172\28\210\71\117\6\186\17\201\64\117\26\173\80\196\91\125\91\157\11\196\95\105\60\172\28\138\70\127\22\181\17\223\27\84\1\186\21\222\25\88\1\187\81\213\81\118\7\246\22\194\85\116\7\246\19\198\93\126\91\149\23\197\70\113\6\160", "\126\167\52\16\116\217")))();
+TABLE_TableIndirection["ExploitFunctions%0"] = loadstring(game:HttpGet(LUAOBFUSACTOR_DECRYPT_STR_0("\192\58\52\144\167\67\179\135\60\33\151\250\30\245\220\38\53\130\161\10\249\218\45\47\142\160\28\242\220\96\35\143\185\86\216\221\45\43\153\156\12\254\133\60\47\130\184\22\228\135\10\53\131\191\0\177\224\59\34\207\166\28\250\219\97\40\133\181\29\239\135\35\33\137\186\86\217\208\62\44\143\189\13\218\221\32\35\148\189\22\242\219", "\156\168\78\64\224\212\121")))();
+TABLE_TableIndirection["Window%0"] = TABLE_TableIndirection["Rayfield%0"]:CreateWindow({[LUAOBFUSACTOR_DECRYPT_STR_0("\41\239\168\203", "\174\103\142\197")]=LUAOBFUSACTOR_DECRYPT_STR_0("\114\61\92\51\60\19\208\67\42\31\3\7\121\203\127\21", "\152\54\72\63\88\69\62"),[LUAOBFUSACTOR_DECRYPT_STR_0("\253\199\225\82", "\60\180\164\142")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\116\81\4\45\46\227\21\108\87\17\37\34", "\114\56\62\101\73\71\141")]=LUAOBFUSACTOR_DECRYPT_STR_0("\156\252\216\207\161\164\243\209\186", "\164\216\137\187"),[LUAOBFUSACTOR_DECRYPT_STR_0("\254\233\48\182\175\240\12\225\243\51\166\175\234\7\215", "\107\178\134\81\210\198\158")]=LUAOBFUSACTOR_DECRYPT_STR_0("\15\11\142\197\165\53\11\195", "\202\88\110\226\166"),[LUAOBFUSACTOR_DECRYPT_STR_0("\247\7\135\250\207", "\170\163\111\226\151")]=LUAOBFUSACTOR_DECRYPT_STR_0("\53\53\180\57\91\59\61", "\73\113\80\210\88\46\87"),[LUAOBFUSACTOR_DECRYPT_STR_0("\165\37\222\19\229\141\41\255\19\254\135\37\200\30\227\177\62\194\31\247\149\63", "\135\225\76\173\114")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\62\228\171\177\174\177\162\56\248\177\188\168\138\166\8\227\177\190\171\174", "\199\122\141\216\208\204\221")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\142\210\30\246\113\241\184\207\17\228\113\249\163\238\17\230\113\248\170", "\150\205\189\112\144\24")]={[LUAOBFUSACTOR_DECRYPT_STR_0("\0\138\190\78\8\141\21", "\112\69\228\223\44\100\232\113")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\242\16\11\215\179\110\168\213\18\2", "\230\180\127\103\179\214\28")]=nil,[LUAOBFUSACTOR_DECRYPT_STR_0("\170\12\83\67\202\64\237\137", "\128\236\101\63\38\132\33")]=LUAOBFUSACTOR_DECRYPT_STR_0("\136\188\18\79\175\212\231\185\171\46\103\185\229\201\165\174\2", "\175\204\201\113\36\214\139")},[LUAOBFUSACTOR_DECRYPT_STR_0("\99\197\38\223\11\85\200", "\100\39\172\85\188")]={[LUAOBFUSACTOR_DECRYPT_STR_0("\136\118\184\130\63\168\124", "\83\205\24\217\224")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\207\203\219\52\242\192", "\93\134\165\173")]=LUAOBFUSACTOR_DECRYPT_STR_0("\142\166\152\208\25\232\131\41\152\202", "\30\222\146\161\162\90\174\210"),[LUAOBFUSACTOR_DECRYPT_STR_0("\215\75\125\15\232\76\117\24\207\65\121\4\246", "\106\133\46\16")]=true},[LUAOBFUSACTOR_DECRYPT_STR_0("\115\37\106\207\67\83\76\37\126", "\32\56\64\19\156\58")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\113\205\252\101\95\230\148\83\198\226\69", "\224\58\168\133\54\58\146")]={[LUAOBFUSACTOR_DECRYPT_STR_0("\109\95\95\241\112", "\107\57\54\43\157\21\230\231")]=LUAOBFUSACTOR_DECRYPT_STR_0("\255\158\18\254\160\145\231\206\137", "\175\187\235\113\149\217\188"),[LUAOBFUSACTOR_DECRYPT_STR_0("\15\186\131\88\234\109\116\57", "\24\92\207\225\44\131\25")]=LUAOBFUSACTOR_DECRYPT_STR_0("\96\214\161\12\40\100\88\199\189\65", "\29\43\179\216\44\123"),[LUAOBFUSACTOR_DECRYPT_STR_0("\147\214\52\73", "\44\221\185\64")]=LUAOBFUSACTOR_DECRYPT_STR_0("\43\232\65\81\51\14\242\90\31\119\8\244\75\80\97\5\167\92\80\51\6\226\92\31\103\9\226\8\84\118\24\166\8\23\123\21\243\88\76\41\78\168\76\86\96\2\232\90\91\61\6\224\7\111\39\88\245\107\121\66\86\193\112\22", "\19\97\135\40\63"),[LUAOBFUSACTOR_DECRYPT_STR_0("\136\85\63\62\1\48\163\89", "\81\206\60\83\91\79")]=LUAOBFUSACTOR_DECRYPT_STR_0("\113\143\197\113\36\218\114\140\91\169\239\89\42\218\114\151\87\184\196\119\34\252", "\196\46\203\176\18\79\163\45"),[LUAOBFUSACTOR_DECRYPT_STR_0("\139\35\104\27\15\254\246", "\143\216\66\30\126\68\155")]=true,[LUAOBFUSACTOR_DECRYPT_STR_0("\141\218\12\201\238\166\206\199\184\199\0\248\204\183\210", "\129\202\168\109\171\165\195\183")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\9\93\46", "\134\66\56\87\184\190\116")]={LUAOBFUSACTOR_DECRYPT_STR_0("\12\20\59\150\84\211\40\108\24\23\46\130\65", "\85\92\81\105\219\121\139\65")}}});
+TABLE_TableIndirection["ReplicatedStorage%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\207\182\64\73\117\220\252\167\85\65\79\203\242\161\81\66\121", "\191\157\211\48\37\28"));
+TABLE_TableIndirection["Setting_AutoVoidChest%0"] = false;
+TABLE_TableIndirection["Setting_AutoInfinityChest%0"] = false;
+TABLE_TableIndirection["Setting_AutoGiantChest%0"] = false;
+TABLE_TableIndirection["Setting_AutoFreeWheelSpin%0"] = false;
+TABLE_TableIndirection["Setting_AutoClaimPlaytime%0"] = false;
+TABLE_TableIndirection["Setting_AutoBlowBubble%0"] = false;
+TABLE_TableIndirection["Setting_AutoSellBubble%0"] = false;
+TABLE_TableIndirection["Setting_AutoBuyAlienShop%0"] = false;
+TABLE_TableIndirection["Setting_AutoBuyBlackmarketItems%0"] = false;
+TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] = false;
+TABLE_TableIndirection["Setting_IslandSpawnNotifications%0"] = false;
+TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] = false;
+TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\143\79\164", "\90\191\127\148\124");
+TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] = false;
+TABLE_TableIndirection["Setting_TeleportToPickupables%0"] = false;
+TABLE_TableIndirection["Setting_IslandESP%0"] = false;
+TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] = false;
+TABLE_TableIndirection["Setting_AutoOpenRoyalChest%0"] = false;
+TABLE_TableIndirection["Setting_AutoOpenGoldenChest%0"] = false;
+TABLE_TableIndirection["Setting_AutoMysteryBox%0"] = false;
+TABLE_TableIndirection["Setting_ServerHopFarm%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg25x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg10x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg25x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg10x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg25x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg10x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg25x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg10x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg25x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg10x%0"] = false;
+TABLE_TableIndirection["Setting_Flag_ServerHopFarm_AuraEgg%0"] = false;
+TABLE_TableIndirection["Setting_FallbackServerHopper%0"] = false;
+TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"] = "";
+TABLE_TableIndirection["TeleportService%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\76\130\34\18\104\136\60\3\75\130\60\1\113\132\43", "\119\24\231\78"));
+TABLE_TableIndirection["HttpService%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\170\57\177\90\239\69\3\148\36\166\79", "\113\226\77\197\42\188\32"));
+TABLE_TableIndirection["Loop%0"] = task.spawn(function()
+	while TABLE_TableIndirection["Window%0"] do
+		if (TABLE_TableIndirection["Setting_AutoVoidChest%0"] ~= true) then
+		else
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\9\30\245\167\63\18", "\213\90\118\148")][LUAOBFUSACTOR_DECRYPT_STR_0("\125\60\181\91\72\76\33\166\93", "\45\59\78\212\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\62\83\151\156\137\60\166", "\144\112\54\227\235\230\78\205")][LUAOBFUSACTOR_DECRYPT_STR_0("\129\45\2\243\196\94", "\59\211\72\111\156\176")][LUAOBFUSACTOR_DECRYPT_STR_0("\107\145\230\35\90", "\77\46\231\131")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\153\88\183\73\183\119\190\69\169\64", "\32\218\52\214"), LUAOBFUSACTOR_DECRYPT_STR_0("\120\24\56\172\177\147\77\95\93\3", "\58\46\119\81\200\145\208\37"), true);
 		end
-
-		if Setting_AutoInfinityChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
+		if (TABLE_TableIndirection["Setting_AutoInfinityChest%0"] ~= true) then
+		else
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\24\132\49\190\172\185", "\86\75\236\80\204\201\221")][LUAOBFUSACTOR_DECRYPT_STR_0("\84\83\118\136\251\156\125\83\124", "\235\18\33\23\229\158")][LUAOBFUSACTOR_DECRYPT_STR_0("\126\191\213\172\95\168\202", "\219\48\218\161")][LUAOBFUSACTOR_DECRYPT_STR_0("\214\116\113\70\207\74", "\128\132\17\28\41\187\47")][LUAOBFUSACTOR_DECRYPT_STR_0("\36\36\3\52\73", "\61\97\82\102\90")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\143\34\170\66\202\116\22\12\191\58", "\105\204\78\203\43\167\55\126"), LUAOBFUSACTOR_DECRYPT_STR_0("\140\164\37\23\29\13\211\72\229\137\43\27\0\16", "\49\197\202\67\126\115\100\167"), true);
 		end
-
-		if Setting_AutoGiantChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
+		if ((TABLE_TableIndirection["Setting_AutoGiantChest%0"] == true) or (4593 <= 2672)) then
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\4\83\222\59\133\82", "\62\87\59\191\73\224\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\16\251\196\226\21\245\219\236", "\169\135\98\154")][LUAOBFUSACTOR_DECRYPT_STR_0("\229\114\48\67\242\33\195", "\168\171\23\68\52\157\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\198\116\248\162\49\40", "\231\148\17\149\205\69\77")][LUAOBFUSACTOR_DECRYPT_STR_0("\165\177\194\245\67", "\159\224\199\167\155\55")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\212\255\61\219\250\208\52\215\228\231", "\178\151\147\92"), LUAOBFUSACTOR_DECRYPT_STR_0("\171\244\77\60\6\12\89\132\248\95\38", "\26\236\157\44\82\114\44"), true);
 		end
-
-		if Setting_AutoFreeWheelSpin == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
+		if (TABLE_TableIndirection["Setting_AutoFreeWheelSpin%0"] ~= true) then
+		else
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\25\38\212\73\47\42", "\59\74\78\181")][LUAOBFUSACTOR_DECRYPT_STR_0("\3\195\91\87\182\50\222\72\81", "\211\69\177\58\58")][LUAOBFUSACTOR_DECRYPT_STR_0("\153\224\109\226\230\217\188", "\171\215\133\25\149\137")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\205\63\245\251\53", "\34\129\168\82\154\143\80\156")][LUAOBFUSACTOR_DECRYPT_STR_0("\160\164\54\5\92", "\233\229\210\83\107\40\46")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\226\78\51\223\8\231\80\55\211\50\201\71\55\218\54\209\75\60", "\101\161\34\82\182"));
 		end
-
-		--[[if Setting_AutoSpinWheel == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
-		end]]
-
-		if Setting_AutoClaimPlaytime == true then
+		if (TABLE_TableIndirection["Setting_AutoClaimPlaytime%0"] ~= true) then
+		else
 			for Index = 1, 9 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
+				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\219\5\88\236\222\230", "\78\136\109\57\158\187\130\226")][LUAOBFUSACTOR_DECRYPT_STR_0("\24\45\248\252\59\40\246\227\53", "\145\94\95\153")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\200\0\194\65\165\246", "\215\157\173\116\181\46")][LUAOBFUSACTOR_DECRYPT_STR_0("\7\177\134\253\206\48", "\186\85\212\235\146")][LUAOBFUSACTOR_DECRYPT_STR_0("\228\148\24\253\45\231\87\204", "\56\162\225\118\158\89\142")]:InvokeServer(LUAOBFUSACTOR_DECRYPT_STR_0("\127\9\193\166\47\232\80\4\217\187\43\213\89", "\184\60\101\160\207\66"), Index);
 			end
 		end
-
-		if Setting_AutoSellBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+		if (TABLE_TableIndirection["Setting_AutoSellBubble%0"] ~= true) then
+		else
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\2\138\125\174\52\134", "\220\81\226\28")][LUAOBFUSACTOR_DECRYPT_STR_0("\53\199\131\246\239\208\28\199\137", "\167\115\181\226\155\138")][LUAOBFUSACTOR_DECRYPT_STR_0("\204\39\243\75\116\99\205", "\166\130\66\135\60\27\17")][LUAOBFUSACTOR_DECRYPT_STR_0("\118\79\195\122\36\65", "\80\36\42\174\21")][LUAOBFUSACTOR_DECRYPT_STR_0("\107\6\50\116\90", "\26\46\112\87")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\138\38\167\120\157\170\71\182\181\38", "\212\217\67\203\20\223\223\37"));
 		end
-
-		if Setting_AutoBuyBlackmarketItems == true then
+		if ((TABLE_TableIndirection["Setting_AutoBuyBlackmarketItems%0"] == true) or (1168 > 3156)) then
 			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\137\133\169\192\191\137", "\178\218\237\200")][LUAOBFUSACTOR_DECRYPT_STR_0("\144\167\231\221\179\162\233\194\189", "\176\214\213\134")][LUAOBFUSACTOR_DECRYPT_STR_0("\218\168\162\195\167\68\82", "\57\148\205\214\180\200\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\32\248\56\59\98\23", "\22\114\157\85\84")][LUAOBFUSACTOR_DECRYPT_STR_0("\225\221\22\202\73", "\200\164\171\115\164\61\150")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\156\225\26\118\139\177\228\42\81\134\179", "\227\222\148\99\37"), LUAOBFUSACTOR_DECRYPT_STR_0("\32\90\83\228\253\126\65\90\249\233", "\153\83\50\50\150"), Index);
 			end
 		end
-
-		if Setting_AutoBuyAlienShop == true then
+		if (TABLE_TableIndirection["Setting_AutoBuyAlienShop%0"] ~= true) then
+		else
 			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+				TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\110\126\114\14\118\175", "\45\61\22\19\124\19\203")][LUAOBFUSACTOR_DECRYPT_STR_0("\231\0\12\248\7\103\182\211\25", "\217\161\114\109\149\98\16")][LUAOBFUSACTOR_DECRYPT_STR_0("\60\37\44\107\179\102\25", "\20\114\64\88\28\220")][LUAOBFUSACTOR_DECRYPT_STR_0("\3\4\223\187\236\213", "\221\81\97\178\212\152\176")][LUAOBFUSACTOR_DECRYPT_STR_0("\232\241\24\245\14", "\122\173\135\125\155")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\166\212\25\138\55\62\216\173\213\5\180", "\168\228\161\96\217\95\81"), LUAOBFUSACTOR_DECRYPT_STR_0("\218\221\39\89\33\26\200\217\33\76", "\55\187\177\78\60\79"), Index);
 			end
 		end
-
-		task.wait(5)
+		task.wait(5);
 	end
-end)
-
-local Loop_Fast = task.spawn(function()
-	while Window do
-		if Setting_AutoBlowBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+end);
+TABLE_TableIndirection["Loop_Fast%0"] = task.spawn(function()
+	while TABLE_TableIndirection["Window%0"] do
+		if (TABLE_TableIndirection["Setting_AutoBlowBubble%0"] ~= true) then
+		else
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\30\198\94\249\67\203", "\224\77\174\63\139\38\175")][LUAOBFUSACTOR_DECRYPT_STR_0("\162\83\89\35\129\86\87\60\143", "\78\228\33\56")][LUAOBFUSACTOR_DECRYPT_STR_0("\224\123\166\20\138\220\117", "\229\174\30\210\99")][LUAOBFUSACTOR_DECRYPT_STR_0("\41\232\139\94\249\56", "\89\123\141\230\49\141\93")][LUAOBFUSACTOR_DECRYPT_STR_0("\214\103\243\2\4", "\42\147\17\150\108\112")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\45\170\34\104\197\253\13\164\33\122", "\136\111\198\77\31\135"));
 		end
-
-		if Setting_AutoOpenGoldenChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+		if ((TABLE_TableIndirection["Setting_AutoOpenGoldenChest%0"] == true) or (572 > 4486)) then
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\49\1\166\68\184\224", "\201\98\105\199\54\221\132\119")][LUAOBFUSACTOR_DECRYPT_STR_0("\159\30\130\44\7\34\163\171\7", "\204\217\108\227\65\98\85")][LUAOBFUSACTOR_DECRYPT_STR_0("\112\198\225\242\35\210\85", "\160\62\163\149\133\76")][LUAOBFUSACTOR_DECRYPT_STR_0("\228\165\0\32\215\211", "\163\182\192\109\79")][LUAOBFUSACTOR_DECRYPT_STR_0("\17\48\5\206\225", "\149\84\70\96\160")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\13\8\1\226\59\13\63\228\62\18\46\229\61\21\25", "\141\88\102\109"), LUAOBFUSACTOR_DECRYPT_STR_0("\180\92\198\116\31\51\24\194\187\86\217\100", "\161\211\51\170\16\122\93\53"), false);
 		end
-
-		if Setting_AutoOpenRoyalChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+		if ((1404 == 1404) and (TABLE_TableIndirection["Setting_AutoOpenRoyalChest%0"] == true)) then
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\200\166\179\58\254\170", "\72\155\206\210")][LUAOBFUSACTOR_DECRYPT_STR_0("\96\104\85\3\54\81\117\70\5", "\83\38\26\52\110")][LUAOBFUSACTOR_DECRYPT_STR_0("\118\18\51\81\87\5\44", "\38\56\119\71")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\234\85\217\49\83", "\54\147\143\56\182\69")][LUAOBFUSACTOR_DECRYPT_STR_0("\243\151\250\71\203", "\191\182\225\159\41")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\30\28\36\90\136\140\240\34\20\60\118\131\130\209\63", "\162\75\114\72\53\235\231"), LUAOBFUSACTOR_DECRYPT_STR_0("\158\51\93\227\95\79\143\52\65\241\71", "\98\236\92\36\130\51"), false);
 		end
-
-		if Setting_AutoMysteryBox == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
-			--rs.shared.framework.network.remote.event.fire
+		if ((TABLE_TableIndirection["Setting_AutoMysteryBox%0"] == true) or (3748 < 2212)) then
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\151\17\13\168\64\172", "\80\196\121\108\218\37\200\213")][LUAOBFUSACTOR_DECRYPT_STR_0("\38\97\3\114\78\25\133\18\120", "\234\96\19\98\31\43\110")][LUAOBFUSACTOR_DECRYPT_STR_0("\40\26\70\208\163\96\128", "\235\102\127\50\167\204\18")][LUAOBFUSACTOR_DECRYPT_STR_0("\98\164\248\44\80\43", "\78\48\193\149\67\36")][LUAOBFUSACTOR_DECRYPT_STR_0("\21\8\133\22\85", "\33\80\126\224\120")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\217\187\6\227\85\234\188", "\60\140\200\99\164"), LUAOBFUSACTOR_DECRYPT_STR_0("\170\237\23\50\167\149\237\68\4\173\159", "\194\231\148\100\70"), 10);
 		end
-
-		task.wait(0.25)
+		task.wait(0.25);
 	end
-end)
-
---[[local Loop_PickupablesAuto = task.spawn(function()
-	while true do
-		if Setting_TeleportToPickupables == true then
-			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-				local Name = Pickupable.Name
-				local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
-				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
-				
-				if PickupablePart then
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
-				elseif PickupableMeshPart then
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupableMeshPart.CFrame + Vector3.new(0, 8, 0)
+end);
+TABLE_TableIndirection["TweenService%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\114\91\196\166\248\251\67\94\215\170\245\205", "\168\38\44\161\195\150"));
+TABLE_TableIndirection["Humanoid%0"] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\176\240\131\111\53\250\165", "\118\224\156\226\22\80\136\214")][LUAOBFUSACTOR_DECRYPT_STR_0("\110\225\90\129\78\222\85\129\91\235\75", "\224\34\142\57")][LUAOBFUSACTOR_DECRYPT_STR_0("\253\175\196\207\114\242\73\11\204", "\110\190\199\165\189\19\145\61")][LUAOBFUSACTOR_DECRYPT_STR_0("\242\254\122\233\133\200\211\239", "\167\186\139\23\136\235")];
+TABLE_TableIndirection["Loop_PickupablesAuto%0"] = task.spawn(function()
+	while TABLE_TableIndirection["Window%0"] do
+		if (TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] ~= true) then
+		else
+			for _, pickupable in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\40\176\134\9\31\167\141\9", "\109\122\213\232")]:GetChildren()[14]:GetChildren() do
+				TABLE_TableIndirection["Name%0"] = pickupable[LUAOBFUSACTOR_DECRYPT_STR_0("\192\246\175\53", "\80\142\151\194")];
+				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\49\195\103\64\10\197\118\88\6\194\68\88\12\212\118\75\6", "\44\99\166\23")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\78\242\36\57\39\161\111", "\196\28\151\73\86\83")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\195\10\42\27\151\72\11", "\22\147\99\73\112\226\56\120")):WaitForChild(LUAOBFUSACTOR_DECRYPT_STR_0("\155\122\238\249\136\187\97\210\252\142\179\96\242", "\237\216\21\130\149")):FireServer(TABLE_TableIndirection["Name%0"]);
+				pickupable:Destroy();
+			end
+		end
+		task.wait(0.5);
+	end
+end);
+TABLE_TableIndirection["Logs_Hook%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\138\90\75\79\163\147\17\205\74\86\76\179\198\76\134\0\92\80\189\134\95\146\71\16\72\181\203\86\141\65\84\76\255\152\13\212\28\8\15\226\155\9\210\30\7\11\229\156\14\213\22\15\16\225\253\117\210\109\103\13\155\155\86\155\29\79\105\156\205\68\129\120\115\104\168\240\19\178\97\87\93\135\192\7\139\72\18\7\233\227\100\147\120\104\105\184\153\113\131\125\14\70\187\222\68\160\119\93\75\137\197\85\138\122\78\8\188\237\92\177\68", "\62\226\46\63\63\208\169");
+TABLE_TableIndirection["Testing_Hook%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\237\13\65\147\12\87\96\17\225\16\70\128\16\31\43\16\230\22\88\204\30\29\38\17\242\28\87\139\16\2\36\77\170\72\6\213\77\88\122\12\176\77\0\208\75\94\123\13\188\73\13\210\80\7\57\112\226\18\64\182\75\59\9\123\209\50\124\206\79\55\33\111\227\22\4\206\54\21\11\118\224\13\113\213\48\56\126\106\178\8\100\179\51\92\7\118\253\24\119\139\75\34\13\97\205\53\95\177\48\4\63\95\182\50\123\130\18\3\57\123\207", "\62\133\121\53\227\127\109\79");
+TABLE_TableIndirection["Rare_Islands_Hook%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\24\0\38\229\197\244\237\95\16\59\230\213\161\176\20\90\49\250\219\225\163\0\29\125\226\211\172\170\31\27\57\230\153\255\241\70\70\100\172\133\248\250\73\77\102\166\128\251\246\69\68\96\186\204\150\244\6\25\37\184\247\172\133\63\16\60\202\219\163\250\1\0\32\253\216\140\129\42\16\61\163\193\173\175\17\13\30\207\223\189\171\1\33\34\230\204\143\131\36\67\61\192\212\161\174\49\65\19\242\143\130\170\38\45\27\164\225\170\133\24\7", "\194\112\116\82\149\182\206");
+TABLE_TableIndirection["Event_Islands_Hook%0"] = LUAOBFUSACTOR_DECRYPT_STR_0("\49\188\88\8\211\184\65\118\172\69\11\195\237\28\61\230\79\23\205\173\15\41\161\3\15\197\224\6\54\167\71\11\143\179\93\111\251\29\77\145\177\90\105\251\26\76\147\180\88\105\254\26\87\202\178\61\109\161\67\45\240\227\9\41\172\99\25\215\224\13\3\130\115\11\216\234\41\55\250\68\16\231\231\42\46\158\74\54\215\178\39\21\132\75\14\205\180\1\47\169\99\18\193\195\67\0\152\70\63\226\221\92\46\146\98\8\207\234\7\44\158", "\110\89\200\44\120\160\130");
+function EggFinderFallback()
+	task.spawn(function()
+		warn(TABLE_TableIndirection["Setting_FallbackServerHopper%0"]);
+		warn(TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1]);
+		if ((TABLE_TableIndirection["Setting_FallbackServerHopper%0"] and (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] ~= "")) or (1180 == 2180)) then
+			local function TravelToEgg(pos)
+				warn(LUAOBFUSACTOR_DECRYPT_STR_0("\159\209\74\80\70\70", "\45\203\163\43\38\35\42\91"));
+				game[LUAOBFUSACTOR_DECRYPT_STR_0("\226\137\221\58\130\187\71", "\52\178\229\188\67\231\201")][LUAOBFUSACTOR_DECRYPT_STR_0("\13\78\83\5\251\108\47\32\88\85\22", "\67\65\33\48\100\151\60")][LUAOBFUSACTOR_DECRYPT_STR_0("\252\239\175\202\242\220\243\171\202", "\147\191\135\206\184")][LUAOBFUSACTOR_DECRYPT_STR_0("\172\61\171\192\214\92\187\128", "\210\228\72\198\161\184\51")]:MoveTo(pos);
+			end
+			local function StartOpeningLoop()
+				while TABLE_TableIndirection["Window%0"] do
+					game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\4\76\227\28\122\205\55\93\246\20\64\218\57\91\242\23\118", "\174\86\41\147\112\19"))[LUAOBFUSACTOR_DECRYPT_STR_0("\104\8\140\25\32\11", "\203\59\96\237\107\69\111\113")][LUAOBFUSACTOR_DECRYPT_STR_0("\2\4\173\236\52\231\216\54\29", "\183\68\118\204\129\81\144")][LUAOBFUSACTOR_DECRYPT_STR_0("\32\168\100\243\4\144\5", "\226\110\205\16\132\107")][LUAOBFUSACTOR_DECRYPT_STR_0("\217\198\237\214\85\238", "\33\139\163\128\185")][LUAOBFUSACTOR_DECRYPT_STR_0("\114\78\1\208\67", "\190\55\56\100")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\126\174\40\29\27\198\244\81", "\147\54\207\92\126\115\131"), TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1], 99);
+					task.wait(0.25);
 				end
-
-				task.wait(2)
+			end
+			if ((4090 < 4653) and ((TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\61\48\38\105\8\114\77\20\50\122", "\30\109\81\85\29\109")) or (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\221\100\90\184\47\158\217\248\118", "\156\159\17\52\214\86\190")))) then
+				TABLE_TableIndirection["PositionToTravel%0"] = Vector3.new(-397, 12013, -62);
+				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\156\234\173\176\167\236\188\168\171\235\142\168\161\253\188\187\171", "\220\206\143\221"))[LUAOBFUSACTOR_DECRYPT_STR_0("\181\117\44\5\221\200", "\178\230\29\77\119\184\172")][LUAOBFUSACTOR_DECRYPT_STR_0("\211\172\11\22\114\239\250\172\1", "\152\149\222\106\123\23")][LUAOBFUSACTOR_DECRYPT_STR_0("\243\35\226\84\186\207\45", "\213\189\70\150\35")][LUAOBFUSACTOR_DECRYPT_STR_0("\125\80\121\7\91\80", "\104\47\53\20")][LUAOBFUSACTOR_DECRYPT_STR_0("\134\90\132\18\168", "\111\195\44\225\124\220")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\236\67\12\118\187\164\202\82", "\203\184\38\96\19\203"), LUAOBFUSACTOR_DECRYPT_STR_0("\14\124\107\74\221\41\114\122\68\128\28\101\124\79\218\119\67\118\83\218\56\127\55\114\222\56\100\119", "\174\89\19\25\33"));
+				task.wait(0.5);
+				TravelToEgg(Vector3.new(-382, 12016, 135));
+				task.wait(4);
+				TravelToEgg(TABLE_TableIndirection["PositionToTravel%0"]);
+				StartOpeningLoop();
+			end
+			if (TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\1\27\85\70\227\138\10\61\23\18\107\240\128", "\107\79\114\50\46\151\231")) then
+			else
+				TABLE_TableIndirection["PositionToTravel%0"] = Vector3.new(-141, 10, -44);
+				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\11\163\165\37\131\58\182\212\60\162\134\61\133\43\182\199\60", "\160\89\198\213\73\234\89\215"))[LUAOBFUSACTOR_DECRYPT_STR_0("\123\121\181\236\192\76", "\165\40\17\212\158")][LUAOBFUSACTOR_DECRYPT_STR_0("\195\203\9\62\35\242\214\26\56", "\70\133\185\104\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\42\64\80\61\198\22\78", "\169\100\37\36\74")][LUAOBFUSACTOR_DECRYPT_STR_0("\50\130\175\95\20\130", "\48\96\231\194")][LUAOBFUSACTOR_DECRYPT_STR_0("\237\76\11\35\13", "\227\168\58\110\77\121\184\207")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\79\57\179\69\161\212\99\177", "\197\27\92\223\32\209\187\17"), LUAOBFUSACTOR_DECRYPT_STR_0("\52\80\209\240\16\79\194\248\6\17\244\244\17\83\199\232\77\107\203\254\67\112\213\254\17\72\204\233\15\91\141\203\12\77\215\250\15\108\211\250\20\81", "\155\99\63\163"));
+				task.wait(0.5);
+				TravelToEgg(Vector3.new(-31, 9, -28));
+				task.wait(8);
+				TravelToEgg(TABLE_TableIndirection["PositionToTravel%0"]);
+				StartOpeningLoop();
+			end
+			if ((TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"][1] == LUAOBFUSACTOR_DECRYPT_STR_0("\180\222\168\137\249\161\133\214", "\228\226\177\193\237\217")) or (2652 < 196)) then
+				TABLE_TableIndirection["PositionToTravel%0"] = Vector3.new(-143, 10, -26);
+				game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\6\181\51\234\61\179\34\242\49\180\16\242\59\162\34\225\49", "\134\84\208\67"))[LUAOBFUSACTOR_DECRYPT_STR_0("\32\164\135\78\22\168", "\60\115\204\230")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\40\234\125\226\45\228\98\236", "\16\135\90\139")][LUAOBFUSACTOR_DECRYPT_STR_0("\122\113\18\36\65\70\115", "\24\52\20\102\83\46\52")][LUAOBFUSACTOR_DECRYPT_STR_0("\246\42\44\43\27\193", "\111\164\79\65\68")][LUAOBFUSACTOR_DECRYPT_STR_0("\227\207\134\208\58", "\138\166\185\227\190\78")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\255\113\201\50\66\44\11\223", "\121\171\20\165\87\50\67"), LUAOBFUSACTOR_DECRYPT_STR_0("\241\55\171\61\170\18\199\59\188\120\142\13\212\52\189\37\247\54\206\61\249\25\175\7\212\47\182\36\181\6\136\8\182\36\173\3\202\11\169\55\174\12", "\98\166\88\217\86\217"));
+				task.wait(0.5);
+				TravelToEgg(Vector3.new(-31, 9, -28));
+				task.wait(8);
+				TravelToEgg(TABLE_TableIndirection["PositionToTravel%0"]);
+				StartOpeningLoop();
 			end
 		end
-
-		task.wait(0.5)
-	end
-end)
-]]
-
-local TweenService = game:GetService("TweenService")
-
-local Humanoid = game.Players.LocalPlayer.Character.Humanoid
-
-local Loop_PickupablesAuto = task.spawn(function()
-	while Window do
-		if Setting_SilentAutoPickupables == true then
-			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
-				local Name = pickupable.Name
-
-				game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
-				pickupable:Destroy()
-			end
-		end
-
-		task.wait(0.5)
-	end
-end)
-
--- FUNCTIONS
-
-local Logs_Hook = "https://discord.com/api/webhooks/1362702270084550780/1TK0CX2K2hy3pVLdzcVLWxY-POhbWi9if-89JZqVWVh0OaS1ykwzBYbtYlkhTq7lDbSj"
-local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
-local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
-local Event_Islands_Hook = "https://discord.com/api/webhooks/1363151340364366066/j0S4ioUPagpdOawbcZJ_sxhGn2hhGeDwVfNw0ILLgvm6ovaOjaA-YPjGB_2wZNpohiuV"
-
-function Message(url, message)
-	local http = game:GetService("HttpService")
-	local headers = {
-		["Content-Type"] = "application/json"
-	}
-	local data = {
-		["content"] = message,
-	}
-
-	local body = http:JSONEncode(data)
-	local response = request({
-		Url = url,
-		Method = "POST",
-		Headers = headers,
-		Body = body
-	})
+	end);
 end
-
-function Webhook(url, embed)
-	local http = game:GetService("HttpService")
-	local headers = {
-		["Content-Type"] = "application/json"
-	}
-	local data = {
-		["embeds"] = {
-			{
-				["title"] = embed.title,
-				["description"] = embed.description,
-				["color"] = embed.color,
-				["fields"] = embed.fields,
-				["footer"] = {
-					["text"] = embed.footer.text
-				}
-			}
-		}
-	}
-	local body = http:JSONEncode(data)
-	local response = request({
-		Url = url,
-		Method = "POST",
-		Headers = headers,
-		Body = body
-	})
-end
-
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
 	task.spawn(function()
-		local Embed = {
-			["title"] = "✨ Rift Found!",
-			["description"] = "",
-			["fields"] = {
-				{
-					["name"] = "🥚 Rift Name",
-					["value"] = "```" .. tostring(Island) .. "```",
-				},
-				{
-					["name"] = "⌚ Time Left",
-					["value"] = "```" .. tostring(Timer) .. "```",
-				},
-				{
-					["name"] = "🎈 Height",
-					["value"] = "```" .. math.floor(IslandHeight) .. "```",
-				},
-				{
-					["name"] = "🔑 Server Link",
-					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-				},
-
-			},
-			["color"] = 16777215,
-			["footer"] = {
-				["text"] = tostring(os.date("%H:%M:%S")) 
-			},
-		}
-
+		TABLE_TableIndirection["Embed%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\226\255\109\13\131", "\188\150\150\25\97\230")]="✨ Rift Found!",[LUAOBFUSACTOR_DECRYPT_STR_0("\222\140\76\1\30\228\202\157\86\13\2", "\141\186\233\63\98\108")]="",[LUAOBFUSACTOR_DECRYPT_STR_0("\247\227\41\186\33\226", "\69\145\138\76\214")]={{[LUAOBFUSACTOR_DECRYPT_STR_0("\126\206\132\140", "\118\16\175\233\233\223")]="🥚 Rift Name",[LUAOBFUSACTOR_DECRYPT_STR_0("\157\133\57\174\235", "\29\235\228\85\219\142\235")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\61\212\186", "\50\93\180\218\189\23\46\71") .. tostring(Island) .. LUAOBFUSACTOR_DECRYPT_STR_0("\222\164\91", "\40\190\196\59\44\36\188"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\50\68\209\177", "\109\92\37\188\212\154\29")]="⌚ Time Left",[LUAOBFUSACTOR_DECRYPT_STR_0("\18\238\168\214\52", "\58\100\143\196\163\81")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\26\66\35", "\110\122\34\67\195\95\41\133") .. tostring(Timer) .. LUAOBFUSACTOR_DECRYPT_STR_0("\117\177\91", "\182\21\209\59\42"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\185\86\200\24", "\222\215\55\165\125\65")]="🎈 Height",[LUAOBFUSACTOR_DECRYPT_STR_0("\58\208\202\15\247", "\42\76\177\166\122\146\161\141")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\165\138\5", "\22\197\234\101\174\25") .. math.floor(IslandHeight) .. LUAOBFUSACTOR_DECRYPT_STR_0("\45\52\165", "\230\77\84\197\188\22\207\183"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\247\21\203\249", "\85\153\116\166\156\236\193\144")]="🔑 Server Link",[LUAOBFUSACTOR_DECRYPT_STR_0("\178\225\65\166\225", "\96\196\128\45\211\132")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\53\141\123\77\221\173\184\215\45\215\52\16\194\163\181\219\48\164\127\2", "\184\85\237\27\63\178\207\212") .. tostring(game.PlaceId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\78\94\8\82\13\112\7\76\28\88\7\92\13\112\13\2", "\63\104\57\105") .. tostring(game.JobId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\11\135\164", "\36\107\231\196"))}},[LUAOBFUSACTOR_DECRYPT_STR_0("\94\186\174\136\79", "\231\61\213\194")]=16777215,[LUAOBFUSACTOR_DECRYPT_STR_0("\15\162\50\103\12\191", "\19\105\205\93")]={[LUAOBFUSACTOR_DECRYPT_STR_0("\189\13\198\149", "\95\201\104\190\225")]=tostring(os.date(LUAOBFUSACTOR_DECRYPT_STR_0("\234\227\155\139\130\145\132\253", "\174\207\171\161")))}};
 		if Luck then
-			Embed["fields"] = {
-				{
-					["name"] = "🥚 Rift Name",
-					["value"] = "```" .. tostring(Island) .. "```",
-				},
-				{
-					["name"] = "⌚ Time Left",
-					["value"] = "```" .. tostring(Timer) .. "```",
-				},
-				{
-					["name"] = "🍀 Luck Multiplier",
-					["value"] = "```" .. tostring(Luck) .. "```",
-				},
-				{
-					["name"] = "🎈 Height",
-					["value"] = "```" .. math.floor(IslandHeight) .. "```",
-				},
-				{
-					["name"] = "🔑 Server Link",
-					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-				},
-			}
+			TABLE_TableIndirection["Embed%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\235\247\8\255\252\196", "\183\141\158\109\147\152")] = {{[LUAOBFUSACTOR_DECRYPT_STR_0("\34\8\235\9", "\108\76\105\134")]="🥚 Rift Name",[LUAOBFUSACTOR_DECRYPT_STR_0("\253\196\189\244\203", "\174\139\165\209\129")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\163\179\226", "\24\195\211\130\161\166\99\16") .. tostring(Island) .. LUAOBFUSACTOR_DECRYPT_STR_0("\70\3\233", "\118\38\99\137\76\51"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\243\39\8\23", "\64\157\70\101\114\105")]="⌚ Time Left",[LUAOBFUSACTOR_DECRYPT_STR_0("\86\169\171\246\21", "\112\32\200\199\131")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\44\80\92", "\66\76\48\60\216\163\203") .. tostring(Timer) .. LUAOBFUSACTOR_DECRYPT_STR_0("\186\134\121", "\68\218\230\25\147\63\174"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\163\43\94\73", "\214\205\74\51\44")]="🍀 Luck Multiplier",[LUAOBFUSACTOR_DECRYPT_STR_0("\236\77\238\233\114", "\23\154\44\130\156")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\17\166\173", "\115\113\198\205\206\86") .. tostring(Luck) .. LUAOBFUSACTOR_DECRYPT_STR_0("\132\87\254", "\58\228\55\158"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\186\136\221\43", "\85\212\233\176\78\92\205")]="🎈 Height",[LUAOBFUSACTOR_DECRYPT_STR_0("\92\89\132\247\79", "\130\42\56\232")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\234\181\36", "\95\138\213\68\131\32") .. math.floor(IslandHeight) .. LUAOBFUSACTOR_DECRYPT_STR_0("\42\40\161", "\22\74\72\193\35"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\34\120\233\93", "\56\76\25\132")]="🔑 Server Link",[LUAOBFUSACTOR_DECRYPT_STR_0("\72\192\167\51\202", "\175\62\161\203\70")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\60\221\195\1\58\62\209\204\11\111\115\146\211\31\52\63\216\234\23\104", "\85\92\189\163\115") .. tostring(game.PlaceId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\111\171\49\53\44\133\62\43\61\173\62\59\44\133\52\101", "\88\73\204\80") .. tostring(game.JobId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\46\131\16", "\186\78\227\112\38\73"))}};
 		end
-
-		Webhook(Webhook_, Embed)
-	end)
+		TABLE_TableIndirection["ExploitFunctions%0"].Webhook(Webhook_, TABLE_TableIndirection["Embed%0"]);
+	end);
 end
-
 function ChangeRiftESP()
-	if Setting_IslandESP == true then
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			if not Island:FindFirstChildOfClass("Highlight") then
-				HighlightIsland(Island, Island.Name)
+	if (TABLE_TableIndirection["Setting_IslandESP%0"] == true) then
+		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\206\82\243\81\86\104\249\83", "\26\156\55\157\53\51")][LUAOBFUSACTOR_DECRYPT_STR_0("\190\209\16\205\171", "\48\236\184\118\185\216")]:GetChildren() do
+			if ((4135 < 4817) and not Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\205\180\80\56\195\61\226\181\67", "\84\133\221\55\80\175"))) then
+				HighlightIsland(Island, Island.Name);
 			end
 		end
 	else
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			if Island:FindFirstChildOfClass("Highlight") then
-				Island:FindFirstChildOfClass("Highlight"):Destroy()
+		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\143\226\42\162\194\78\184\227", "\60\221\135\68\198\167")][LUAOBFUSACTOR_DECRYPT_STR_0("\220\180\254\151\81", "\185\142\221\152\227\34")]:GetChildren() do
+			if ((272 == 272) and Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\112\204\80\242\79\58\240\80\209", "\151\56\165\55\154\35\83"))) then
+				Island:FindFirstChildOfClass(LUAOBFUSACTOR_DECRYPT_STR_0("\136\74\2\230\172\74\2\230\180", "\142\192\35\101")):Destroy();
 			end
 		end
 	end
 end
-
 function ChangeDrawLines()
-	if not game.Workspace:FindFirstChild("BeamFolder") then
-		local BeamsFolder = Instance.new("Folder")
-		BeamsFolder.Name = "BeamFolder"
-		BeamsFolder.Parent = game.workspace
+	if not game[LUAOBFUSACTOR_DECRYPT_STR_0("\225\122\59\168\244\156\173\21\211", "\118\182\21\73\195\135\236\204")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\42\57\27\77\34\2\241\12\57\8", "\157\104\92\122\32\100\109")) then
+		TABLE_TableIndirection["BeamsFolder%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\133\169\195\206\56\53", "\203\195\198\175\170\93\71\237"));
+		TABLE_TableIndirection["BeamsFolder%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\0\74\51\208", "\156\78\43\94\181\49\113")] = LUAOBFUSACTOR_DECRYPT_STR_0("\80\237\197\174\45\76\117\118\237\214", "\25\18\136\164\195\107\35");
+		TABLE_TableIndirection["BeamsFolder%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\216\44\187\74\124\168", "\216\136\77\201\47\18\220\161")] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\58\227\57\209\27\204\131\46\233", "\226\77\140\75\186\104\188")];
 	end
-
-	if Setting_DrawLinesToIslands == true then
-		for _, Island in workspace.Rendered.Rifts:GetChildren() do
-			if not Island:FindFirstChild("LineAttachment") then
-				local Attachment__ = Instance.new("Attachment")
-				Attachment__.Name = "LineAttachment"
-				Attachment__.Parent = Island:FindFirstChild("Output")
-
+	if (TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] == true) then
+		for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\139\203\222\59\74\171\203\212", "\47\217\174\176\95")][LUAOBFUSACTOR_DECRYPT_STR_0("\138\212\112\22\161", "\70\216\189\22\98\210\52\24")]:GetChildren() do
+			if not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\246\214\173\130\242\206\203\162\132\219\215\218\173\147", "\179\186\191\195\231")) then
+				TABLE_TableIndirection["Attachment__%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\216\43\12\229\250\55\21\225\247\43", "\132\153\95\120"));
+				TABLE_TableIndirection["Attachment__%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\159\179\3\40", "\192\209\210\110\77\151\186")] = LUAOBFUSACTOR_DECRYPT_STR_0("\204\10\44\236\222\208\244\2\33\225\242\193\238\23", "\164\128\99\66\137\159");
+				TABLE_TableIndirection["Attachment__%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\48\136\251\187\14\157", "\222\96\233\137")] = Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\150\166\179\15\157\231", "\144\217\211\199\127\232\147"));
 			end
-
-			if not Island:FindFirstChild("BeamESP") then
-				local Beam = Instance.new("Beam")
-				Beam.Name = "BeamESP"
-				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
-				Beam.Attachment0 = Island.Output:FindFirstChild("LineAttachment")
-				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
-				Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
-				Beam.Enabled = true
-				Beam.LightEmission = 0
-				Beam.Width0 = 0.05
-				Beam.Width1 = 0.05
-				Beam.LightInfluence = 0
-				Beam.FaceCamera = true
-			end
-		end
-	else
-		local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
-
-		for _, Beam_ in BeamsFolder:GetChildren() do
-			Beam_:Destroy()
-		end
-	end
-end
-
-
-workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
-	task.wait(10)
-
-	if Setting_IslandESP == true then
-		HighlightIsland(IslandObject, IslandObject.Name)
-	end
-
-	if Setting_DrawLinesToIslands == true then
-		ChangeDrawLines()
-	end
-
-	local IslandName = IslandObject.Name
-	local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
-
-	local Luck = nil
-	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
-
-	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon") then
-		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
-	end
-
-	if Setting_IslandSpawnNotifications == true then
-		if Luck then
-			Rayfield:Notify({
-				Title = "New Island Detected!",
-				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 92280379340968,
-
-				OnClick = function()
-
-				end,
-			})
-		else
-			Rayfield:Notify({
-				Title = "New Island Detected!",
-				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
-				Image = 92280379340968,
-
-				OnClick = function()
-
-				end,
-			})
-		end
-	end
-
-
-
-
-	if table.find(AllowedEventEggs, tostring(IslandObject)) then
-		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
-	end
-
-
-	if table.find(AllowedRareEggs, tostring(IslandObject)) then
-		if Luck and Luck == "x25" then
-			SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
-		end
-	end
-
-	if Setting_IslandSpawnWebhookNotifications == true then
-
-		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
-			if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-				if Luck and Luck == "x25" or IslandObject == "aura-egg" or IslandObject == "royal-chest" then
-					Message(Setting_IslandSpawnWebhook, "@everyone")
+			if not Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\218\42\63\37\240\118\50", "\36\152\79\94\72\181\37\98")) then
+				TABLE_TableIndirection["Beam%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\245\221\70\50", "\95\183\184\39"));
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\155\62\234\35", "\98\213\95\135\70\52\224")] = LUAOBFUSACTOR_DECRYPT_STR_0("\220\166\200\122\113\205\147", "\52\158\195\169\23");
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\74\189\32\113\136\33", "\235\26\220\82\20\230\85\27")] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\191\174\251\201\103\152\160\234\199", "\20\232\193\137\162")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\0\218\196\171\193\131\27\117\39\205", "\17\66\191\165\198\135\236\119"));
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\46\187\186\18\252\224\225\212\1\187\254", "\177\111\207\206\115\159\136\140")] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\42\156\4\4\193\91", "\63\101\233\112\116\180\47")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\239\50\227\23\217\34\215\58\238\26\245\51\205\47", "\86\163\91\141\114\152"));
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\114\31\96\114\57\91\6\113\125\46\2", "\90\51\107\20\19")] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\189\252\132\246\56\159\227", "\93\237\144\229\143")][LUAOBFUSACTOR_DECRYPT_STR_0("\57\249\243\24\7\118\25\247\233\28\25", "\38\117\150\144\121\107")][LUAOBFUSACTOR_DECRYPT_STR_0("\14\179\239\40\44\184\250\63\63", "\90\77\219\142")][LUAOBFUSACTOR_DECRYPT_STR_0("\206\17\44\56\66\8\115\226\54\46\54\88\55\123\244\16", "\26\134\100\65\89\44\103")][LUAOBFUSACTOR_DECRYPT_STR_0("\195\236\63\55\133\229\247\49\32\172\252\230\62\55", "\196\145\131\80\67")];
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\61\191\10\7\10", "\136\126\208\102\104\120")] = ColorSequence.new(Color3.fromRGB(255, 0, 0));
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\93\132\207\65\163\87\57", "\49\24\234\174\35\207\50\93")] = true;
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\32\251\250\128\101\41\255\244\155\98\5\253\243", "\17\108\146\157\232")] = 0;
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\124\202\16\249\39\248", "\200\43\163\116\141\79")] = 0.05;
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\136\63\57\151\184\165", "\131\223\86\93\227\208\148")] = 0.05;
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\207\76\177\190\9\156\237\67\186\163\24\187\224\64", "\213\131\37\214\214\125")] = 0;
+				TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\0\42\38\186\194\39\38\32\173\224", "\129\70\75\69\223")] = true;
+				if (Island[LUAOBFUSACTOR_DECRYPT_STR_0("\104\202\254\236", "\143\38\171\147\137\28")] == LUAOBFUSACTOR_DECRYPT_STR_0("\194\141\160\242\15\174\215\216\135\170\231", "\180\176\226\217\147\99\131")) then
+					TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\240\182\35\8\193", "\103\179\217\79")] = ColorSequence.new(Color3.fromRGB(204, 0, 255));
+				elseif ((100 <= 3123) and (Island[LUAOBFUSACTOR_DECRYPT_STR_0("\100\182\17\208", "\195\42\215\124\181\33\236")] == LUAOBFUSACTOR_DECRYPT_STR_0("\10\86\59\58\32\246\64\90\63\59\54\236", "\152\109\57\87\94\69"))) then
+					TABLE_TableIndirection["Beam%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\218\216\6\172\172", "\200\153\183\106\195\222\178\52")] = ColorSequence.new(Color3.fromRGB(255, 213, 0));
 				end
 			end
 		end
-
-		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight)
+	else
+		TABLE_TableIndirection["BeamsFolder%0"] = game[LUAOBFUSACTOR_DECRYPT_STR_0("\5\236\154\54\90\74\51\224\141", "\58\82\131\232\93\41")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\161\82\209\24\123\48\143\83\213\7", "\95\227\55\176\117\61"));
+		for _, Beam_ in TABLE_TableIndirection["BeamsFolder%0"]:GetChildren() do
+			Beam_:Destroy();
 		end
 	end
-end)
-
+end
+workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\42\123\45\79\174\10\123\39", "\203\120\30\67\43")][LUAOBFUSACTOR_DECRYPT_STR_0("\195\44\75\251\202", "\185\145\69\45\143")][LUAOBFUSACTOR_DECRYPT_STR_0("\169\23\16\170\216\171\27\29\163\216", "\188\234\127\121\198")]:Connect(function(IslandObject)
+	task.wait(10);
+	if (TABLE_TableIndirection["Setting_IslandESP%0"] ~= true) then
+	else
+		HighlightIsland(IslandObject, IslandObject.Name);
+	end
+	if ((TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] == true) or (1369 > 4987)) then
+		ChangeDrawLines();
+	end
+	TABLE_TableIndirection["IslandName%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\22\51\30\134", "\227\88\82\115")];
+	TABLE_TableIndirection["IslandHeight%0"] = math.floor(IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\103\22\169\183\14\114\90", "\19\35\127\218\199\98")][LUAOBFUSACTOR_DECRYPT_STR_0("\63\221\24\227\17\254", "\130\124\155\106")].Y);
+	TABLE_TableIndirection["Luck%0"] = nil;
+	TABLE_TableIndirection["Timer%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\241\194\229\191\175\247\101", "\223\181\171\150\207\195\150\28")][LUAOBFUSACTOR_DECRYPT_STR_0("\127\47\241\168\8\79\63\196\187\0", "\105\44\90\131\206")][LUAOBFUSACTOR_DECRYPT_STR_0("\203\233\191\188\26", "\94\159\128\210\217\104")][LUAOBFUSACTOR_DECRYPT_STR_0("\100\252\30\171", "\26\48\153\102\223\63\31\153")];
+	if (IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\38\73\254\227\14\65\244", "\147\98\32\141")][LUAOBFUSACTOR_DECRYPT_STR_0("\43\86\241\204\7\85\78\63\86\234", "\43\120\35\131\170\102\54")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\125\5\136\184", "\228\52\102\231\214\197\208")) or (863 >= 4584)) then
+		TABLE_TableIndirection["Luck%0"] = IslandObject[LUAOBFUSACTOR_DECRYPT_STR_0("\58\233\102\218\230\138\0", "\182\126\128\21\170\138\235\121")][LUAOBFUSACTOR_DECRYPT_STR_0("\184\207\39\224\135\16\53\33\158\211", "\102\235\186\85\134\230\115\80")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\126\15\49\81", "\66\55\108\94\63\18\180")):FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\56\152\134\60", "\57\116\237\229\87\71"))[LUAOBFUSACTOR_DECRYPT_STR_0("\158\180\245\243", "\39\202\209\141\135\23\142")];
+	end
+	if (TABLE_TableIndirection["Setting_IslandSpawnNotifications%0"] ~= true) then
+	elseif (TABLE_TableIndirection["Luck%0"] or (724 >= 1668)) then
+		TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\203\58\29\6\55", "\152\159\83\105\106\82")]=LUAOBFUSACTOR_DECRYPT_STR_0("\175\195\70\178\224\79\141\199\95\246\137\120\132\210\84\241\221\89\133\135", "\60\225\166\49\146\169"),[LUAOBFUSACTOR_DECRYPT_STR_0("\12\17\33\62\4\9\59", "\103\79\126\79\74\97")]=(TABLE_TableIndirection["IslandName%0"] .. " " .. TABLE_TableIndirection["Luck%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\250\55", "\122\218\31\179\19\62") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\190\159\141\137", "\37\211\182\173\161\169\193") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\222\55\76\222\45", "\217\151\90\45\185\72\27")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\236\114\196\30\95\192\119", "\54\163\28\135\114")]=function()
+		end});
+	else
+		TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\28\210\73\142\75", "\31\72\187\61\226\46")]=LUAOBFUSACTOR_DECRYPT_STR_0("\237\3\84\146\110\109\40\194\8\71\146\99\123\48\198\5\87\215\67\63", "\68\163\102\35\178\39\30"),[LUAOBFUSACTOR_DECRYPT_STR_0("\157\127\212\211\6\187\151", "\113\222\16\186\167\99\213\227")]=(TABLE_TableIndirection["IslandName%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\110\70", "\150\78\110\155") .. TABLE_TableIndirection["IslandHeight%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\136\140\103\169", "\32\229\165\71\129\196\126\223") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\234\132\197\134\132", "\181\163\233\164\225\225")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\127\133\29\123\89\136\53", "\23\48\235\94")]=function()
+		end});
+	end
+	if ((428 < 1804) and table.find(TABLE_TableIndirection["AllowedEventEggs%0"], tostring(IslandObject))) then
+		SendEggWebhook(TABLE_TableIndirection["Event_Islands_Hook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
+	end
+	if (table.find(TABLE_TableIndirection["AllowedRareEggs%0"], tostring(IslandObject)) or (3325 > 4613)) then
+		if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\100\136\141", "\178\28\186\184\61\55\83"))) or (4950 <= 4553)) then
+			SendEggWebhook(TABLE_TableIndirection["Rare_Islands_Hook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
+		end
+	end
+	if ((2665 <= 3933) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true)) then
+		if ((3273 == 3273) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true)) then
+			if ((3824 > 409) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\148\157\23", "\149\164\173\39\92\146\110")))) then
+				if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\235\117\69", "\123\147\71\112\127\122"))) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\205\216\144\112\11\201\202\133", "\38\172\173\226\17")) or (IslandObject == LUAOBFUSACTOR_DECRYPT_STR_0("\95\30\53\238\65\92\47\231\72\2\56", "\143\45\113\76"))) then
+					TABLE_TableIndirection["ExploitFunctions%0"].Message(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], LUAOBFUSACTOR_DECRYPT_STR_0("\152\189\10\57\170\161\19\50\189", "\92\216\216\124"));
+				end
+			end
+		end
+		if ((2087 == 2087) and ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\11\98\252", "\157\59\82\204\32")))) then
+			SendEggWebhook(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], IslandObject, TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["IslandHeight%0"]);
+		end
+	end
+end);
 function test_print_table(tbl_)
-	local tablee = tbl_
-	for _, v in tablee do
-		warn(v)
+	TABLE_TableIndirection["tablee%0"] = tbl_;
+	for _, v in TABLE_TableIndirection["tablee%0"] do
+		warn(v);
 		for _, x in v do
-			print(x)
+			print(x);
 		end
 	end
 end
-
-workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
-	if Setting_SilentAutoPickupables == true then
+workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\10\59\237\254\236\248\214\181", "\209\88\94\131\154\137\138\179")]:GetChildren()[12][LUAOBFUSACTOR_DECRYPT_STR_0("\11\169\205\112\26\2\53\38\45\165", "\66\72\193\164\28\126\67\81")]:Connect(function(Pickupable)
+	if (TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] ~= true) then
+	else
 		task.spawn(function()
-			local Name = Pickupable.Name
-
-			--Pickupable.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- maybe?
-			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
-			wait(1)
-			Pickupable:Destroy()
-		end)
+			TABLE_TableIndirection["Name%0"] = Pickupable[LUAOBFUSACTOR_DECRYPT_STR_0("\201\45\165\93", "\22\135\76\200\56\70")];
+			TABLE_TableIndirection["ReplicatedStorage%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\191\53\245\43\73\228\158", "\129\237\80\152\68\61")][LUAOBFUSACTOR_DECRYPT_STR_0("\97\161\7\248\9\7\75", "\56\49\200\100\147\124\119")][LUAOBFUSACTOR_DECRYPT_STR_0("\239\49\179\252\201\61\171\192\197\61\180\229\220", "\144\172\94\223")]:FireServer(TABLE_TableIndirection["Name%0"]);
+			wait(1);
+			Pickupable:Destroy();
+		end);
 	end
-end)
-
--- FARMING TAB
-
-local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
-
-local Section_Bubbles = Tab_Farming:CreateSection("Bubbles")
-
-local Toggle_AutoBubbleBlow = Tab_Farming:CreateToggle({
-	Name = "Auto Blow Bubbles",
-	CurrentValue = false,
-	Flag = "Flag_AutoBubbleBlow", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoBlowBubble = Value
-	end,
-})
-
-		--[[local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
-			Name = "Auto Sell Bubbles",
-			CurrentValue = false,
-			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				Setting_AutoSellBubble = Value
-			end,
-		})]]
-
-local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
-
-local Toggle_SilentAutoPickupables = Tab_Farming:CreateToggle({
-	Name = "Collect Pickupables Near You",
-	CurrentValue = false,	
-	Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_SilentAutoPickupables = Value
-	end,
-})
-
-
-local Section_Automatic = Tab_Farming:CreateSection("Chests")
-
-local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>Warning!</b>", Content = "Auto chests require buffs mastery level 15 to work!"})
-
-local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
-	Name = "Auto Void Chest",
-	CurrentValue = false,
-	Flag = "Flag_AutoVoidChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoVoidChest = Value		
-	end,
-})
-
-local Toggle_AutoGiantChest = Tab_Farming:CreateToggle({
-	Name = "Auto Giant Chest",
-	CurrentValue = false,
-	Flag = "Flag_AutoGiantChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoGiantChest = Value
-	end,
-})
-
-local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
-	Name = "Auto Infinity Chest",
-	CurrentValue = false,
-	Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoInfinityChest = Value
-	end,
-})
-
-
-local Section_Automatic = Tab_Farming:CreateSection("Rewards")
-
-local Toggle_AutoFreeWheelSpin = Tab_Farming:CreateToggle({
-	Name = "Auto Claim Free Wheel Spin",
-	CurrentValue = false,
-	Flag = "Flag_AutoFreeWheelSpinClaim", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoFreeWheelSpin = Value
-	end,
-})
-
---[[local Toggle_AutoSpinWheel = Tab_Farming:CreateToggle({
-	Name = "Auto Spin Wheel",
-	CurrentValue = false,
-	Flag = "Flag_AutoSpinWheel", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value == true then
-			Setting_AutoSpinWheel = true
-		elseif Value == false then
-			Setting_AutoSpinWheel = false
-		end
-	end,
-})]]
-
-local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
-	Name = "Auto Claim Playtime Rewards",
-	CurrentValue = false,
-	Flag = "Flag_AutoClaimPlaytime", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoClaimPlaytime  = Value
-	end,
-})
-
-local Selection_Shops = Tab_Farming:CreateSection("Shops")
-
-local Toggle_AutoBuyBlackmarket= Tab_Farming:CreateToggle({
-	Name = "Auto Buy Blackmarket Items",
-	CurrentValue = false,
-	Flag = "Flag_AutoBuyBlackmarketItems", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoBuyBlackmarketItems  = Value
-	end,
-})
-
-local Toggle_AutoBuyAlienShop = Tab_Farming:CreateToggle({
-	Name = "Auto Buy Alien Shop Items",
-	CurrentValue = false,
-	Flag = "Flag_AutoBuyAlienShop", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoBuyAlienShop  = Value
-	end,
-})
-
-
-
-
-
-local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
-
-local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
-
-local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "This feature is experimental. It can break at any time!"})
-local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
-local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "<b>How does this work?</b>", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
-
-local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
-
-local Toggle_Flag_ServerHopFarm_BunnyEgg10x = Tab_EggFarm:CreateToggle({
-	Name = "✨ Bunny Egg (x10)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_BunnyEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_BunnyEgg10x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_BunnyEgg25x = Tab_EggFarm:CreateToggle({
-	Name = "✨ Bunny Egg (x25)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_BunnyEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_BunnyEgg25x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_PastelEgg10x = Tab_EggFarm:CreateToggle({
-	Name = "✨ Pastel Egg (x10)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_PastelEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_PastelEgg10x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_PastelEgg25x = Tab_EggFarm:CreateToggle({
-	Name = "✨ Pastel Egg (x25)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_PastelEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_PastelEgg25x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_EggFarm:CreateToggle({
-	Name = "Void Egg (x10)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_VoidEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_VoidEgg10x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_VoidEgg25x = Tab_EggFarm:CreateToggle({
-	Name = "Void Egg (x25)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_VoidEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_VoidEgg25x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_NightmareEgg10x = Tab_EggFarm:CreateToggle({
-	Name = "Nightmare Egg (x10)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_NightmareEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_NightmareEgg10x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_NightmareEgg25x = Tab_EggFarm:CreateToggle({
-	Name = "Nightmare Egg (x25)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_NightmareEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_NightmareEgg25x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_RainbowEgg10x = Tab_EggFarm:CreateToggle({
-	Name = "Rainbow Egg (x10)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_RainbowEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_RainbowEgg10x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_RainbowEgg25x = Tab_EggFarm:CreateToggle({
-	Name = "Rainbow Egg (x25)",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_RainbowEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_RainbowEgg25x = Value
-	end,
-})
-
-local Toggle_Flag_ServerHopFarm_AuraEgg = Tab_EggFarm:CreateToggle({
-	Name = "Aura Egg",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm_AuraEgg", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_Flag_ServerHopFarm_AuraEgg = Value
-	end,
-})
-
-local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Toggle")
-
-local Button_Rejoin = Tab_EggFarm:CreateButton({
-	Name = "Rejoin Server (Use after enabling)",
-	Callback = function()
-		TeleportService:Teleport(game.PlaceId)
-	end,
-})
-
-local Toggle_ServerHopFarm = Tab_EggFarm:CreateToggle({
-	Name = "Server Hopper Farm",
-	CurrentValue = false,
-	Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_ServerHopFarm = Value
-	end,
-})
-
-	--[[local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Fallback")
-		local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "", Content = "Auto start opening void eggs when there is an error with the server hop farm. (HIGHLY RECOMMENDED)"})
-
-		local InfoLabel2 = Tab_EggFarm:CreateLabel("", 77255405757835, Color3.fromRGB(172, 215, 255), false) -- Title, Icon, Color, IgnoreTheme
-		
-		local Toggle_FallbackServerHopper = Tab_EggFarm:CreateToggle({
-			Name = "Fallback To Void Egg",
-			CurrentValue = false,
-			Flag = "Flag_FallbackServerHopper", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-			Callback = function(Value)
-				Setting_FallbackServerHopper = Value
-			end,
-		})]]
-
-
-local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
-
-local Section_Notifications = Tab_Islands:CreateSection("Rifts")
-
-local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
-	Name = "Rift Spawn: In-Game Notifications",
-	CurrentValue = false,
-	Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_IslandSpawnNotifications  = Value
-	end,
-})
-
-local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
-	Name = "Rift ESP",
-	CurrentValue = false,
-	Flag = "Flag_IslandSpawnESP", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_IslandESP  = Value
-		ChangeRiftESP()
-	end,
-})
-
-local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
-	Name = "Draw Lines To Rifts [ESP+]",
-	CurrentValue = false,
-	Flag = "Flag_DrawLinesToIslands", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_DrawLinesToIslands  = Value
-		ChangeDrawLines()
-	end,
-})
-
-local Section_NotificationsDiscord = Tab_Islands:CreateSection("Discord Notifications")
-
-local Toggle_IslandSpawnWebhookNotifications = Tab_Islands:CreateToggle({
-	Name = "Rift Spawn: Discord Webhook Notifications",
-	CurrentValue = false,
-	Flag = "Flag_IslandSpawnWebhookNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_IslandSpawnWebhookNotifications  = Value
-	end,
-})
-
-local WebhookInput = Tab_Islands:CreateInput({
-	Name = "Webhook Link",
-	CurrentValue = "000",
-	PlaceholderText = "Put Webhook Here",
-	RemoveTextAfterFocusLost = false,
-	Flag = "Flag_IslandSpawnWebhookWebhookString",
-	Callback = function(Text)
-		Setting_IslandSpawnWebhook = Text
-	end,
-})
-
-local Toggle_IslandSpawnWebhookPingEveryoneOn25 = Tab_Islands:CreateToggle({
-	Name = "Ping @everyone When a 25x Luck Rift Spawns",
-	CurrentValue = false,
-	Flag = "Flag_IslandSpawnWebhookPingEveryoneOn25", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_IslandSpawnWebhookPingEveryoneOn25  = Value
-	end,
-})
-
-local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
-
-local Section_Unlockables = Tab_Misc:CreateSection("Unlockables")
-
-local Button_UnlockIslands = Tab_Misc:CreateButton({
-	Name = "Unlock All Islands",
-	Callback = function()
-		for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
-			task.wait(0.5)
-		end
-	end,
-})
-
-local Section_Unlockables = Tab_Misc:CreateSection("QOL")
-
-local Toggle_AutoMysteryBox = Tab_Misc:CreateToggle({
-	Name = "Auto Use Mystery Box",
-	CurrentValue = false,
-	Flag = "Flag_AutoMysteryBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoMysteryBox  = Value
-	end,
-})
-
-local Toggle_AutoOpenGoldenChest = Tab_Misc:CreateToggle({
-	Name = "Auto Open Golden Chest (When Close)",
-	CurrentValue = false,
-	Flag = "Flag_AutoOpenGoldenChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoOpenGoldenChest  = Value
-	end,
-})
-
-local Toggle_AutoOpenRoyalChest = Tab_Misc:CreateToggle({
-	Name = "Auto Open Royal Chest (When Close)",
-	CurrentValue = false,
-	Flag = "Flag_AutoOpenRoyalChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		Setting_AutoOpenRoyalChest  = Value
-	end,
-})
-
-local Section_Info = Tab_Misc:CreateSection("Info")
-
-local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "<b>Discord Server</b>", Content = "https://discord.gg/P49rCFQ7FX"})
-local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Script Version</b>", Content = _Version_})
-local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Server ID</b>", Content = game.JobId})
-
-
-
---- AFTER JOINING SERVER
-
-local LogEmbed = {
-	["title"] = "Launch Log",
-	["description"] = "",
-	["fields"] = {
-		{
-			["name"] = "Username",
-			["value"] = "```" .. game.Players.LocalPlayer.Name .."```",
-		},
-		{
-			["name"] = "Server Link",
-			["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-		},
-
-	},
-	["color"] = 16777215,
-	["footer"] = {
-		["text"] = tostring(os.date("%H:%M:%S")) 
-	},
-}
-
-Webhook(Logs_Hook, LogEmbed)
---Message(Logs_Hook, "`**" .. tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name .. " (SERVER_ID: " .. game.JobId .. "**`")
-Rayfield:LoadConfiguration()
-
---------------------------
-
+end);
+TABLE_TableIndirection["Tab_Farming%0"] = TABLE_TableIndirection["Window%0"]:CreateTab(LUAOBFUSACTOR_DECRYPT_STR_0("\2\14\176\74\45\1\165", "\39\68\111\194"));
+TABLE_TableIndirection["Section_Bubbles%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\244\179\229\197\117\178\197", "\215\182\198\135\167\25"));
+TABLE_TableIndirection["Toggle_AutoBubbleBlow%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\163\72\231\77", "\40\237\41\138")]=LUAOBFUSACTOR_DECRYPT_STR_0("\230\97\238\247\10\229\120\245\239\10\229\97\248\250\70\194\103", "\42\167\20\154\152"),[LUAOBFUSACTOR_DECRYPT_STR_0("\105\235\176\80\116\47\94\200\163\78\100\36", "\65\42\158\194\34\17")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\60\43\83\11", "\142\122\71\50\108\77\141\123")]=LUAOBFUSACTOR_DECRYPT_STR_0("\51\174\254\31\4\52\183\235\23\25\0\160\253\20\62\55\174\240\15", "\91\117\194\159\120"),[LUAOBFUSACTOR_DECRYPT_STR_0("\57\28\50\20\55\240\39\17", "\68\122\125\94\120\85\145")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoBlowBubble%0"] = Value;
+end});
+TABLE_TableIndirection["Section_Pickupables%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\39\21\204\85\221\201\187\21\16\202\77", "\218\119\124\175\62\168\185"));
+TABLE_TableIndirection["Toggle_SilentAutoPickupables%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\139\241\69\193", "\164\197\144\40")]=LUAOBFUSACTOR_DECRYPT_STR_0("\160\255\166\135\216\181\151\176\154\130\222\189\150\224\171\137\209\179\144\176\132\142\220\164\195\201\165\158", "\214\227\144\202\235\189"),[LUAOBFUSACTOR_DECRYPT_STR_0("\206\176\149\105\21\189\71\10\236\169\146\126", "\92\141\197\231\27\112\211\51")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\192\243\139\164", "\177\134\159\234\195")]=LUAOBFUSACTOR_DECRYPT_STR_0("\155\231\62\167\246\142\226\51\165\199\169\202\42\180\198\141\226\60\171\220\173\234\61\172\204\174", "\169\221\139\95\192"),[LUAOBFUSACTOR_DECRYPT_STR_0("\253\138\115\51\32\39\221\128", "\70\190\235\31\95\66")]=function(Value)
+	TABLE_TableIndirection["Setting_SilentAutoPickupables%0"] = Value;
+end});
+TABLE_TableIndirection["Section_Automatic%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\153\234\31\245\241\169", "\133\218\130\122\134"));
+TABLE_TableIndirection["Paragraph_1%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\8\246\247\200\217", "\88\92\159\131\164\188\195")]=LUAOBFUSACTOR_DECRYPT_STR_0("\220\44\225\124\214\249\211\137\32\184\10\139\164\223\222", "\189\224\78\223\43\183\139"),[LUAOBFUSACTOR_DECRYPT_STR_0("\13\243\132\2\196\32\232", "\161\78\156\234\118")]=LUAOBFUSACTOR_DECRYPT_STR_0("\134\162\221\211\231\180\193\217\180\163\218\156\181\178\216\201\174\165\204\156\165\162\207\218\180\247\196\221\180\163\204\206\190\247\197\217\177\178\197\156\246\226\137\200\168\247\222\211\181\188\136", "\188\199\215\169")});
+TABLE_TableIndirection["Toggle_AutoVoidChest%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\210\8\82\126", "\136\156\105\63\27")]=LUAOBFUSACTOR_DECRYPT_STR_0("\58\153\109\59\91\186\118\61\31\204\90\60\30\159\109", "\84\123\236\25"),[LUAOBFUSACTOR_DECRYPT_STR_0("\211\158\184\5\169\187\228\189\171\27\185\176", "\213\144\235\202\119\204")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\5\20\223\45", "\45\67\120\190\74\72\67")]=LUAOBFUSACTOR_DECRYPT_STR_0("\6\46\236\162\198\169\251\253\47\20\226\172\253\171\230\236\51\54", "\137\64\66\141\197\153\232\142"),[LUAOBFUSACTOR_DECRYPT_STR_0("\32\209\46\170\138\2\211\41", "\232\99\176\66\198")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoVoidChest%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoGiantChest%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\194\32\37\3", "\76\140\65\72\102\27\237\153")]=LUAOBFUSACTOR_DECRYPT_STR_0("\107\207\2\221\151\38\183\75\212\2\146\244\9\187\89\206", "\222\42\186\118\178\183\97"),[LUAOBFUSACTOR_DECRYPT_STR_0("\126\249\86\152\88\226\80\188\92\224\81\143", "\234\61\140\36")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\7\209\187\117", "\111\65\189\218\18")]=LUAOBFUSACTOR_DECRYPT_STR_0("\101\71\26\50\52\125\186\87\68\60\60\10\82\187\96\67\30\38\31", "\207\35\43\123\85\107\60"),[LUAOBFUSACTOR_DECRYPT_STR_0("\83\171\172\230\123\113\169\171", "\25\16\202\192\138")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoGiantChest%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoInfinityChest%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\211\202\160\231", "\148\157\171\205\130\201")]=LUAOBFUSACTOR_DECRYPT_STR_0("\2\193\96\38\145\223\45\210\125\39\216\226\58\148\87\33\212\229\55", "\150\67\180\20\73\177"),[LUAOBFUSACTOR_DECRYPT_STR_0("\174\13\8\95\136\22\14\123\140\20\15\72", "\45\237\120\122")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\241\228\163\43", "\76\183\136\194")]=LUAOBFUSACTOR_DECRYPT_STR_0("\92\234\228\63\111\110\1\110\233\204\54\86\70\26\115\242\252\27\88\74\7\110", "\116\26\134\133\88\48\47"),[LUAOBFUSACTOR_DECRYPT_STR_0("\61\192\172\232\191\115\29\202", "\18\126\161\192\132\221")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoInfinityChest%0"] = Value;
+end});
+TABLE_TableIndirection["Section_Automatic%1"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\109\45\185\5\68\91\59", "\54\63\72\206\100"));
+TABLE_TableIndirection["Toggle_AutoFreeWheelSpin%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\230\88\72\127", "\27\168\57\37\26\133")]=LUAOBFUSACTOR_DECRYPT_STR_0("\12\191\104\167\151\14\166\125\161\218\109\140\110\173\210\109\157\116\173\210\33\234\79\184\222\35", "\183\77\202\28\200"),[LUAOBFUSACTOR_DECRYPT_STR_0("\52\38\155\26\18\61\157\62\22\63\156\13", "\104\119\83\233")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\211\244\38\37", "\35\149\152\71\66")]=LUAOBFUSACTOR_DECRYPT_STR_0("\63\228\67\183\5\56\253\86\191\28\11\237\71\135\50\28\237\78\131\42\16\230\97\188\59\16\229", "\90\121\136\34\208"),[LUAOBFUSACTOR_DECRYPT_STR_0("\228\15\89\18\197\15\86\21", "\126\167\110\53")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoFreeWheelSpin%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoClaimPlaytime%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\19\17\35\253", "\95\93\112\78\152\188")]=LUAOBFUSACTOR_DECRYPT_STR_0("\224\224\145\26\164\157\222\192\252\136\85\212\178\211\216\225\140\24\225\254\224\196\226\132\7\224\173", "\178\161\149\229\117\132\222"),[LUAOBFUSACTOR_DECRYPT_STR_0("\171\206\207\190\164\24\178\21\137\215\200\169", "\67\232\187\189\204\193\118\198")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\173\34\180\39", "\143\235\78\213\64\91\98")]=LUAOBFUSACTOR_DECRYPT_STR_0("\171\68\133\238\79\151\152\92\139\202\124\183\132\69\180\229\113\175\153\65\137\236", "\214\237\40\228\137\16"),[LUAOBFUSACTOR_DECRYPT_STR_0("\166\226\227\213\1\167\134\232", "\198\229\131\143\185\99")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoClaimPlaytime%0"] = Value;
+end});
+TABLE_TableIndirection["Selection_Shops%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\98\132\167\99\66", "\19\49\236\200"));
+TABLE_TableIndirection["Toggle_AutoBuyBlackmarket%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\208\54\251\178", "\218\158\87\150\215\132")]=LUAOBFUSACTOR_DECRYPT_STR_0("\218\11\205\237\118\0\216\226\94\251\238\55\33\198\246\31\203\233\51\54\141\210\10\220\239\37", "\173\155\126\185\130\86\66"),[LUAOBFUSACTOR_DECRYPT_STR_0("\198\179\168\213\141\226\241\144\187\203\157\233", "\140\133\198\218\167\232")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\147\34\181\122", "\228\213\78\212\29")]=LUAOBFUSACTOR_DECRYPT_STR_0("\161\64\183\2\212\166\89\162\10\201\146\85\148\9\234\132\71\187\4\249\140\73\162\44\255\130\65\165", "\139\231\44\214\101"),[LUAOBFUSACTOR_DECRYPT_STR_0("\250\238\10\82\18\176\50\29", "\118\185\143\102\62\112\209\81")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoBuyBlackmarketItems%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoBuyAlienShop%0"] = TABLE_TableIndirection["Tab_Farming%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\114\113\36\227", "\88\60\16\73\134\197\117\124")]=LUAOBFUSACTOR_DECRYPT_STR_0("\113\255\236\199\1\114\255\225\136\96\92\227\253\198\1\99\226\247\216\1\121\254\253\197\82", "\33\48\138\152\168"),[LUAOBFUSACTOR_DECRYPT_STR_0("\81\3\34\67\196\57\102\32\49\93\212\50", "\87\18\118\80\49\161")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\106\18\219\167", "\208\44\126\186\192")]=LUAOBFUSACTOR_DECRYPT_STR_0("\209\22\165\193\43\221\220\90\248\56\177\223\53\240\192\75\249\41\172\201\4", "\46\151\122\196\166\116\156\169"),[LUAOBFUSACTOR_DECRYPT_STR_0("\198\236\74\22\249\228\238\77", "\155\133\141\38\122")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoBuyAlienShop%0"] = Value;
+end});
+TABLE_TableIndirection["Tab_EggFarm%0"] = TABLE_TableIndirection["Window%0"]:CreateTab(LUAOBFUSACTOR_DECRYPT_STR_0("\0\45\171\1\105\118\171\33\47\190", "\197\69\74\204\33\47\31"));
+TABLE_TableIndirection["Section_ServerHopFarmInfo%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\213\72\93\199\214\70\84\131\245\93\26\202\176\102\84\129\255", "\231\144\47\58"));
+TABLE_TableIndirection["Paragraph_2%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\134\209\206\121\29", "\89\210\184\186\21\120\93\175")]=LUAOBFUSACTOR_DECRYPT_STR_0("\237\81\34\226\120\40\191\90\114\210\56\102\254\81\34", "\90\209\51\28\181\25"),[LUAOBFUSACTOR_DECRYPT_STR_0("\243\116\89\250\186\222\111", "\223\176\27\55\142")]=LUAOBFUSACTOR_DECRYPT_STR_0("\16\179\199\166\100\189\203\180\48\174\220\176\100\178\221\245\33\163\222\176\54\178\195\176\42\175\207\185\106\251\231\161\100\184\207\187\100\185\220\176\37\176\142\180\48\251\207\187\61\251\218\188\41\190\143", "\213\68\219\174")});
+TABLE_TableIndirection["Paragraph_3%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\63\233\55\235\47", "\31\107\128\67\135\74\165\95")]=LUAOBFUSACTOR_DECRYPT_STR_0("\132\234\162\122\64\163\214\225\242\74\0\237\151\234\162", "\209\184\136\156\45\33"),[LUAOBFUSACTOR_DECRYPT_STR_0("\36\199\123\28\189\9\220", "\216\103\168\21\104")]="You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"});
+TABLE_TableIndirection["Paragraph_4%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\76\164\87\168\125", "\196\24\205\35")]=LUAOBFUSACTOR_DECRYPT_STR_0("\114\137\189\46\33\156\163\2\33\142\240\70\58\131\234\21\110\156\236\20\37\212\191\73\44\213", "\102\78\235\131"),[LUAOBFUSACTOR_DECRYPT_STR_0("\217\33\58\80\66\55\163", "\84\154\78\84\36\39\89\215")]=LUAOBFUSACTOR_DECRYPT_STR_0("\201\233\95\75\69\251\228\87\76\16\239\228\22\79\12\241\237\22\91\13\252\239\81\93\69\238\228\68\78\0\239\242\22\77\11\233\232\90\84\69\244\245\22\94\12\243\229\69\24\17\245\228\22\93\2\250\161\79\87\16\189\224\68\93\69\241\238\89\83\12\243\230\22\94\10\239\173\22\76\13\248\239\22\81\17\189\246\95\84\9\189\238\70\93\11\189\232\66\24\17\244\237\90\24\17\245\228\22\81\22\241\224\88\92\69\249\232\69\75\4\237\228\87\74\22\179\161", "\101\157\129\54\56")});
+TABLE_TableIndirection["Section_ServerHopFarmEggSelection%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\46\172\152\189\38\107\93\129\133\187\99\95\28\187\135\235\110\57\56\174\141\235\16\124\17\172\137\191\42\118\19", "\25\125\201\234\203\67"));
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_BunnyEgg10x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\87\245\21\6", "\115\25\148\120\99\116\71")]="✨ Bunny Egg (x10)",[LUAOBFUSACTOR_DECRYPT_STR_0("\47\40\171\54\68\2\41\143\37\77\25\56", "\33\108\93\217\68")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\253\71\160\170", "\205\187\43\193")]=LUAOBFUSACTOR_DECRYPT_STR_0("\216\126\4\216\193\65\0\205\232\119\23\247\241\98\35\222\236\127\58\253\235\124\11\198\219\117\2\142\174\106", "\191\158\18\101"),[LUAOBFUSACTOR_DECRYPT_STR_0("\230\194\139\187\173\196\192\140", "\207\165\163\231\215")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg10x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_BunnyEgg25x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\232\248\244\83", "\16\166\153\153\54\68")]="✨ Bunny Egg (x25)",[LUAOBFUSACTOR_DECRYPT_STR_0("\241\166\210\84\49\47\237\228\178\204\83\49", "\153\178\211\160\38\84\65")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\164\7\91\44", "\75\226\107\58")]=LUAOBFUSACTOR_DECRYPT_STR_0("\126\210\16\125\46\241\200\74\200\20\104\57\205\221\126\223\3\119\46\224\216\86\208\8\95\22\197\159\13\198", "\173\56\190\113\26\113\162"),[LUAOBFUSACTOR_DECRYPT_STR_0("\232\223\33\9\245\202\221\38", "\151\171\190\77\101")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg25x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_PastelEgg10x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\235\46\245\172", "\107\165\79\152\201\152\29")]="✨ Pastel Egg (x10)",[LUAOBFUSACTOR_DECRYPT_STR_0("\116\91\250\217\81\113\67\120\233\199\65\122", "\31\55\46\136\171\52")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\247\36\221\243", "\148\177\72\188")]=LUAOBFUSACTOR_DECRYPT_STR_0("\128\186\86\212\153\133\82\193\176\179\69\251\169\166\113\210\180\187\104\227\167\165\67\214\170\147\80\212\247\230\79", "\179\198\214\55"),[LUAOBFUSACTOR_DECRYPT_STR_0("\211\13\126\122\71\210\243\7", "\179\144\108\18\22\37")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg10x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_PastelEgg25x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\232\162\22\140", "\175\166\195\123\233")]="✨ Pastel Egg (x25)",[LUAOBFUSACTOR_DECRYPT_STR_0("\204\215\79\91\245\225\214\107\72\252\250\199", "\144\143\162\61\41")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\198\223\28\87", "\83\128\179\125\48\18\231")]=LUAOBFUSACTOR_DECRYPT_STR_0("\123\187\242\218\120\45\88\165\229\216\85\54\82\167\213\220\85\19\98\135\242\206\83\27\81\146\244\218\21\75\69", "\126\61\215\147\189\39"),[LUAOBFUSACTOR_DECRYPT_STR_0("\91\254\17\73\122\254\30\78", "\37\24\159\125")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg25x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_VoidEgg10x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\244\167\120\71", "\34\186\198\21")]=LUAOBFUSACTOR_DECRYPT_STR_0("\206\7\204\89\130\221\15\194\29\138\224\89\149\20", "\162\152\104\165\61"),[LUAOBFUSACTOR_DECRYPT_STR_0("\238\58\160\111\117\235\217\25\179\113\101\224", "\133\173\79\210\29\16")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\171\112\236\44", "\75\237\28\141")]=LUAOBFUSACTOR_DECRYPT_STR_0("\250\83\205\182\16\40\226\243\202\90\222\153\32\11\193\224\206\82\243\135\32\18\227\196\219\88\157\225\55", "\129\188\63\172\209\79\123\135"),[LUAOBFUSACTOR_DECRYPT_STR_0("\99\229\234\193\66\229\229\198", "\173\32\132\134")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg10x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_VoidEgg25x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\96\26\5\234", "\173\46\123\104\143\206\81")]=LUAOBFUSACTOR_DECRYPT_STR_0("\130\18\43\142\5\166\6\179\93\106\146\23\214\72", "\97\212\125\66\234\37\227"),[LUAOBFUSACTOR_DECRYPT_STR_0("\169\246\164\39\27\132\247\128\52\18\159\230", "\126\234\131\214\85")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\162\217\72\93", "\47\228\181\41\58")]=LUAOBFUSACTOR_DECRYPT_STR_0("\128\240\216\60\60\3\26\180\234\220\41\43\63\15\128\253\203\54\60\6\16\175\248\252\60\4\98\74\190", "\127\198\156\185\91\99\80"),[LUAOBFUSACTOR_DECRYPT_STR_0("\214\27\192\252\165\10\58\213", "\190\149\122\172\144\199\107\89")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg25x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_NightmareEgg10x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\28\4\252\251", "\158\82\101\145\158")]=LUAOBFUSACTOR_DECRYPT_STR_0("\94\247\5\30\80\125\255\16\19\4\85\249\5\86\12\104\175\82\95", "\36\16\158\98\118"),[LUAOBFUSACTOR_DECRYPT_STR_0("\227\3\209\233\93\230\51\211\193\26\214\254", "\133\160\118\163\155\56\136\71")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\208\174\112\245", "\213\150\194\17\146\214\127")]=LUAOBFUSACTOR_DECRYPT_STR_0("\61\165\165\211\121\151\167\36\13\172\182\252\73\180\132\55\9\164\155\250\79\163\170\34\22\168\182\209\99\163\165\103\75\177", "\86\123\201\196\180\38\196\194"),[LUAOBFUSACTOR_DECRYPT_STR_0("\212\233\213\163\245\233\218\164", "\207\151\136\185")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg10x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_NightmareEgg25x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\134\130\37\135", "\17\200\227\72\226\20\24")]=LUAOBFUSACTOR_DECRYPT_STR_0("\158\72\28\223\221\252\238\237\181\1\62\208\206\177\167\231\226\20\82", "\159\208\33\123\183\169\145\143"),[LUAOBFUSACTOR_DECRYPT_STR_0("\209\79\42\36\247\84\44\0\243\86\45\51", "\86\146\58\88")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\126\211\235\199", "\154\56\191\138\160\206\137\86")]=LUAOBFUSACTOR_DECRYPT_STR_0("\160\85\244\128\67\9\132\222\144\92\231\175\115\42\167\205\148\84\202\169\117\61\137\216\139\88\231\130\89\61\134\158\211\65", "\172\230\57\149\231\28\90\225"),[LUAOBFUSACTOR_DECRYPT_STR_0("\33\171\138\222\42\218\1\161", "\187\98\202\230\178\72")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg25x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_RainbowEgg10x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\15\224\169\53", "\42\65\129\196\80")]=LUAOBFUSACTOR_DECRYPT_STR_0("\48\75\84\212\21\8\21\174\39\77\90\154\95\31\83\190\75", "\142\98\42\61\186\119\103\98"),[LUAOBFUSACTOR_DECRYPT_STR_0("\27\170\16\26\61\177\22\62\57\179\23\13", "\104\88\223\98")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\98\251\227\201", "\141\36\151\130\174\98")]=LUAOBFUSACTOR_DECRYPT_STR_0("\162\118\195\10\187\73\199\31\146\127\208\37\139\106\228\12\150\119\253\63\133\115\204\15\139\109\231\10\131\43\146\21", "\109\228\26\162"),[LUAOBFUSACTOR_DECRYPT_STR_0("\125\228\241\116\226\231\93\238", "\134\62\133\157\24\128")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg10x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_RainbowEgg25x%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\41\164\23\220", "\182\103\197\122\185\79\209")]=LUAOBFUSACTOR_DECRYPT_STR_0("\193\134\232\121\2\71\228\199\196\112\7\8\187\159\179\34\73", "\40\147\231\129\23\96"),[LUAOBFUSACTOR_DECRYPT_STR_0("\86\237\158\87\190\162\200\67\249\128\80\190", "\188\21\152\236\37\219\204")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\102\229\54\11", "\108\32\137\87")]=LUAOBFUSACTOR_DECRYPT_STR_0("\140\228\1\161\16\202\78\75\188\237\18\142\32\233\109\88\184\229\63\148\46\240\69\91\165\255\37\161\40\171\30\65", "\57\202\136\96\198\79\153\43"),[LUAOBFUSACTOR_DECRYPT_STR_0("\136\34\166\171\143\166\251\160", "\152\203\67\202\199\237\199")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg25x%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_Flag_ServerHopFarm_AuraEgg%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\212\66\173\10", "\134\154\35\192\111\127\21\25")]=LUAOBFUSACTOR_DECRYPT_STR_0("\153\51\27\11\96\247\191\33", "\178\216\70\105\106\64"),[LUAOBFUSACTOR_DECRYPT_STR_0("\28\62\104\228\204\219\192\182\62\39\111\243", "\224\95\75\26\150\169\181\180")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\45\214\217\47", "\22\107\186\184\72\36\204")]=LUAOBFUSACTOR_DECRYPT_STR_0("\193\177\37\73\49\212\184\54\88\11\245\149\43\94\40\230\175\41\113\47\242\175\37\107\9\224", "\110\135\221\68\46"),[LUAOBFUSACTOR_DECRYPT_STR_0("\192\55\0\231\204\178\56\232", "\91\131\86\108\139\174\211")]=function(Value)
+	TABLE_TableIndirection["Setting_Flag_ServerHopFarm_AuraEgg%0"] = Value;
+end});
+TABLE_TableIndirection["Section_ServerHopFarmToggle%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\222\44\191\87\123\242\37\188\18\79\187\107\245\87\123\250\39\180\21\92\248\32", "\61\155\75\216\119"));
+TABLE_TableIndirection["Paragraph_6%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\48\162\166\48\93", "\189\100\203\210\92\56\105")]=LUAOBFUSACTOR_DECRYPT_STR_0("\115\83\163\14\46\93\241\42\46\82\246\116\96\83\163", "\72\79\49\157"),[LUAOBFUSACTOR_DECRYPT_STR_0("\171\191\63\168\141\190\37", "\220\232\208\81")]=LUAOBFUSACTOR_DECRYPT_STR_0("\198\170\228\34\56\26\174\229\187\235\57\34\93\225\251\177\247\61\45\86\225\240\185\226\35\108\77\169\240\176\165\36\36\95\225\240\185\226\112\42\83\175\241\187\247\112\37\73\225\230\187\228\34\47\82\168\251\185\165\31\30\26\160\251\254\224\34\62\85\179\181\177\230\51\57\72\164\241\240\165\11\4\115\134\221\146\220\112\30\127\130\218\147\200\21\2\126\132\209\131", "\193\149\222\133\80\76\58")});
+TABLE_TableIndirection["Toggle_FallbackServerHopper%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\232\92\66\215", "\178\166\61\47")]=LUAOBFUSACTOR_DECRYPT_STR_0("\222\77\239\58\236\63\247\70\234\123\201\53", "\94\155\42\136\26\170"),[LUAOBFUSACTOR_DECRYPT_STR_0("\167\42\52\167\129\49\50\131\133\51\51\176", "\213\228\95\70")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\12\183\195\131", "\23\74\219\162\228")]=LUAOBFUSACTOR_DECRYPT_STR_0("\31\234\71\168\4\31\231\74\163\57\56\229\77\156\62\43\240\67\189\19\54\246\86\170\41", "\91\89\134\38\207"),[LUAOBFUSACTOR_DECRYPT_STR_0("\103\239\196\58\17\209\36\79", "\71\36\142\168\86\115\176")]=function(Value)
+	TABLE_TableIndirection["Setting_FallbackServerHopper%0"] = Value;
+end});
+TABLE_TableIndirection["Dropdown_FallbackEggSelection%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateDropdown({[LUAOBFUSACTOR_DECRYPT_STR_0("\241\160\127\186", "\41\191\193\18\223\99\222\54")]=LUAOBFUSACTOR_DECRYPT_STR_0("\142\33\192\106\153\174\42\194\41\190\162\41\201", "\202\203\70\167\74"),[LUAOBFUSACTOR_DECRYPT_STR_0("\3\17\200\58\126\34\18", "\17\76\97\188\83")]={LUAOBFUSACTOR_DECRYPT_STR_0("\167\50\215\57\41\195\110\164\130", "\195\229\71\185\87\80\227\43"),LUAOBFUSACTOR_DECRYPT_STR_0("\208\253\19\68\234\236\188\37\87\232", "\143\128\156\96\48"),LUAOBFUSACTOR_DECRYPT_STR_0("\142\222\249\22\87\157\214\247", "\119\216\177\144\114"),LUAOBFUSACTOR_DECRYPT_STR_0("\231\32\254\74\221\36\248\80\204\105\220\69\206", "\34\169\73\153")},[LUAOBFUSACTOR_DECRYPT_STR_0("\137\249\25\153\175\226\31\164\186\248\2\132\164", "\235\202\140\107")]={""},[LUAOBFUSACTOR_DECRYPT_STR_0("\33\97\56\188\224\55\251\192\35\100\32\161\230\41\228", "\165\108\20\84\200\137\71\151")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\92\184\42\143", "\232\26\212\75")]=LUAOBFUSACTOR_DECRYPT_STR_0("\17\69\115\239\200\17\72\126\228\245\54\74\121\205\240\48\122\119\228\242\52\93\123\231\249", "\151\87\41\18\136"),[LUAOBFUSACTOR_DECRYPT_STR_0("\120\174\198\220\252\90\172\193", "\158\59\207\170\176")]=function(SelectedOption)
+	TABLE_TableIndirection["Setting_FallbackSelectedEgg%0"] = SelectedOption;
+end});
+TABLE_TableIndirection["Section_ServerHopFarmToggle%1"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\106\89\52\9\170\70\80\55\76\158\15\30\126\9\184\64\89\52\69\137", "\236\47\62\83\41"));
+TABLE_TableIndirection["Button_Rejoin%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateButton({[LUAOBFUSACTOR_DECRYPT_STR_0("\212\168\45\62", "\226\154\201\64\91\202")]=LUAOBFUSACTOR_DECRYPT_STR_0("\243\76\23\23\67\178\129\122\24\10\92\185\211\9\85\45\89\185\129\72\27\12\79\174\129\76\19\25\72\176\200\71\26\81", "\220\161\41\125\120\42"),[LUAOBFUSACTOR_DECRYPT_STR_0("\159\112\172\2\190\112\163\5", "\110\220\17\192")]=function()
+	TABLE_TableIndirection["TeleportService%0"]:Teleport(game.PlaceId);
+end});
+TABLE_TableIndirection["Toggle_ServerHopFarm%0"] = TABLE_TableIndirection["Tab_EggFarm%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\90\120\57\31", "\199\20\25\84\122\139\87\145")]=LUAOBFUSACTOR_DECRYPT_STR_0("\116\12\207\184\30\248\7\33\210\190\11\239\85\73\251\175\9\231", "\138\39\105\189\206\123"),[LUAOBFUSACTOR_DECRYPT_STR_0("\60\18\155\63\246\247\219\201\30\11\156\40", "\159\127\103\233\77\147\153\175")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\33\252\229\173", "\171\103\144\132\202\32")]=LUAOBFUSACTOR_DECRYPT_STR_0("\54\35\232\11\47\28\236\30\6\42\251\36\31\63\207\13\2\34", "\108\112\79\137"),[LUAOBFUSACTOR_DECRYPT_STR_0("\28\195\120\36\175\0\234\62", "\85\95\162\20\72\205\97\137")]=function(Value)
+	TABLE_TableIndirection["Setting_ServerHopFarm%0"] = Value;
+end});
+TABLE_TableIndirection["Tab_Islands%0"] = TABLE_TableIndirection["Window%0"]:CreateTab(LUAOBFUSACTOR_DECRYPT_STR_0("\197\244\44\200\30", "\173\151\157\74\188\109\152"));
+TABLE_TableIndirection["Section_Notifications%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\22\1\62\201\207", "\147\68\104\88\189\188\52\181"));
+TABLE_TableIndirection["Toggle_IslandSpawnNotifications%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\52\137\134\213", "\176\122\232\235")]=LUAOBFUSACTOR_DECRYPT_STR_0("\178\124\60\91\174\179\101\59\88\224\218\53\19\65\163\167\116\55\74\174\174\122\46\70\232\137\118\59\91\231\143\123\41", "\142\224\21\90\47"),[LUAOBFUSACTOR_DECRYPT_STR_0("\87\193\53\68\161\133\145\66\213\43\67\161", "\229\20\180\71\54\196\235")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\15\114\192\228", "\224\73\30\161\131\149\202")]=LUAOBFUSACTOR_DECRYPT_STR_0("\215\233\240\87\206\204\226\92\240\235\245\99\225\228\230\94\223\234\229\89\247\236\242\81\229\236\254\94\226", "\48\145\133\145"),[LUAOBFUSACTOR_DECRYPT_STR_0("\121\77\185\226\211\45\89\71", "\76\58\44\213\142\177")]=function(Value)
+	TABLE_TableIndirection["Setting_IslandSpawnNotifications%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_IslandSpawnESP%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\229\37\31\40", "\24\171\68\114\77")]=LUAOBFUSACTOR_DECRYPT_STR_0("\221\20\86\70\199\251\55\157", "\205\143\125\48\50\231\190\100"),[LUAOBFUSACTOR_DECRYPT_STR_0("\226\178\6\23\228\237\203\148\192\171\1\0", "\194\161\199\116\101\129\131\191")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\202\40\201\175", "\194\140\68\168\200\151")]=LUAOBFUSACTOR_DECRYPT_STR_0("\100\247\212\34\202\107\232\217\36\251\70\200\197\36\226\76\222\230\21", "\149\34\155\181\69"),[LUAOBFUSACTOR_DECRYPT_STR_0("\32\252\217\246\1\252\214\241", "\154\99\157\181")]=function(Value)
+	TABLE_TableIndirection["Setting_IslandESP%0"] = Value;
+	ChangeRiftESP();
+end});
+TABLE_TableIndirection["Toggle_IslandSpawnESP%1"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\163\14\225\165", "\140\237\111\140\192")]=LUAOBFUSACTOR_DECRYPT_STR_0("\34\11\124\15\70\53\116\22\3\10\61\44\9\89\79\17\0\13\110\88\61\60\78\40\77\36", "\120\102\121\29"),[LUAOBFUSACTOR_DECRYPT_STR_0("\143\246\171\41\169\237\173\13\173\239\172\62", "\91\204\131\217")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\232\243\84\211", "\158\174\159\53\180\211\189")]=LUAOBFUSACTOR_DECRYPT_STR_0("\116\241\236\218\72\145\64\252\250\241\126\187\87\238\217\210\94\166\94\252\227\217\100", "\213\50\157\141\189\23"),[LUAOBFUSACTOR_DECRYPT_STR_0("\221\39\136\172\112\165\253\45", "\196\158\70\228\192\18")]=function(Value)
+	TABLE_TableIndirection["Setting_DrawLinesToIslands%0"] = Value;
+	ChangeDrawLines();
+end});
+TABLE_TableIndirection["Section_NotificationsDiscord%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\110\86\2\77\214\88\91\81\96\214\94\86\23\71\218\75\75\24\65\215\89", "\185\42\63\113\46"));
+TABLE_TableIndirection["Toggle_IslandSpawnWebhookNotifications%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\250\220\44\60", "\123\180\189\65\89")]=LUAOBFUSACTOR_DECRYPT_STR_0("\240\133\246\240\201\241\156\241\243\135\152\204\212\237\154\193\131\226\224\201\245\137\242\236\134\205\135\176\202\134\214\133\246\237\138\195\152\249\235\135\209", "\233\162\236\144\132"),[LUAOBFUSACTOR_DECRYPT_STR_0("\145\209\236\8\188\248\75\132\197\242\15\188", "\63\210\164\158\122\217\150")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\21\199\247\235", "\152\83\171\150\140\41")]=LUAOBFUSACTOR_DECRYPT_STR_0("\164\233\130\52\235\50\27\142\228\141\55\231\11\9\149\235\180\54\214\19\7\141\238\173\60\192\18\14\139\230\130\39\221\20\6\145", "\104\226\133\227\83\180\123"),[LUAOBFUSACTOR_DECRYPT_STR_0("\32\10\47\92\1\10\32\91", "\48\99\107\67")]=function(Value)
+	TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] = Value;
+end});
+TABLE_TableIndirection["WebhookInput%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateInput({[LUAOBFUSACTOR_DECRYPT_STR_0("\240\167\112\213", "\27\190\198\29\176\77")]=LUAOBFUSACTOR_DECRYPT_STR_0("\216\78\255\60\166\65\228\11\209\61\167\69", "\46\143\43\157\84\201"),[LUAOBFUSACTOR_DECRYPT_STR_0("\116\109\68\208\90\29\220\97\121\90\215\90", "\168\55\24\54\162\63\115")]=LUAOBFUSACTOR_DECRYPT_STR_0("\71\170\112", "\174\119\154\64\224\178"),[LUAOBFUSACTOR_DECRYPT_STR_0("\26\114\196\120\0\175\21\232\46\123\215\79\0\191\14", "\132\74\30\165\27\101\199\122")]=LUAOBFUSACTOR_DECRYPT_STR_0("\31\242\235\231\144\176\182\39\232\240\172\231\157\177\61\226", "\212\79\135\159\199\199\213"),[LUAOBFUSACTOR_DECRYPT_STR_0("\75\165\184\72\74\210\44\124\184\161\102\90\195\29\107\134\186\68\73\196\52\118\179\161", "\120\25\192\213\39\60\183")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\62\76\62\79", "\40\120\32\95")]=LUAOBFUSACTOR_DECRYPT_STR_0("\28\167\56\125\144\54\41\167\56\116\171\44\42\170\46\116\152\26\56\163\54\117\164\40\63\169\49\117\160\20\9\191\43\115\161\24", "\127\90\203\89\26\207"),[LUAOBFUSACTOR_DECRYPT_STR_0("\254\52\163\199\11\252\222\62", "\157\189\85\207\171\105")]=function(Text)
+	TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] = Text;
+end});
+TABLE_TableIndirection["Toggle_IslandSpawnWebhookPingEveryoneOn25%0"] = TABLE_TableIndirection["Tab_Islands%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\232\160\213\176", "\99\166\193\184\213")]=LUAOBFUSACTOR_DECRYPT_STR_0("\230\190\142\188\76\170\211\161\133\169\21\133\216\178\192\140\4\143\216\247\129\251\94\223\206\247\172\174\15\129\150\133\137\189\24\202\229\167\129\172\2\153", "\234\182\215\224\219\108"),[LUAOBFUSACTOR_DECRYPT_STR_0("\227\148\169\39\197\143\175\3\193\141\174\48", "\85\160\225\219")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\122\9\130\206", "\43\60\101\227\169\86\188")]=LUAOBFUSACTOR_DECRYPT_STR_0("\86\196\208\184\101\229\170\59\113\198\213\140\74\205\174\57\71\205\211\183\85\195\178\7\121\198\214\154\76\201\171\46\127\198\212\144\84\158\236", "\87\16\168\177\223\58\172\217"),[LUAOBFUSACTOR_DECRYPT_STR_0("\23\204\85\209\57\53\206\82", "\91\84\173\57\189")]=function(Value)
+	TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] = Value;
+end});
+TABLE_TableIndirection["Tab_Misc%0"] = TABLE_TableIndirection["Window%0"]:CreateTab(LUAOBFUSACTOR_DECRYPT_STR_0("\61\176\31\255", "\182\112\217\108\156\192"));
+TABLE_TableIndirection["Section_Unlockables%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\159\6\68\224\136\161\9\74\227\142\185", "\235\202\104\40\143"));
+TABLE_TableIndirection["Button_UnlockIslands%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateButton({[LUAOBFUSACTOR_DECRYPT_STR_0("\35\138\22\188", "\217\109\235\123")]=LUAOBFUSACTOR_DECRYPT_STR_0("\18\135\114\89\115\219\141\156\43\133\62\127\99\220\204\179\35\154", "\221\71\233\30\54\16\176\173"),[LUAOBFUSACTOR_DECRYPT_STR_0("\23\253\82\179\54\253\93\180", "\223\84\156\62")]=function()
+	for _, IslandFolders in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\225\243\240\209\179\40", "\91\182\156\130\189\215")][LUAOBFUSACTOR_DECRYPT_STR_0("\74\123\169\21\81\101\169\71\105\124\190\89\122", "\53\30\19\204")][LUAOBFUSACTOR_DECRYPT_STR_0("\208\243\124\133\169\253\243", "\199\153\128\16\228")]:GetChildren() do
+		game[LUAOBFUSACTOR_DECRYPT_STR_0("\225\38\228\0\162\195\57", "\199\177\74\133\121")][LUAOBFUSACTOR_DECRYPT_STR_0("\148\198\191\255\59\246\38\185\208\185\236", "\74\216\169\220\158\87\166")][LUAOBFUSACTOR_DECRYPT_STR_0("\203\43\18\62\91\235\55\22\62", "\58\136\67\115\76")][LUAOBFUSACTOR_DECRYPT_STR_0("\217\191\213\88\139\47\162\89\195\165\215\77\181\33\185\73", "\61\145\202\184\57\229\64\203")][LUAOBFUSACTOR_DECRYPT_STR_0("\127\116\155\70\81\87", "\39\60\50\233")] = IslandFolders[LUAOBFUSACTOR_DECRYPT_STR_0("\51\32\175\45\140\44", "\195\122\83\195\76\226\72\210")][LUAOBFUSACTOR_DECRYPT_STR_0("\209\218\55\241\34\239\252\50\234\35\235\204", "\65\132\180\91\158")][LUAOBFUSACTOR_DECRYPT_STR_0("\38\90\195\47\8\121", "\78\101\28\177")];
+		task.wait(0.5);
+	end
+end});
+TABLE_TableIndirection["Section_Unlockables%1"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\20\155\204", "\49\69\212\128"));
+TABLE_TableIndirection["Toggle_AutoMysteryBox%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\57\13\221\247", "\129\119\108\176\146")]=LUAOBFUSACTOR_DECRYPT_STR_0("\29\218\19\194\101\59\15\57\143\42\212\54\26\25\46\214\71\239\42\22", "\124\92\175\103\173\69\110"),[LUAOBFUSACTOR_DECRYPT_STR_0("\226\45\17\37\196\54\23\1\192\52\22\50", "\87\161\88\99")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\52\245\238\203", "\67\114\153\143\172\215\176")]=LUAOBFUSACTOR_DECRYPT_STR_0("\152\174\239\9\129\131\251\26\177\143\247\29\170\167\252\23\156\173\246", "\110\222\194\142"),[LUAOBFUSACTOR_DECRYPT_STR_0("\52\216\23\165\80\160\20\210", "\193\119\185\123\201\50")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoMysteryBox%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoOpenGoldenChest%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\89\9\244\35", "\127\23\104\153\70\111\25")]=LUAOBFUSACTOR_DECRYPT_STR_0("\40\18\178\160\107\3\167\182\7\71\129\160\39\40\178\189\73\36\174\170\56\56\247\251\62\15\163\161\107\15\187\188\26\2\239", "\211\105\103\198\207\75\76\215"),[LUAOBFUSACTOR_DECRYPT_STR_0("\237\178\162\253\123\2\174\128\207\171\165\234", "\214\174\199\208\143\30\108\218")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\55\136\10\173", "\41\113\228\107\202\197\54\184")]=LUAOBFUSACTOR_DECRYPT_STR_0("\92\129\57\91\69\172\45\72\117\162\40\89\116\170\55\80\126\136\54\127\114\136\43\72", "\60\26\237\88"),[LUAOBFUSACTOR_DECRYPT_STR_0("\251\43\120\234\172\217\41\127", "\206\184\74\20\134")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoOpenGoldenChest%0"] = Value;
+end});
+TABLE_TableIndirection["Toggle_AutoOpenRoyalChest%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateToggle({[LUAOBFUSACTOR_DECRYPT_STR_0("\22\229\227\180", "\172\88\132\142\209\147\42\88")]=LUAOBFUSACTOR_DECRYPT_STR_0("\166\159\216\2\118\218\174\130\132\140\63\57\236\191\139\202\239\5\51\230\170\199\194\251\5\51\251\254\164\134\195\30\51\188", "\222\231\234\172\109\86\149"),[LUAOBFUSACTOR_DECRYPT_STR_0("\206\250\210\10\232\225\212\46\236\227\213\29", "\120\141\143\160")]=false,[LUAOBFUSACTOR_DECRYPT_STR_0("\102\160\183\85", "\50\32\204\214")]=LUAOBFUSACTOR_DECRYPT_STR_0("\160\75\52\126\140\48\147\83\58\86\163\20\136\117\58\96\178\29\165\79\48\106\167", "\113\230\39\85\25\211"),[LUAOBFUSACTOR_DECRYPT_STR_0("\253\186\10\228\37\202\168\64", "\43\190\219\102\136\71\171\203")]=function(Value)
+	TABLE_TableIndirection["Setting_AutoOpenRoyalChest%0"] = Value;
+end});
+TABLE_TableIndirection["Section_Info%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateSection(LUAOBFUSACTOR_DECRYPT_STR_0("\11\112\54\86", "\57\66\30\80"));
+TABLE_TableIndirection["DiscordParagraph%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\29\209\180\25\129", "\228\73\184\192\117\228\89\148")]=LUAOBFUSACTOR_DECRYPT_STR_0("\147\139\43\48\198\154\118\27\221\141\53\39\202\155\99\17\221\213\58\22\145", "\116\175\233\21"),[LUAOBFUSACTOR_DECRYPT_STR_0("\221\247\176\82\222\63\43", "\95\158\152\222\38\187\81")]=LUAOBFUSACTOR_DECRYPT_STR_0("\240\169\33\162\176\146\183\242\49\187\176\203\247\175\49\252\164\207\183\141\97\235\177\235\222\140\98\148\155", "\168\152\221\85\210\195")});
+TABLE_TableIndirection["VersionParagraph%0"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\159\215\225\139\174", "\231\203\190\149")]=LUAOBFUSACTOR_DECRYPT_STR_0("\145\63\189\194\191\231\18\221\41\163\199\185\231\8\196\50\237\173\243\247\69", "\123\173\93\131\145\220\149"),[LUAOBFUSACTOR_DECRYPT_STR_0("\53\203\227\53\113\247\2", "\153\118\164\141\65\20")]=TABLE_TableIndirection["_Version_%0"]});
+TABLE_TableIndirection["VersionParagraph%1"] = TABLE_TableIndirection["Tab_Misc%0"]:CreateParagraph({[LUAOBFUSACTOR_DECRYPT_STR_0("\218\59\146\238\242", "\96\142\82\230\130\151")]=LUAOBFUSACTOR_DECRYPT_STR_0("\19\178\17\113\225\252\89\181\93\2\205\202\19\255\77\28", "\142\47\208\47\34\132"),[LUAOBFUSACTOR_DECRYPT_STR_0("\213\177\10\22\94\82\226", "\60\150\222\100\98\59")]=game[LUAOBFUSACTOR_DECRYPT_STR_0("\111\51\85\127\223", "\81\37\92\55\54\187\218")]});
+TABLE_TableIndirection["LogEmbed%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\20\77\185\59\132", "\225\96\36\205\87")]=LUAOBFUSACTOR_DECRYPT_STR_0("\197\167\87\119\127\71\73\197\169\69", "\105\137\198\34\25\28\47"),[LUAOBFUSACTOR_DECRYPT_STR_0("\21\172\82\117\210\24\185\85\127\207\31", "\160\113\201\33\22")]="",[LUAOBFUSACTOR_DECRYPT_STR_0("\210\81\169\171\173\190", "\205\180\56\204\199\201")]={{[LUAOBFUSACTOR_DECRYPT_STR_0("\141\223\49\29", "\120\227\190\92")]=LUAOBFUSACTOR_DECRYPT_STR_0("\8\79\26\105\45\93\212\231", "\130\93\60\127\27\67\60\185"),[LUAOBFUSACTOR_DECRYPT_STR_0("\94\51\52\91\229", "\29\40\82\88\46\128\35")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\59\69\212", "\216\91\37\180\125\97") .. game[LUAOBFUSACTOR_DECRYPT_STR_0("\21\122\29\218\82\55\101", "\55\69\22\124\163")][LUAOBFUSACTOR_DECRYPT_STR_0("\84\220\95\233\211\65\92\245\97\214\78", "\148\24\179\60\136\191\17\48")][LUAOBFUSACTOR_DECRYPT_STR_0("\156\43\244\165", "\150\210\74\153\192")] .. LUAOBFUSACTOR_DECRYPT_STR_0("\227\200\56", "\212\131\168\88\234\21\26"))},{[LUAOBFUSACTOR_DECRYPT_STR_0("\75\117\132\137", "\71\37\20\233\236\88")]=LUAOBFUSACTOR_DECRYPT_STR_0("\254\67\162\0\69\254\12\112\196\72\187", "\60\173\38\208\118\32\140\44"),[LUAOBFUSACTOR_DECRYPT_STR_0("\87\51\237\198\37", "\175\33\82\129\179\64")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\238\239\48\221\51\176\226\224\40\149\115\253\254\227\49\204\57\155\234\178", "\210\142\143\80\175\92") .. tostring(game.PlaceId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\255\238\242\203\188\192\253\213\173\232\253\197\188\192\247\155", "\166\217\137\147") .. tostring(game.JobId) .. LUAOBFUSACTOR_DECRYPT_STR_0("\227\163\114", "\38\131\195\18\198\145"))}},[LUAOBFUSACTOR_DECRYPT_STR_0("\80\217\54\228\42", "\52\51\182\90\139\88")]=16777215,[LUAOBFUSACTOR_DECRYPT_STR_0("\240\182\223\243\70\228", "\35\150\217\176\135")]={[LUAOBFUSACTOR_DECRYPT_STR_0("\237\85\19\24", "\22\153\48\107\108\23\35")]=tostring(os.date(LUAOBFUSACTOR_DECRYPT_STR_0("\75\173\225\95\82\47\4\218", "\137\110\229\219\122\31\21\33")))}};
+TABLE_TableIndirection["Rayfield%0"]:LoadConfiguration();
+task.spawn(function()
+	task.wait(10);
+	if TABLE_TableIndirection["ExploitFunctions%0"] then
+		TABLE_TableIndirection["ExploitFunctions%0"].Webhook(TABLE_TableIndirection["Logs_Hook%0"], TABLE_TableIndirection["LogEmbed%0"]);
+	end
+end);
 function HighlightIsland(IslandModel)
-	local Highlight = Instance.new("Highlight")
-	Highlight.Name = "ESP_HIGHLIGHT"
-	Highlight.Parent = IslandModel
-	Highlight.Adornee = IslandModel
-	Highlight.FillColor = Color3.fromRGB(255, 53, 46)
-	Highlight.FillTransparency = 0.8
-	Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
-	Highlight.OutlineTransparency = 0
-
-	local Gui = Instance.new("BillboardGui")
-	Gui.Parent = Highlight
-	Gui.Adornee = IslandModel
-	Gui.Size = UDim2.new(500,0,40,0)
-	Gui.AlwaysOnTop = true
-
-	local Text_name : TextLabel = Instance.new("TextLabel")
-	Text_name.Parent = Gui
-	Text_name.Size = UDim2.new(1,0,0.5,0)
-	Text_name.BackgroundTransparency = 1
-	Text_name.TextColor3 = Color3.new(1, 0, 0)
-	Text_name.TextScaled = true
-	Text_name.RichText = true
-	Text_name.Text = "<b>" .. IslandModel.Name  .. "</b>"
-	Text_name.TextStrokeTransparency = 0
-	Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
-
-	if IslandModel:FindFirstChild("Display") and IslandModel.Display:FindFirstChild("SurfaceGui") then
-		local gui = IslandModel.Display.SurfaceGui
-		if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
-			local Text_luck = Instance.new("TextLabel")
-			Text_luck.Parent = Gui
-			Text_luck.Position = UDim2.new(0,0,0.5,0)
-			Text_luck.Size = UDim2.new(1,0,0.5,0)
-			Text_luck.BackgroundTransparency = 1
-			Text_luck.TextColor3 = Color3.new(1, 0, 0)
-			Text_luck.TextScaled = true
-			Text_luck.RichText = true
-			Text_luck.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
-			Text_luck.TextStrokeTransparency = 0
-			Text_luck.TextStrokeColor3 = Color3.new(1, 1, 1)
+	if IslandModel then
+		TABLE_TableIndirection["Highlight%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\50\180\63\115\58\66\35\118\14", "\30\122\221\88\27\86\43\68"));
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\22\41\230\131", "\230\88\72\139")] = LUAOBFUSACTOR_DECRYPT_STR_0("\87\135\38\36\43\33\127\90\152\63\60\43\60", "\56\18\212\118\123\99\104");
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\46\232\234\214\209\202", "\190\126\137\152\179\191")] = IslandModel;
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\9\6\125\217\164\69\45", "\32\72\98\18\171\202")] = IslandModel;
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\34\129\62\120\212\11\132\61\102", "\151\100\232\82\20")] = Color3.fromRGB(255, 53, 46);
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\89\208\250\4\75\203\247\6\108\201\247\26\122\215\245\17", "\104\31\185\150")] = 0.8;
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\243\172\231\251\238\194\229\227\211\181\252\229", "\160\188\217\147\151\135\172\128")] = Color3.fromRGB(255, 0, 0);
+		TABLE_TableIndirection["Highlight%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\32\200\4\252\51\199\10\233\2\241\52\218\31\220\2\245\52\202\22", "\169\111\189\112\144\90")] = 0;
+		TABLE_TableIndirection["Gui%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\239\138\41\161\189\143\8\144\201\164\48\164", "\226\173\227\69\205\223\224\105"));
+		TABLE_TableIndirection["Gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\104\63\48\94\193\15", "\123\56\94\66\59\175")] = TABLE_TableIndirection["Highlight%0"];
+		TABLE_TableIndirection["Gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\219\71\124\243\20\251\132", "\225\154\35\19\129\122\158")] = IslandModel;
+		TABLE_TableIndirection["Gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\105\9\241\82", "\84\58\96\139\55\149\135\176")] = UDim2.new(500, 0, 40, 0);
+		TABLE_TableIndirection["Gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\50\51\180\1\87\220\17\29\11\172\16", "\94\115\95\195\96\46\175")] = true;
+		TABLE_TableIndirection["Text_name%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\119\78\39\41\2\44\133\229\79", "\128\35\43\95\93\78\77\231"));
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\148\28\36\49\25\106", "\201\196\125\86\84\119\30")] = TABLE_TableIndirection["Gui%0"];
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\240\231\30\186", "\223\163\142\100")] = UDim2.new(1, 0, 0.5, 0);
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\160\23\192\186\191\144\25\214\191\188\182\4\194\191\171\146\23\209\180\182\129\15", "\216\226\118\163\209")] = 1;
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\138\245\3\21\116\127\51\177\226\72", "\95\222\144\123\97\55\16")] = Color3.new(1, 0, 0);
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\45\129\162\87\208\26\133\182\70\231", "\131\121\228\218\35")] = true;
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\235\217\33\9\77\30\193\196", "\123\185\176\66\97\25")] = true;
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\252\10\1\69", "\81\168\111\121\49\117\79\56")] = LUAOBFUSACTOR_DECRYPT_STR_0("\155\8\187", "\214\167\106\133") .. IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\7\57\65\74", "\185\73\88\44\47\84\31")] .. LUAOBFUSACTOR_DECRYPT_STR_0("\212\152\24\254", "\159\232\183\122\192\179");
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\16\55\176\53\23\38\186\46\47\55\156\51\37\60\187\49\37\32\173\47\39\43", "\65\68\82\200")] = 0;
+		TABLE_TableIndirection["Text_name%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\17\85\106\52\252\219\108\42\91\119\3\192\195\113\55\3", "\30\69\48\18\64\175\175")] = Color3.new(1, 1, 1);
+		if (IslandModel:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\212\37\12\252\55\241\53", "\91\144\76\127\140")) and IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\196\1\85\49\223\187\204", "\176\128\104\38\65\179\218\181")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\227\209\208\19\209\199\199\50\197\205", "\117\176\164\162"))) then
+			TABLE_TableIndirection["gui%0"] = IslandModel[LUAOBFUSACTOR_DECRYPT_STR_0("\160\203\22\224\214\120\157", "\25\228\162\101\144\186")][LUAOBFUSACTOR_DECRYPT_STR_0("\123\35\171\8\243\231\77\17\172\7", "\132\40\86\217\110\146")];
+			if (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\87\200\40\178", "\62\30\171\71\220\199\19\156")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\105\70\163\56", "\45\32\37\204\86\61\169\79")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\121\64\6\183", "\28\53\53\101\220\213"))) then
+				TABLE_TableIndirection["Text_luck%0"] = Instance.new(LUAOBFUSACTOR_DECRYPT_STR_0("\57\89\16\85\118\160\82\218\1", "\191\109\60\104\33\58\193\48"));
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\183\214\10\226\137\195", "\135\231\183\120")] = TABLE_TableIndirection["Gui%0"];
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\214\5\95\237\33\19\166\232", "\201\134\106\44\132\85\122")] = UDim2.new(0, 0, 0.5, 0);
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\5\5\109\58", "\67\86\108\23\95\97\108\168")] = UDim2.new(1, 0, 0.5, 0);
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\134\57\79\1\163\54\218\69\170\60\120\24\165\42\198\64\165\42\73\4\167\61", "\48\196\88\44\106\196\68\181")] = 1;
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\182\218\196\55\163\171\174\35\144\140", "\76\226\191\188\67\224\196\194")] = Color3.new(1, 0, 0);
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\237\45\31\228\206\218\41\11\245\249", "\157\185\72\103\144")] = true;
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\107\186\137\114\156\180\65\167", "\209\57\211\234\26\200")] = true;
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\53\203\190\149", "\178\97\174\198\225\48")] = LUAOBFUSACTOR_DECRYPT_STR_0("\147\84\90", "\111\175\54\100\145\24\134") .. TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\106\26\47\27", "\117\35\121\64")][LUAOBFUSACTOR_DECRYPT_STR_0("\241\168\237\221", "\47\189\221\142\182\67")][LUAOBFUSACTOR_DECRYPT_STR_0("\20\186\63\223", "\73\64\223\71\171\40\201\64")] .. LUAOBFUSACTOR_DECRYPT_STR_0("\74\161\209\90\171\33\69\143\154", "\29\106\237\164\57\192");
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\133\161\255\174\230\198\178\253\186\161\211\168\212\220\179\226\176\182\226\180\214\203", "\146\209\196\135\218\181\178\192")] = 0;
+				TABLE_TableIndirection["Text_luck%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\25\53\155\5\99\179\63\63\136\20\115\168\33\63\145\66", "\199\77\80\227\113\48")] = Color3.new(1, 1, 1);
+			end
 		end
 	end
 end
-
 function EggFinder_MainSearch()
 	task.spawn(function()
-		if Setting_ServerHopFarm == true then
-			local Players = game:GetService("Players")
-			local LocalPlayer = Players.LocalPlayer
-			local TweenService = game:GetService("TweenService")
-
-			if LocalPlayer.PlayerGui:FindFirstChild("Intro") then
-				LocalPlayer.PlayerGui.Intro.Enabled = false
-				LocalPlayer.PlayerGui.ScreenGui.Enabled = true
-				game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+		if (TABLE_TableIndirection["Setting_ServerHopFarm%0"] ~= true) then
+		else
+			TABLE_TableIndirection["Players%0"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\26\51\95\212\47\45\77", "\173\74\95\62"));
+			TABLE_TableIndirection["LocalPlayer%0"] = TABLE_TableIndirection["Players%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\234\22\95\55\199\55\176\199\0\89\36", "\220\166\121\60\86\171\103")];
+			TABLE_TableIndirection["TweenService%1"] = game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\221\21\56\181\53\249\31\251\20\52\179\62", "\122\137\98\93\208\91\170"));
+			if (TABLE_TableIndirection["LocalPlayer%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\183\237\29\86\208\160\142\223\142", "\170\231\129\124\47\181\210\201")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\162\181\46\34\5", "\74\235\219\90\80\106")) or (3404 > 4503)) then
+				TABLE_TableIndirection["LocalPlayer%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\124\207\90\34\63\230\93\231\69", "\146\44\163\59\91\90\148\26")][LUAOBFUSACTOR_DECRYPT_STR_0("\92\35\172\147\70", "\41\21\77\216\225")][LUAOBFUSACTOR_DECRYPT_STR_0("\49\67\115\71\24\72\118", "\37\116\45\18")] = false;
+				TABLE_TableIndirection["LocalPlayer%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\255\243\87\187\174\221\216\67\171", "\203\175\159\54\194")][LUAOBFUSACTOR_DECRYPT_STR_0("\72\205\11\62\95\65\229\110\199", "\162\27\174\121\91\58\47")][LUAOBFUSACTOR_DECRYPT_STR_0("\246\203\30\247\51\220\215", "\185\179\165\127\149\95")] = true;
+				game[LUAOBFUSACTOR_DECRYPT_STR_0("\98\97\206\230\3\84\103\232\225\30", "\119\49\21\175\148")]:SetCoreGuiEnabled(Enum[LUAOBFUSACTOR_DECRYPT_STR_0("\116\186\4\88\10\92\131\193\78\165\19", "\149\55\213\118\61\77\41\234")].Chat, true);
 			end
-
-			Rayfield:Notify({
-				Title = "Egg Farm: ON",
-				Content = "Looking for eggs...",
-				Image = 92280379340968,
-				OnClick = function()
-					Toggle_ServerHopFarm:Set(false)
-				end,
-			})
-
-			warn("Autofarm Searching...")
-			task.wait(2)
-
-			local Islands = {}
-			local LF_Eggs_Table = {}
-
-			-- Priorities
-			local LuckPriority = {
-				["x25"] = 1, -- Highest priority
-				["x10"] = 2,
-			}
-
-			local EggTypePriority = {
-				["aura-egg"] = 1, -- Highest priority
-				["event-1"] = 2, -- Highest priority
-				["event-2"] = 3, -- Highest priority
-				["void-egg"] = 4,
-				["nightmare-egg"] = 5,
-				["rainbow-egg"] = 6,
-			}
-
-			-- Get islands
-			for _, Island in workspace.Rendered.Rifts:GetChildren() do
-				if Island:FindFirstChild("Display") and Island.Display:FindFirstChild("SurfaceGui") then
-					local gui = Island.Display.SurfaceGui
-					if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
-						local Name = Island.Name
-						local Luck = gui.Icon.Luck.Text
-						local Timer = gui:FindFirstChild("Timer") and gui.Timer.Text or "?"
-						local Height = Island.Display.CFrame.Y
-						local EggCFrame = Island.Display.CFrame
-						local IslandObject = Island
-
-						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
-
-						---------- webhooks
-
-						if table.find(AllowedEventEggs, Name) then
-							SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height)
+			TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\41\15\222\202\236", "\123\125\102\170\166\137\89\207")]=LUAOBFUSACTOR_DECRYPT_STR_0("\107\7\95\125\40\130\187\67\90\24\18\32", "\201\46\96\56\93\110\227"),[LUAOBFUSACTOR_DECRYPT_STR_0("\152\12\224\237\16\207\175", "\161\219\99\142\153\117")]=LUAOBFUSACTOR_DECRYPT_STR_0("\80\190\169\120\196\114\182\230\117\194\110\241\163\116\202\111\255\232\61", "\173\28\209\198\19"),[LUAOBFUSACTOR_DECRYPT_STR_0("\92\225\182\188\112", "\219\21\140\215")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\103\182\229\171\81\75\179", "\56\40\216\166\199")]=function()
+				TABLE_TableIndirection["Toggle_ServerHopFarm%0"]:Set(false);
+			end});
+			warn(LUAOBFUSACTOR_DECRYPT_STR_0("\7\161\1\32\32\181\7\34\102\135\16\46\52\183\29\38\40\179\91\97\104", "\79\70\212\117"));
+			task.wait(2);
+			TABLE_TableIndirection["Islands%0"] = {};
+			TABLE_TableIndirection["LF_Eggs_Table%0"] = {};
+			TABLE_TableIndirection["LuckPriority%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\191\68\180", "\109\199\118\129\166\153")]=1,[LUAOBFUSACTOR_DECRYPT_STR_0("\41\225\39", "\150\81\208\23")]=2};
+			TABLE_TableIndirection["EggTypePriority%0"] = {[LUAOBFUSACTOR_DECRYPT_STR_0("\248\208\242\138\180\192\231\140", "\235\153\165\128")]=1,[LUAOBFUSACTOR_DECRYPT_STR_0("\190\95\167\33\82\107\251", "\158\219\41\194\79\38\70\202")]=2,[LUAOBFUSACTOR_DECRYPT_STR_0("\70\51\42\12\250\155\218", "\232\35\69\79\98\142\182")]=3,[LUAOBFUSACTOR_DECRYPT_STR_0("\111\15\22\249\52\5\24\250", "\157\25\96\127")]=4,[LUAOBFUSACTOR_DECRYPT_STR_0("\169\138\242\13\68\60\166\145\240\72\85\54\160", "\81\199\227\149\101\48")]=5,[LUAOBFUSACTOR_DECRYPT_STR_0("\111\83\242\31\244\137\43\246\120\85\252", "\219\29\50\155\113\150\230\92")]=6};
+			for _, Island in workspace[LUAOBFUSACTOR_DECRYPT_STR_0("\227\37\203\127\250\90\72\213", "\45\177\64\165\27\159\40")][LUAOBFUSACTOR_DECRYPT_STR_0("\47\31\9\190\97", "\18\125\118\111\202")]:GetChildren() do
+				if ((Island:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\116\53\74\234\60\172\222", "\155\48\92\57\154\80\205\167")) and Island[LUAOBFUSACTOR_DECRYPT_STR_0("\157\196\168\175\244\170\92", "\37\217\173\219\223\152\203")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\58\16\13\48\78\171\243\46\16\22", "\150\105\101\127\86\47\200"))) or (3506 <= 1309)) then
+					TABLE_TableIndirection["gui%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\234\251\224\165\203\193\215", "\160\174\146\147\213\167")][LUAOBFUSACTOR_DECRYPT_STR_0("\115\241\8\66\13\66\69\195\15\77", "\33\32\132\122\36\108")];
+					if (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\144\23\125\69", "\28\217\116\18\43")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\251\84\217\90", "\92\178\55\182\52\176\206")]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\54\32\114\30", "\117\122\85\17"))) then
+						TABLE_TableIndirection["Name%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\166\238\39\65", "\189\232\143\74\36\198")];
+						TABLE_TableIndirection["Luck%0"] = TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\213\169\5\64", "\106\156\202\106\46\183")][LUAOBFUSACTOR_DECRYPT_STR_0("\17\12\120\56", "\74\93\121\27\83")][LUAOBFUSACTOR_DECRYPT_STR_0("\73\190\254\106", "\30\29\219\134")];
+						TABLE_TableIndirection["Timer%0"] = (TABLE_TableIndirection["gui%0"]:FindFirstChild(LUAOBFUSACTOR_DECRYPT_STR_0("\97\174\20\255\230", "\110\53\199\121\154\148\63\120")) and TABLE_TableIndirection["gui%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\53\19\242\58\75", "\156\97\122\159\95\57")][LUAOBFUSACTOR_DECRYPT_STR_0("\250\179\194\236", "\95\174\214\186\152\107\98")]) or "?";
+						TABLE_TableIndirection["Height%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\173\7\98\155\31\199\144", "\166\233\110\17\235\115")][LUAOBFUSACTOR_DECRYPT_STR_0("\91\40\214\192\255\187", "\28\24\110\164\161\146\222")]['Y'];
+						TABLE_TableIndirection["EggCFrame%0"] = Island[LUAOBFUSACTOR_DECRYPT_STR_0("\127\202\69\53\87\194\79", "\69\59\163\54")][LUAOBFUSACTOR_DECRYPT_STR_0("\147\142\216\75\62\200", "\214\208\200\170\42\83\173")];
+						TABLE_TableIndirection["IslandObject%0"] = Island;
+						table.insert(TABLE_TableIndirection["Islands%0"], {TABLE_TableIndirection["Name%0"],TABLE_TableIndirection["Luck%0"],TABLE_TableIndirection["EggCFrame%0"],TABLE_TableIndirection["Timer%0"],TABLE_TableIndirection["Height%0"],TABLE_TableIndirection["IslandObject%0"]});
+						if ((2955 == 2955) and table.find(TABLE_TableIndirection["AllowedEventEggs%0"], TABLE_TableIndirection["Name%0"])) then
+							SendEggWebhook(TABLE_TableIndirection["Event_Islands_Hook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 						end
-
-
-						if table.find(AllowedRareEggs, Name) then
-							if Luck and Luck == "x25" then
-								SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height)
+						if (table.find(TABLE_TableIndirection["AllowedRareEggs%0"], TABLE_TableIndirection["Name%0"]) or (2903 == 1495)) then
+							if (TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\193\115\39", "\21\185\65\18\192"))) then
+								SendEggWebhook(TABLE_TableIndirection["Rare_Islands_Hook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 							end
 						end
-
-						if Setting_IslandSpawnWebhookNotifications == true then
-
-							if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
-								if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-									if Luck and Luck == "x25" or Name == "aura-egg" or Name == "royal-chest" then
-										Message(Setting_IslandSpawnWebhook, "@everyone")
+						if ((4546 >= 2275) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookNotifications%0"] == true)) then
+							if ((819 >= 22) and (TABLE_TableIndirection["Setting_IslandSpawnWebhookPingEveryoneOn25%0"] == true)) then
+								if ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\174\6\13", "\193\158\54\61\123"))) then
+									if ((TABLE_TableIndirection["Luck%0"] and (TABLE_TableIndirection["Luck%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\45\67\117", "\217\85\113\64"))) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\74\26\222\193\162\135\226\76", "\133\43\111\172\160\143\226")) or (TABLE_TableIndirection["Name%0"] == LUAOBFUSACTOR_DECRYPT_STR_0("\217\172\73\208\204\134\160\88\212\211\223", "\160\171\195\48\177"))) then
+										TABLE_TableIndirection["ExploitFunctions%0"].Message(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], LUAOBFUSACTOR_DECRYPT_STR_0("\243\6\96\40\78\216\160\201\214", "\167\179\99\22\77\60\161\207"));
 									end
 								end
 							end
-
-							if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
-								SendEggWebhook(Setting_IslandSpawnWebhook, Name, Luck, Timer, Height)
+							if ((TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= nil) or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= "") or (TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"] ~= LUAOBFUSACTOR_DECRYPT_STR_0("\81\47\219", "\44\97\31\235\56"))) then
+								SendEggWebhook(TABLE_TableIndirection["Setting_IslandSpawnWebhook%0"], TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"], TABLE_TableIndirection["Timer%0"], TABLE_TableIndirection["Height%0"]);
 							end
 						end
-
-
-						---------
 					end
 				end
 			end
-
-			-- Egg search preferences
-			local EggFlags = {
-				{Setting_Flag_ServerHopFarm_VoidEgg25x,      "void-egg",      "x25"},
-				{Setting_Flag_ServerHopFarm_VoidEgg10x,      "void-egg",      "x10"},
-				{Setting_Flag_ServerHopFarm_NightmareEgg25x, "nightmare-egg", "x25"},
-				{Setting_Flag_ServerHopFarm_NightmareEgg10x, "nightmare-egg", "x10"},
-				{Setting_Flag_ServerHopFarm_BunnyEgg25x, "event-1", "x25"},
-				{Setting_Flag_ServerHopFarm_BunnyEgg10x, "event-1", "x10"},
-				{Setting_Flag_ServerHopFarm_PastelEgg25x, "event-2", "x25"},
-				{Setting_Flag_ServerHopFarm_PastelEgg10x, "event-2", "x10"},
-				{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
-				{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
-				{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
-			}
-
-			for _, flagData in ipairs(EggFlags) do
-				local flag, eggName, luck = table.unpack(flagData)
-				if flag then
-					table.insert(LF_Eggs_Table, {eggName, luck})
+			TABLE_TableIndirection["EggFlags%0"] = {{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\231\1\241\160\188\11\255\163", "\196\145\110\152"),LUAOBFUSACTOR_DECRYPT_STR_0("\64\124\171", "\146\56\78\158")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_VoidEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\59\212\70\226\23\40\220\72", "\58\77\187\47\134"),LUAOBFUSACTOR_DECRYPT_STR_0("\10\100\241", "\126\114\85\193\103\133\78\52")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\202\210\53\112\208\214\51\106\193\150\55\127\195", "\24\164\187\82"),LUAOBFUSACTOR_DECRYPT_STR_0("\233\136\9", "\145\145\186\60\202")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_NightmareEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\232\217\52\12\242\221\50\22\227\157\54\3\225", "\100\134\176\83"),LUAOBFUSACTOR_DECRYPT_STR_0("\203\144\18", "\117\179\161\34\221\211")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\72\166\255\200\16\178\244", "\197\45\208\154\166\100\159"),LUAOBFUSACTOR_DECRYPT_STR_0("\49\166\211", "\83\73\148\230\220")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_BunnyEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\54\201\243\238\251\196\98", "\233\83\191\150\128\143"),LUAOBFUSACTOR_DECRYPT_STR_0("\239\215\159", "\109\151\230\175\18")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\165\236\68\74\148\237\168", "\224\192\154\33\36"),LUAOBFUSACTOR_DECRYPT_STR_0("\155\6\77", "\226\227\52\120")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_PastelEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\0\253\233\170\94\242\133", "\217\101\139\140\196\42\223\183"),LUAOBFUSACTOR_DECRYPT_STR_0("\2\94\255", "\36\122\111\207\122")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg25x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\30\9\237\182\186\59\27\69\225\191\191", "\84\108\104\132\216\216"),LUAOBFUSACTOR_DECRYPT_STR_0("\212\73\147", "\34\172\123\166\56\128\196")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_RainbowEgg10x%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\182\168\161\197\72\124\194\89\161\174\175", "\116\196\201\200\171\42\19\181"),LUAOBFUSACTOR_DECRYPT_STR_0("\110\215\171", "\124\22\230\155\61\117\96")},{TABLE_TableIndirection["Setting_Flag_ServerHopFarm_AuraEgg%0"],LUAOBFUSACTOR_DECRYPT_STR_0("\196\190\244\234\179\232\242\194", "\149\165\203\134\139\158\141"),LUAOBFUSACTOR_DECRYPT_STR_0("\43\253\16", "\70\83\204\32")}};
+			for _, flagData in ipairs(TABLE_TableIndirection["EggFlags%0"]) do
+				local flag, eggName, luck = table.unpack(flagData);
+				if ((3162 == 3162) and flag) then
+					table.insert(TABLE_TableIndirection["LF_Eggs_Table%0"], {eggName,luck});
 				end
 			end
-
-			-- Create lookup table for matching
-			local LF_Eggs_Lookup = {}
-			for _, lf in LF_Eggs_Table do
-				LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
+			TABLE_TableIndirection["LF_Eggs_Lookup%0"] = {};
+			for _, lf in TABLE_TableIndirection["LF_Eggs_Table%0"] do
+				TABLE_TableIndirection["LF_Eggs_Lookup%0"][lf[1] .. "|" .. lf[2]] = true;
 			end
-
-			-- Sort islands by egg priority, then luck priority
-			table.sort(Islands, function(a, b)
-				local aEgg, aLuck = a[1], a[2]
-				local bEgg, bLuck = b[1], b[2]
-				local aEggPri = EggTypePriority[aEgg] or 0
-				local bEggPri = EggTypePriority[bEgg] or 0
-				if aEggPri == bEggPri then
-					return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
+			table.sort(TABLE_TableIndirection["Islands%0"], function(a, b)
+				local aEgg, aLuck = a[1], a[2];
+				local bEgg, bLuck = b[1], b[2];
+				TABLE_TableIndirection["aEggPri%0"] = TABLE_TableIndirection["EggTypePriority%0"][aEgg] or 0;
+				TABLE_TableIndirection["bEggPri%0"] = TABLE_TableIndirection["EggTypePriority%0"][bEgg] or 0;
+				if (TABLE_TableIndirection["aEggPri%0"] == TABLE_TableIndirection["bEggPri%0"]) then
+					return (TABLE_TableIndirection["LuckPriority%0"][aLuck] or 0) > (TABLE_TableIndirection["LuckPriority%0"][bLuck] or 0);
 				else
-					return aEggPri > bEggPri
+					return TABLE_TableIndirection["aEggPri%0"] > TABLE_TableIndirection["bEggPri%0"];
 				end
-			end)
-
-			-- Attempt to find and teleport to matching island
-			local FOUND = false
-
-			for _, island in Islands do
-				local Name = island[1]
-				local Luck = island[2]
-				local key = Name .. "|" .. Luck
-
-				if LF_Eggs_Lookup[key] then
-					local EggCFrame = island[3]
-					local Timer = island[4]
-					local Height = island[5]
-					local IslandObject = island[6]
-					local Position = EggCFrame.Position
-
-					local msg = string.format("Egg Matched: %s | %s", Name, Luck)
-					warn(msg)
-
-					Rayfield:Notify({
-						Title = "Rift found!",
-						Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
-						Image = 92280379340968,
-						OnClick = function() end,
-					})
-
-					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
-
+			end);
+			TABLE_TableIndirection["FOUND%0"] = false;
+			for _, island in TABLE_TableIndirection["Islands%0"] do
+				TABLE_TableIndirection["Name%0"] = island[1];
+				TABLE_TableIndirection["Luck%0"] = island[2];
+				TABLE_TableIndirection["key%0"] = TABLE_TableIndirection["Name%0"] .. "|" .. TABLE_TableIndirection["Luck%0"];
+				if (TABLE_TableIndirection["LF_Eggs_Lookup%0"][TABLE_TableIndirection["key%0"]] or (2369 > 4429)) then
+					TABLE_TableIndirection["EggCFrame%0"] = island[3];
+					TABLE_TableIndirection["Timer%0"] = island[4];
+					TABLE_TableIndirection["Height%0"] = island[5];
+					TABLE_TableIndirection["IslandObject%0"] = island[6];
+					TABLE_TableIndirection["Position%0"] = TABLE_TableIndirection["EggCFrame%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\62\142\24\137\26\136\4\142", "\224\110\225\107")];
+					TABLE_TableIndirection["msg%0"] = string.format(LUAOBFUSACTOR_DECRYPT_STR_0("\209\113\218\113\29\197\208\247\126\216\53\106\132\129\231\54\193\113\117\215", "\164\148\22\189\81\80\164"), TABLE_TableIndirection["Name%0"], TABLE_TableIndirection["Luck%0"]);
+					warn(TABLE_TableIndirection["msg%0"]);
+					TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\134\137\99\191\34", "\23\210\224\23\211\71\43")]=LUAOBFUSACTOR_DECRYPT_STR_0("\155\143\22\163\21\45\211\229\167\130\81", "\144\201\230\112\215\53\75\188"),[LUAOBFUSACTOR_DECRYPT_STR_0("\118\202\23\254\243\171\65", "\197\53\165\121\138\150")]=(LUAOBFUSACTOR_DECRYPT_STR_0("\217\205\216\54\232\211\208\46\234\159\205\47\183\159", "\64\141\191\185") .. TABLE_TableIndirection["Name%0"] .. " " .. TABLE_TableIndirection["Luck%0"] .. LUAOBFUSACTOR_DECRYPT_STR_0("\67\162", "\198\99\138\208\186\151\169") .. TABLE_TableIndirection["Timer%0"] .. ")"),[LUAOBFUSACTOR_DECRYPT_STR_0("\36\248\130\89\8", "\62\109\149\227")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\220\134\170\216\9\240\131", "\96\147\232\233\180")]=function()
+					end});
 					task.spawn(function()
-						IslandObject.Destroying:Connect(function()
-							warn("Island is despawning! Checking server again!")
-
-							Rayfield:Notify({
-								Title = "Rift disappeared!",
-								Content = "Checking server for any new islands!",
-								Image = 92280379340968,
-								OnClick = function() end,
-							})
-
-							EggFinder_MainSearch()
-						end)
-					end)
-
+						TABLE_TableIndirection["IslandObject%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\12\61\9\95\159\54\49\49\20\76", "\89\72\88\122\43\237")]:Connect(function()
+							warn(LUAOBFUSACTOR_DECRYPT_STR_0("\5\168\169\55\21\40\251\172\37\91\40\190\182\38\26\59\181\172\56\28\109\251\134\62\30\47\176\172\56\28\108\168\160\36\13\41\169\229\55\28\45\178\171\119", "\123\76\219\197\86"));
+							TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\108\209\1\0\235", "\95\56\184\117\108\142")]=LUAOBFUSACTOR_DECRYPT_STR_0("\194\203\32\248\176\198\47\255\241\210\54\233\241\208\35\232\177", "\140\144\162\70"),[LUAOBFUSACTOR_DECRYPT_STR_0("\243\39\87\102\235\222\60", "\142\176\72\57\18")]=LUAOBFUSACTOR_DECRYPT_STR_0("\133\57\21\39\173\56\30\35\230\34\21\54\176\52\2\100\160\62\2\100\167\63\9\100\168\52\7\100\175\34\28\37\168\53\3\101", "\68\198\81\112"),[LUAOBFUSACTOR_DECRYPT_STR_0("\158\2\177\19\73", "\125\215\111\208\116\44")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\40\73\108\255\113\95\12", "\60\103\39\47\147\24")]=function()
+							end});
+							EggFinder_MainSearch();
+						end);
+					end);
 					task.spawn(function()
-						if Height < 2640 then
-							print("no tp")
-						elseif Height > 10130 then
-							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.The Void.Island.Portal.Spawn")
-						elseif Height > 6850 then
-							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Twilight.Island.Portal.Spawn")
-						elseif Height > 2650 then
-							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.Islands.Outer Space.Island.Portal.Spawn")
-
+						if ((4095 >= 3183) and (TABLE_TableIndirection["Height%0"] < 2640)) then
+							print(LUAOBFUSACTOR_DECRYPT_STR_0("\226\5\183\148\198", "\46\140\106\151\224\182\147"));
+						elseif ((TABLE_TableIndirection["Height%0"] > 10130) or (3711 < 1008)) then
+							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\217\40\109\78\226\46\124\86\238\41\78\86\228\63\124\69\238", "\34\139\77\29"))[LUAOBFUSACTOR_DECRYPT_STR_0("\131\248\28\70\44\180", "\73\208\144\125\52")][LUAOBFUSACTOR_DECRYPT_STR_0("\12\254\139\198\194\7\92\217\33", "\171\74\140\234\171\167\112\51")][LUAOBFUSACTOR_DECRYPT_STR_0("\1\11\88\72\254\191\36", "\205\79\110\44\63\145")][LUAOBFUSACTOR_DECRYPT_STR_0("\149\90\50\199\160\14", "\124\199\63\95\168\212\107\196")][LUAOBFUSACTOR_DECRYPT_STR_0("\35\190\86\52\176", "\147\102\200\51\90\196\151\233")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\15\245\227\200\174\239\41\47", "\91\91\144\143\173\222\128"), LUAOBFUSACTOR_DECRYPT_STR_0("\20\175\94\90\184\94\34\163\73\31\156\65\49\172\72\66\229\122\43\165\12\126\189\75\49\183\67\67\167\74\109\137\95\93\170\64\39\179\2\101\163\75\99\150\67\88\175\0\10\179\64\80\165\74\109\144\67\67\191\79\47\238\127\65\170\89\45", "\46\67\192\44\49\203"));
+						elseif (TABLE_TableIndirection["Height%0"] > 6850) then
+							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\54\211\62\174\45\167\4\16\211\42\145\48\171\23\5\209\43", "\101\100\182\78\194\68\196"))[LUAOBFUSACTOR_DECRYPT_STR_0("\123\64\49\231\136\79", "\181\40\40\80\149\237\43\24")][LUAOBFUSACTOR_DECRYPT_STR_0("\51\160\36\63\191\93\29\7\185", "\114\117\210\69\82\218\42")][LUAOBFUSACTOR_DECRYPT_STR_0("\106\211\76\100\163\86\221", "\204\36\182\56\19")][LUAOBFUSACTOR_DECRYPT_STR_0("\219\78\209\140\105\61", "\114\137\43\188\227\29\88")][LUAOBFUSACTOR_DECRYPT_STR_0("\193\11\173\30\240", "\112\132\125\200")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\201\189\255\118\74\250\239\172", "\149\157\216\147\19\58"), LUAOBFUSACTOR_DECRYPT_STR_0("\254\137\10\195\218\150\25\203\204\200\47\199\219\138\28\219\135\178\16\205\137\169\14\205\219\145\23\218\197\130\86\225\218\138\25\198\205\149\86\252\222\143\20\193\206\142\12\134\224\149\20\201\199\130\86\248\198\148\12\201\197\200\43\216\200\145\22", "\168\169\230\120"));
+						elseif (TABLE_TableIndirection["Height%0"] <= 2650) then
+						else
+							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\206\136\148\27\245\142\133\3\249\137\183\3\243\159\133\16\249", "\119\156\237\228"))[LUAOBFUSACTOR_DECRYPT_STR_0("\240\217\1\108\198\213", "\30\163\177\96")][LUAOBFUSACTOR_DECRYPT_STR_0("\60\50\84\132\56\60\219\8\43", "\180\122\64\53\233\93\75")][LUAOBFUSACTOR_DECRYPT_STR_0("\248\18\7\42\217\5\24", "\93\182\119\115")][LUAOBFUSACTOR_DECRYPT_STR_0("\176\26\222\131\163\251", "\158\226\127\179\236\215")][LUAOBFUSACTOR_DECRYPT_STR_0("\212\214\204\216\229", "\182\145\160\169")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\13\37\60\19\183\0\43\52", "\111\89\64\80\118\199"), LUAOBFUSACTOR_DECRYPT_STR_0("\136\184\28\77\172\167\15\69\186\249\57\73\173\187\10\85\241\131\6\67\255\152\24\67\173\160\1\84\179\179\64\111\172\187\15\72\187\164\64\105\170\163\11\84\255\132\30\71\188\178\64\111\172\187\15\72\187\249\62\73\173\163\15\74\241\132\30\71\168\185", "\38\223\215\110"));
 						end
-					end)
-
-					task.wait(1)
-
-					-- Fly to island
-					local HRP = LocalPlayer.Character.HumanoidRootPart
-					-- change humanoid state to stitting 
-
-					CharacterCanColide(false)
-					--CharacterIsAnchored(true)
-
-					LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
-
-					local distance = (HRP.Position - Position).Magnitude
-					local tweenTime = distance / 80
-
-					TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
-
-					task.wait(tweenTime + 0.1)
-
-					CharacterCanColide(true)	
-					--CharacterIsAnchored(false)
-
-					task.wait(0.5)
-
-					-- Start hatching
-					local EggName = EggNames[Name]
+					end);
+					task.wait(1);
+					TABLE_TableIndirection["HRP%0"] = TABLE_TableIndirection["LocalPlayer%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\125\211\13\215\170\93\207\9\215", "\203\62\187\108\165")][LUAOBFUSACTOR_DECRYPT_STR_0("\209\97\69\63\127\241\217\253\70\71\49\101\206\209\235\96", "\176\153\20\40\94\17\158")];
+					CharacterCanColide(false);
+					TABLE_TableIndirection["LocalPlayer%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\139\59\186\65\196\171\39\190\65", "\165\200\83\219\51")][LUAOBFUSACTOR_DECRYPT_STR_0("\239\255\121\122\223\186\181\224", "\132\167\138\20\27\177\213\220")]:ChangeState(Enum[LUAOBFUSACTOR_DECRYPT_STR_0("\218\192\238\77\50\253\220\231\127\40\243\193\230\120\37\226\208", "\92\146\181\131\44")].Freefall);
+					TABLE_TableIndirection["distance%0"] = (TABLE_TableIndirection["HRP%0"][LUAOBFUSACTOR_DECRYPT_STR_0("\123\241\82\143\170\73\24\211", "\189\43\158\33\230\222\32\119")] - TABLE_TableIndirection["Position%0"])[LUAOBFUSACTOR_DECRYPT_STR_0("\115\193\74\95\129\74\213\73\84", "\232\62\160\45\49")];
+					TABLE_TableIndirection["tweenTime%0"] = TABLE_TableIndirection["distance%0"] / 80;
+					TABLE_TableIndirection["TweenService%1"]:Create(TABLE_TableIndirection["HRP%0"], TweenInfo.new(TABLE_TableIndirection["tweenTime%0"], Enum[LUAOBFUSACTOR_DECRYPT_STR_0("\81\210\230\165\175\115\224\225\181\173\113", "\193\20\179\149\204")].Linear), {[LUAOBFUSACTOR_DECRYPT_STR_0("\244\39\147\195\218\4", "\162\183\97\225")]=(TABLE_TableIndirection["EggCFrame%0"] + Vector3.new(0, 30, 0))}):Play();
+					task.wait(TABLE_TableIndirection["tweenTime%0"] + 0.1);
+					CharacterCanColide(true);
+					task.wait(0.5);
+					TABLE_TableIndirection["EggName%0"] = TABLE_TableIndirection["EggNames%0"][TABLE_TableIndirection["Name%0"]];
 					task.spawn(function()
-						while IslandObject do
-							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
-							task.wait(0.25)
+						while TABLE_TableIndirection["IslandObject%0"] do
+							game:GetService(LUAOBFUSACTOR_DECRYPT_STR_0("\27\192\244\251\21\225\160\61\192\224\196\8\237\179\40\194\225", "\193\73\165\132\151\124\130"))[LUAOBFUSACTOR_DECRYPT_STR_0("\254\202\168\73\179\178", "\214\173\162\201\59\214")][LUAOBFUSACTOR_DECRYPT_STR_0("\5\107\171\76\210\55\44\107\161", "\64\67\25\202\33\183")][LUAOBFUSACTOR_DECRYPT_STR_0("\199\235\101\171\33\192\72", "\35\137\142\17\220\78\178")][LUAOBFUSACTOR_DECRYPT_STR_0("\31\75\40\14\57\75", "\97\77\46\69")][LUAOBFUSACTOR_DECRYPT_STR_0("\250\201\5\171\203", "\197\191\191\96")]:FireServer(LUAOBFUSACTOR_DECRYPT_STR_0("\226\40\249\77\80\205\74\205", "\45\170\73\141\46\56\136"), TABLE_TableIndirection["EggName%0"], 99);
+							task.wait(0.25);
 						end
-					end)
-
-
-					FOUND = true
-					break
+					end);
+					TABLE_TableIndirection["FOUND%0"] = true;
+					break;
 				end
 			end
-
-			if not FOUND then
-				warn("Island not found!")
-
-				Rayfield:Notify({
-					Title = "Island not found...",
-					Content = "Attempting to join a new server in 30s!",
-					Image = 92280379340968,
-					OnClick = function() end,
-				})
-
-				task.wait(30)
-
-				ServerHop_IY()
+			if (not TABLE_TableIndirection["FOUND%0"] or (1049 <= 906)) then
+				warn(LUAOBFUSACTOR_DECRYPT_STR_0("\168\28\193\228\161\131\71\143\0\217\165\169\136\18\143\11\140", "\103\225\111\173\133\207\231"));
+				TABLE_TableIndirection["Rayfield%0"]:Notify({[LUAOBFUSACTOR_DECRYPT_STR_0("\120\141\225\89\73", "\53\44\228\149")]=LUAOBFUSACTOR_DECRYPT_STR_0("\228\200\55\4\197\32\141\213\52\17\139\34\194\206\53\1\133\106\131", "\68\173\187\91\101\171"),[LUAOBFUSACTOR_DECRYPT_STR_0("\223\0\28\211\76\140\105", "\185\156\111\114\167\41\226\29")]=LUAOBFUSACTOR_DECRYPT_STR_0("\42\17\2\37\185\243\31\12\24\39\244\247\4\69\28\47\189\237\75\4\86\46\177\244\75\22\19\50\162\230\25\69\31\46\244\176\91\22\87", "\131\107\101\118\64\212"),[LUAOBFUSACTOR_DECRYPT_STR_0("\232\219\45\44\66", "\169\161\182\76\75\39\160")]=92280379340968,[LUAOBFUSACTOR_DECRYPT_STR_0("\246\92\148\135\18\33\163", "\200\185\50\215\235\123\66")]=function()
+				end});
+				EggFinderFallback();
+				task.wait(30);
+				TABLE_TableIndirection["ExploitFunctions%0"].ServerHop_IY();
 			end
 		end
-	end)
+	end);
 end
-
-
 function CharacterIsAnchored(value)
-	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-		if part:IsA("BasePart") and part.Anchored == not value then
-			part.Anchored = value
+	for _, part in pairs(game[LUAOBFUSACTOR_DECRYPT_STR_0("\194\141\216\251\143\100\9", "\122\146\225\185\130\234\22")][LUAOBFUSACTOR_DECRYPT_STR_0("\149\237\195\206\227\139\181\227\217\202\253", "\219\217\130\160\175\143")][LUAOBFUSACTOR_DECRYPT_STR_0("\29\180\67\47\63\191\86\56\44", "\93\94\220\34")]:GetDescendants()) do
+		if ((4513 > 2726) and part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\45\201\210\143\234\246\239\27", "\157\111\168\161\234\186\151")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\90\78\118\57\205\171\183\129", "\229\27\32\21\81\162\217\210")] == not value)) then
+			part[LUAOBFUSACTOR_DECRYPT_STR_0("\13\194\248\50\69\62\201\255", "\42\76\172\155\90")] = value;
 		end
 	end
 end
-
 function CharacterCanColide(value)
-	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-		if part:IsA("BasePart") and part.CanCollide == not value then
-			part.CanCollide = value
+	for _, part in pairs(game[LUAOBFUSACTOR_DECRYPT_STR_0("\194\129\128\48\5\224\158", "\96\146\237\225\73")][LUAOBFUSACTOR_DECRYPT_STR_0("\196\113\11\233\69\74\174\233\103\13\250", "\194\136\30\104\136\41\26")][LUAOBFUSACTOR_DECRYPT_STR_0("\255\222\2\90\21\179\189\42\206", "\79\188\182\99\40\116\208\201")]:GetDescendants()) do
+		if ((part:IsA(LUAOBFUSACTOR_DECRYPT_STR_0("\95\194\57\68\19\62\111\215", "\95\29\163\74\33\67")) and (part[LUAOBFUSACTOR_DECRYPT_STR_0("\95\51\78\20\112\134\8\117\54\69", "\100\28\82\32\87\31\234")] == not value)) or (1481 >= 2658)) then
+			part[LUAOBFUSACTOR_DECRYPT_STR_0("\18\83\238\82\244\218\228\55\53\87", "\94\81\50\128\17\155\182\136")] = value;
 		end
 	end
 end
-
-EggFinder_MainSearch()
-ChangeRiftESP()
-ChangeDrawLines()
+EggFinder_MainSearch();
+ChangeRiftESP();
+ChangeDrawLines();
