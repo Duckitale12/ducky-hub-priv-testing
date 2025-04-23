@@ -1,4 +1,4 @@
-local _Version_ = "1.072v."
+local _Version_ = "1.073v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -686,7 +686,9 @@ for _, island in Islands do
 			local distance = (HRP.Position - Vector3.new(Position.X, -20, Position.Z)).Magnitude
 			local tweenTime = distance / 25
 
-			TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+			--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+
+			TweenService:Create(HRP , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {Position = Vector3.new(EggCFrame.Position.X, -20, EggCFrame.Position.Z) }):Play()
 
 			task.wait(tweenTime + 0.3)
 
