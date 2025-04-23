@@ -1,0 +1,1312 @@
+local _Version_ = "1.07v."
+
+local EggNames = {
+	["void-egg"] = "Void Egg",
+	["rainbow-egg"] = "Rainbow Egg",
+	["nightmare-egg"] = "Nightmare Egg",
+	["aura-egg"] = "Aura Egg",
+	["event-1"] = "Bunny Egg",
+	["event-2"] = "Pastel Egg",
+} 
+
+local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "aura-egg"}
+local AllowedEventEggs = {"event-1", "event-2"}
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/Library'))()
+local ExploitFunctions = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/ExploitFunctions'))()
+
+local Window = Rayfield:CreateWindow({
+	Name = "Ducky-Hub [BGSI]",
+	Icon = 92280379340968, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	LoadingTitle = "Ducky-Hub",
+	LoadingSubtitle = "Welcome!",
+	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+	DisableRayfieldPrompts = true,
+	DisableBuildWarnings = true, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil, -- Create a custom folder for your hub/game
+		FileName = "Ducky_Hub_Configs"
+	},
+
+	Discord = {
+		Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+		Invite = "P49rCFQ7FX", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+	},
+
+	KeySystem = true, -- Set this to true to use our key system
+	KeySettings = {
+		Title = "Ducky-Hub",
+		Subtitle = "Key System",
+		Note = "Join our discord to get the key! (https://discord.gg/P49rCFQ7FX)", -- Use this to tell the user how to get a key
+		FileName = "_Ducky_Hub_Key_System_", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = {"PERM-Xi9DFGY8"}, -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+	}
+})
+
+-- SERVICES
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- VALUES
+
+local Setting_AutoVoidChest = false
+local Setting_AutoInfinityChest = false
+local Setting_AutoGiantChest = false
+local Setting_AutoFreeWheelSpin = false
+--local Setting_AutoSpinWheel = false
+local Setting_AutoClaimPlaytime = false
+local Setting_AutoBlowBubble = false
+local Setting_AutoSellBubble = false
+local Setting_AutoBuyAlienShop = false
+local Setting_AutoBuyBlackmarketItems = false
+local Setting_SilentAutoPickupables = false
+local Setting_IslandSpawnNotifications = false
+local Setting_IslandSpawnWebhookNotifications = false
+local Setting_IslandSpawnWebhook = "000"
+local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
+local Setting_TeleportToPickupables = false
+local Setting_IslandESP = false
+
+local Setting_DrawLinesToIslands = false
+local Setting_AutoOpenRoyalChest = false
+local Setting_AutoOpenGoldenChest = false
+local Setting_AutoMysteryBox = false
+
+local Setting_ServerHopFarm = false
+
+-- HOP FARM EGGS
+local Setting_Flag_ServerHopFarm_VoidEgg25x = false
+local Setting_Flag_ServerHopFarm_VoidEgg10x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg25x = false
+local Setting_Flag_ServerHopFarm_NightmareEgg10x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg25x = false
+local Setting_Flag_ServerHopFarm_RainbowEgg10x = false
+local Setting_Flag_ServerHopFarm_PastelEgg25x = false
+local Setting_Flag_ServerHopFarm_PastelEgg10x = false
+local Setting_Flag_ServerHopFarm_BunnyEgg25x = false
+local Setting_Flag_ServerHopFarm_BunnyEgg10x = false
+local Setting_Flag_ServerHopFarm_AuraEgg = false
+
+local Setting_FallbackServerHopper = false
+local Setting_FallbackSelectedEgg = ""
+
+-- TELEPORTING FUNCS
+
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+
+--------
+
+
+-- MAIN WHILE LOOP
+
+local Loop = task.spawn(function()
+	while Window do
+
+		if Setting_AutoVoidChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
+		end
+
+		if Setting_AutoInfinityChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
+		end
+
+		if Setting_AutoGiantChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
+		end
+
+		if Setting_AutoFreeWheelSpin == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
+		end
+
+		--[[if Setting_AutoSpinWheel == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
+		end]]
+
+		if Setting_AutoClaimPlaytime == true then
+			for Index = 1, 9 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
+			end
+		end
+
+		if Setting_AutoSellBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+		end
+
+		if Setting_AutoBuyBlackmarketItems == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+			end
+		end
+
+		if Setting_AutoBuyAlienShop == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+			end
+		end
+
+		task.wait(5)
+	end
+end)
+
+local Loop_Fast = task.spawn(function()
+	while Window do
+		if Setting_AutoBlowBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+		end
+
+		if Setting_AutoOpenGoldenChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+		end
+
+		if Setting_AutoOpenRoyalChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+		end
+
+		if Setting_AutoMysteryBox == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
+			--rs.shared.framework.network.remote.event.fire
+		end
+
+		task.wait(0.25)
+	end
+end)
+
+--[[local Loop_PickupablesAuto = task.spawn(function()
+	while true do
+		if Setting_TeleportToPickupables == true then
+			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
+				local Name = Pickupable.Name
+				local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
+				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
+				
+				if PickupablePart then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
+				elseif PickupableMeshPart then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupableMeshPart.CFrame + Vector3.new(0, 8, 0)
+				end
+
+				task.wait(2)
+			end
+		end
+
+		task.wait(0.5)
+	end
+end)
+]]
+
+local TweenService = game:GetService("TweenService")
+
+local Humanoid = game.Players.LocalPlayer.Character.Humanoid
+
+local Loop_PickupablesAuto = task.spawn(function()
+	while Window do
+		if Setting_SilentAutoPickupables == true then
+			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
+				
+				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
+				
+				if Part then
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+					local distance = (HRP.Position - Part.Position).Magnitude
+					
+					if distance < 80 then
+						local Name = pickupable.Name
+
+						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
+						task.wait(0.2)
+						--task.wait(0.1)
+						--pickupable:Destroy()
+					end
+				end
+			end
+		end
+
+		task.wait(0.5)
+	end
+end)
+
+
+
+-- FUNCTIONS
+
+local Logs_Hook = "https://discord.com/api/webhooks/1362702270084550780/1TK0CX2K2hy3pVLdzcVLWxY-POhbWi9if-89JZqVWVh0OaS1ykwzBYbtYlkhTq7lDbSj"
+local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
+local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
+local Event_Islands_Hook = "https://discord.com/api/webhooks/1363151340364366066/j0S4ioUPagpdOawbcZJ_sxhGn2hhGeDwVfNw0ILLgvm6ovaOjaA-YPjGB_2wZNpohiuV"
+
+
+
+function EggFinderFallback()
+	task.spawn(function()
+		warn(Setting_FallbackServerHopper)
+		warn(Setting_FallbackSelectedEgg[1])
+		if Setting_FallbackServerHopper and Setting_FallbackSelectedEgg[1] ~= "" then
+			local function TravelToEgg(pos)
+				warn("Travel")
+				game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
+			end
+			
+			local function StartOpeningLoop()
+				while Window do
+					game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
+					task.wait(0.25)
+				end
+			end
+
+			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
+				local PositionToTravel = Vector3.new(-397, 12013, -62)
+				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
+				task.wait(0.5)
+				TravelToEgg(Vector3.new(-382, 12016, 135))
+				task.wait(4)
+				TravelToEgg(PositionToTravel)
+				StartOpeningLoop()
+			end
+			
+			if Setting_FallbackSelectedEgg[1] == "Nightmare Egg" then
+				local PositionToTravel = Vector3.new(-141, 10, -44)
+				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+				task.wait(0.5)
+				TravelToEgg(Vector3.new(-31, 9, -28))
+				task.wait(8)
+				TravelToEgg(PositionToTravel)
+				StartOpeningLoop()
+			end
+			
+			if Setting_FallbackSelectedEgg[1] == "Void Egg" then
+				local PositionToTravel = Vector3.new(-143, 10, -26)
+				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+				task.wait(0.5)
+				TravelToEgg(Vector3.new(-31, 9, -28))
+				task.wait(8)
+				TravelToEgg(PositionToTravel)
+				StartOpeningLoop()
+			end
+		end
+	end)
+end
+
+function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
+	task.spawn(function()
+		local Embed = {
+			["title"] = "✨ Rift Found!",
+			["description"] = "",
+			["fields"] = {
+				{
+					["name"] = "🥚 Rift Name",
+					["value"] = "```" .. tostring(Island) .. "```",
+				},
+				{
+					["name"] = "⌚ Time Left",
+					["value"] = "```" .. tostring(Timer) .. "```",
+				},
+				{
+					["name"] = "🎈 Height",
+					["value"] = "```" .. math.floor(IslandHeight) .. "```",
+				},
+				{
+					["name"] = "🔑 Server Link",
+					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+				},
+
+			},
+			["color"] = 16777215,
+			["footer"] = {
+				["text"] = tostring(os.date("%H:%M:%S")) 
+			},
+		}
+
+		if Luck then
+			Embed["fields"] = {
+				{
+					["name"] = "🥚 Rift Name",
+					["value"] = "```" .. tostring(Island) .. "```",
+				},
+				{
+					["name"] = "⌚ Time Left",
+					["value"] = "```" .. tostring(Timer) .. "```",
+				},
+				{
+					["name"] = "🍀 Luck Multiplier",
+					["value"] = "```" .. tostring(Luck) .. "```",
+				},
+				{
+					["name"] = "🎈 Height",
+					["value"] = "```" .. math.floor(IslandHeight) .. "```",
+				},
+				{
+					["name"] = "🔑 Server Link",
+					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+				},
+			}
+		end
+
+		ExploitFunctions.Webhook(Webhook_, Embed)
+	end)
+end
+
+function ChangeRiftESP()
+	task.spawn(function()
+		if Setting_IslandESP == true then
+			for _, Island in workspace.Rendered.Rifts:GetChildren() do
+				if Island then
+					if not Island:FindFirstChildOfClass("Highlight") then
+						warn("island: " .. tostring(Island))
+						HighlightIsland(Island)
+					end
+				end
+			end
+		else
+			for _, Island in workspace.Rendered.Rifts:GetChildren() do
+				if Island then
+					if Island:FindFirstChildOfClass("Highlight") then
+						Island:FindFirstChildOfClass("Highlight"):Destroy()
+					end
+				end
+			end
+		end
+	end)
+end
+
+
+function ChangeDrawLines()
+	task.spawn(function()
+		if not game.Workspace:FindFirstChild("BeamFolder") then
+			local BeamsFolder = Instance.new("Folder")
+			BeamsFolder.Name = "BeamFolder"
+			BeamsFolder.Parent = game.workspace
+		end
+
+		if Setting_DrawLinesToIslands == true then
+			for _, Island in workspace.Rendered.Rifts:GetChildren() do
+				if not Island:FindFirstChild("LineAttachment") then
+					local Attachment__ = Instance.new("Attachment")
+					Attachment__.Name = "LineAttachment"
+					Attachment__.Parent = Island:FindFirstChild("Output")
+
+				end
+
+				if not Island:FindFirstChild("BeamESP") then
+					local Beam = Instance.new("Beam")
+					Beam.Name = "BeamESP"
+					Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
+					Beam.Attachment0 = Island.Output:FindFirstChild("LineAttachment")
+					Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
+					Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
+					Beam.Enabled = true
+					Beam.LightEmission = 0
+					Beam.Width0 = 0.05
+					Beam.Width1 = 0.05
+					Beam.LightInfluence = 0
+					Beam.FaceCamera = true
+
+					if Island.Name == "royal-chest" then
+						Beam.Color = ColorSequence.new(Color3.fromRGB(204, 0, 255))
+					elseif Island.Name == "golden-chest" then
+						Beam.Color = ColorSequence.new(Color3.fromRGB(255, 213, 0))
+					end
+				end
+			end
+		else
+			local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
+
+			for _, Beam_ in BeamsFolder:GetChildren() do
+				Beam_:Destroy()
+			end
+		end
+	end)
+end
+
+
+workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
+	task.wait(10)
+
+	if Setting_IslandESP == true then
+		HighlightIsland(IslandObject)
+	end
+
+	if Setting_DrawLinesToIslands == true then
+		ChangeDrawLines()
+	end
+
+	local IslandName = IslandObject.Name
+	local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
+
+	local Luck = nil
+	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
+
+	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon") then
+		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+	end
+
+	if Setting_IslandSpawnNotifications == true then
+		if Luck then
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 92280379340968,
+
+				OnClick = function()
+
+				end,
+			})
+		else
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 92280379340968,
+
+				OnClick = function()
+
+				end,
+			})
+		end
+	end
+
+
+
+
+	if table.find(AllowedEventEggs, tostring(IslandObject)) then
+		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+	end
+
+
+	if table.find(AllowedRareEggs, tostring(IslandObject)) then
+		if Luck and Luck == "x25" then
+			SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+		end
+	end
+
+	if Setting_IslandSpawnWebhookNotifications == true then
+
+		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+			if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+				if Luck and Luck == "x25" or IslandObject == "aura-egg" or IslandObject == "royal-chest" then
+					ExploitFunctions.Message(Setting_IslandSpawnWebhook, "@everyone")
+				end
+			end
+		end
+
+		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight)
+		end
+	end
+end)
+
+function test_print_table(tbl_)
+	local tablee = tbl_
+	for _, v in tablee do
+		warn(v)
+		for _, x in v do
+			print(x)
+		end
+	end
+end
+
+--[[workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
+	if Setting_SilentAutoPickupables == true then
+		task.spawn(function()
+			local Name = Pickupable.Name
+
+			--Pickupable.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- maybe?
+			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
+			wait(1)
+			Pickupable:Destroy()
+		end)
+	end
+end)]]
+
+-- FARMING TAB
+
+local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
+
+local Section_Bubbles = Tab_Farming:CreateSection("Bubbles")
+
+local Toggle_AutoBubbleBlow = Tab_Farming:CreateToggle({
+	Name = "Auto Blow Bubbles",
+	CurrentValue = false,
+	Flag = "Flag_AutoBubbleBlow", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBlowBubble = Value
+	end,
+})
+
+		--[[local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
+			Name = "Auto Sell Bubbles",
+			CurrentValue = false,
+			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_AutoSellBubble = Value
+			end,
+		})]]
+
+local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
+
+local Toggle_SilentAutoPickupables = Tab_Farming:CreateToggle({
+	Name = "Collect Pickupables Near You",
+	CurrentValue = false,	
+	Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_SilentAutoPickupables = Value
+	end,
+})
+
+
+local Section_Automatic = Tab_Farming:CreateSection("Chests")
+
+local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>Warning!</b>", Content = "Auto chests require buffs mastery level 15 to work!"})
+
+local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
+	Name = "Auto Void Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoVoidChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoVoidChest = Value		
+	end,
+})
+
+local Toggle_AutoGiantChest = Tab_Farming:CreateToggle({
+	Name = "Auto Giant Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoGiantChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoGiantChest = Value
+	end,
+})
+
+local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
+	Name = "Auto Infinity Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoInfinityChest = Value
+	end,
+})
+
+
+local Section_Automatic = Tab_Farming:CreateSection("Rewards")
+
+local Toggle_AutoFreeWheelSpin = Tab_Farming:CreateToggle({
+	Name = "Auto Claim Free Wheel Spin",
+	CurrentValue = false,
+	Flag = "Flag_AutoFreeWheelSpinClaim", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoFreeWheelSpin = Value
+	end,
+})
+
+--[[local Toggle_AutoSpinWheel = Tab_Farming:CreateToggle({
+	Name = "Auto Spin Wheel",
+	CurrentValue = false,
+	Flag = "Flag_AutoSpinWheel", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			Setting_AutoSpinWheel = true
+		elseif Value == false then
+			Setting_AutoSpinWheel = false
+		end
+	end,
+})]]
+
+local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
+	Name = "Auto Claim Playtime Rewards",
+	CurrentValue = false,
+	Flag = "Flag_AutoClaimPlaytime", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoClaimPlaytime  = Value
+	end,
+})
+
+local Selection_Shops = Tab_Farming:CreateSection("Shops")
+
+local Toggle_AutoBuyBlackmarket= Tab_Farming:CreateToggle({
+	Name = "Auto Buy Blackmarket Items",
+	CurrentValue = false,
+	Flag = "Flag_AutoBuyBlackmarketItems", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBuyBlackmarketItems  = Value
+	end,
+})
+
+local Toggle_AutoBuyAlienShop = Tab_Farming:CreateToggle({
+	Name = "Auto Buy Alien Shop Items",
+	CurrentValue = false,
+	Flag = "Flag_AutoBuyAlienShop", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBuyAlienShop  = Value
+	end,
+})
+
+
+
+
+
+local Tab_EggFarm = Window:CreateTab("Egg Finder") -- Title, Image
+
+local Section_ServerHopFarmInfo = Tab_EggFarm:CreateSection("Egg Finder - Info")
+
+local Paragraph_2 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "This feature is experimental. It can break at any time!"})
+local Paragraph_3 = Tab_EggFarm:CreateParagraph({Title = "<b>Warning!</b>", Content = "You need to add this script to the 'auto execute' list of your executor to make the server hop feature work properly!"})
+local Paragraph_4 = Tab_EggFarm:CreateParagraph({Title = "<b>How does this work?</b>", Content = "This feature will change servers untill it finds the egg you are looking for, then it will open it till the island dissapears. "})
+
+local Section_ServerHopFarmEggSelection = Tab_EggFarm:CreateSection("Server Hop Farm - Egg Selection")
+
+local Toggle_Flag_ServerHopFarm_BunnyEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Bunny Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_BunnyEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_BunnyEgg10x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_BunnyEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Bunny Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_BunnyEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_BunnyEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_PastelEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Pastel Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_PastelEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_PastelEgg10x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_PastelEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Pastel Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_PastelEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_PastelEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_VoidEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "Void Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_VoidEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_VoidEgg10x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_VoidEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "Void Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_VoidEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_VoidEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_NightmareEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "Nightmare Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_NightmareEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_NightmareEgg10x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_NightmareEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "Nightmare Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_NightmareEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_NightmareEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_RainbowEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "Rainbow Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_RainbowEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_RainbowEgg10x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_RainbowEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "Rainbow Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_RainbowEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_RainbowEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_AuraEgg = Tab_EggFarm:CreateToggle({
+	Name = "Aura Egg",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_AuraEgg", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_AuraEgg = Value
+	end,
+})
+
+local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Fallback")
+
+local Paragraph_6 = Tab_EggFarm:CreateParagraph({Title = "<b>Fallback</b>", Content = "Start opening normal eggs when the egg finder is searching OR an error occured. [HIGHLY RECOMMENDED]"})
+
+local Toggle_FallbackServerHopper = Tab_EggFarm:CreateToggle({
+	Name = "Egg Fallback",
+	CurrentValue = false,
+	Flag = "Flag_FallbackServerHopper", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_FallbackServerHopper = Value
+	end,
+})
+
+local Dropdown_FallbackEggSelection = Tab_EggFarm:CreateDropdown({
+	Name = "Egg Selection",
+	Options = {"Bunny Egg", "Pastel Egg", "Void Egg", "Nightmare Egg"},
+	CurrentOption = {""},
+	MultipleOptions = false,
+	Flag = "Flag_FallbackEggSelection", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(SelectedOption)
+		Setting_FallbackSelectedEgg = SelectedOption
+		-- The function that takes place when the selected option is changed
+		-- The variable (Options) is a table of strings for the current selected options
+	end,
+})
+
+
+local Section_ServerHopFarmToggle = Tab_EggFarm:CreateSection("Egg Finder  - Toggle")
+
+local Button_Rejoin = Tab_EggFarm:CreateButton({
+	Name = "Rejoin Server (Use after enabling)",
+	Callback = function()
+		TeleportService:Teleport(game.PlaceId)
+	end,
+})
+
+local Toggle_ServerHopFarm = Tab_EggFarm:CreateToggle({
+	Name = "Server Hopper Farm",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_ServerHopFarm = Value
+	end,
+})
+
+
+local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
+
+local Section_Notifications = Tab_Islands:CreateSection("Rifts")
+
+local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
+	Name = "Rift Spawn: In-Game Notifications",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnNotifications  = Value
+	end,
+})
+
+local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
+	Name = "Rift ESP",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnESP", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandESP  = Value
+		ChangeRiftESP()
+	end,
+})
+
+local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
+	Name = "Draw Lines To Rifts [ESP+]",
+	CurrentValue = false,
+	Flag = "Flag_DrawLinesToIslands", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_DrawLinesToIslands  = Value
+		ChangeDrawLines()
+	end,
+})
+
+local Section_NotificationsDiscord = Tab_Islands:CreateSection("Discord Notifications")
+
+local Toggle_IslandSpawnWebhookNotifications = Tab_Islands:CreateToggle({
+	Name = "Rift Spawn: Discord Webhook Notifications",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnWebhookNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnWebhookNotifications  = Value
+	end,
+})
+
+local WebhookInput = Tab_Islands:CreateInput({
+	Name = "Webhook Link",
+	CurrentValue = "000",
+	PlaceholderText = "Put Webhook Here",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Flag_IslandSpawnWebhookWebhookString",
+	Callback = function(Text)
+		Setting_IslandSpawnWebhook = Text
+	end,
+})
+
+local Toggle_IslandSpawnWebhookPingEveryoneOn25 = Tab_Islands:CreateToggle({
+	Name = "Ping @everyone When a 25x Luck Rift Spawns",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnWebhookPingEveryoneOn25", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnWebhookPingEveryoneOn25  = Value
+	end,
+})
+
+local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
+
+local Section_Unlockables = Tab_Misc:CreateSection("Unlockables")
+
+local Button_UnlockIslands = Tab_Misc:CreateButton({
+	Name = "Unlock All Islands",
+	Callback = function()
+		for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
+			task.wait(0.5)
+		end
+	end,
+})
+
+local Section_JoinServer = Tab_Misc:CreateSection("Specific Join")
+
+local Job_Id = nil
+
+local Button_UnlockIslands = Tab_Misc:CreateButton({
+	Name = "Join",
+	Callback = function()
+		for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+			if Job_Id ~= "-" then
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, Job_Id, game.Players.LocalPlayer)
+			end
+		end
+	end,
+})
+
+local Job_IdRejoin = Tab_Misc:CreateInput({
+	Name = "Server JobID",
+	CurrentValue = "-",
+	PlaceholderText = "-",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Flag_Job_IdRejoin",
+	Callback = function(Text)
+		Job_Id = Text
+	end,
+})
+
+
+local Section_Unlockables = Tab_Misc:CreateSection("QOL")
+
+local Toggle_AutoMysteryBox = Tab_Misc:CreateToggle({
+	Name = "Auto Use Mystery Box",
+	CurrentValue = false,
+	Flag = "Flag_AutoMysteryBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoMysteryBox  = Value
+	end,
+})
+
+local Toggle_AutoOpenGoldenChest = Tab_Misc:CreateToggle({
+	Name = "Auto Open Golden Chest (When Close)",
+	CurrentValue = false,
+	Flag = "Flag_AutoOpenGoldenChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoOpenGoldenChest  = Value
+	end,
+})
+
+local Toggle_AutoOpenRoyalChest = Tab_Misc:CreateToggle({
+	Name = "Auto Open Royal Chest (When Close)",
+	CurrentValue = false,
+	Flag = "Flag_AutoOpenRoyalChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoOpenRoyalChest  = Value
+	end,
+})
+
+local Section_Info = Tab_Misc:CreateSection("Info")
+
+local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "<b>Discord Server</b>", Content = "https://discord.gg/P49rCFQ7FX"})
+local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Script Version</b>", Content = _Version_})
+local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Server ID</b>", Content = game.JobId})
+
+
+
+--- AFTER JOINING SERVER
+
+local LogEmbed = {
+	["title"] = "Launch Log",
+	["description"] = "",
+	["fields"] = {
+		{
+			["name"] = "Username",
+			["value"] = "```" .. game.Players.LocalPlayer.Name .."```",
+		},
+		{
+			["name"] = "Server Link",
+			["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+		},
+
+	},
+	["color"] = 16777215,
+	["footer"] = {
+		["text"] = tostring(os.date("%H:%M:%S")) 
+	},
+}
+
+--Message(Logs_Hook, "`**" .. tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name .. " (SERVER_ID: " .. game.JobId .. "**`")
+Rayfield:LoadConfiguration()
+
+task.spawn(function()
+	task.wait(10)
+	
+	if ExploitFunctions then
+		ExploitFunctions.Webhook(Logs_Hook, LogEmbed)
+	end
+	
+	
+	EggFinder_MainSearch()
+	ChangeRiftESP()
+	ChangeDrawLines()
+	
+	--Rayfield.CheckSavedKey()
+	
+end)
+
+--------------------------
+
+function HighlightIsland(IslandModel)
+	if IslandModel then
+		local Highlight = Instance.new("Highlight")
+		Highlight.Name = "ESP_HIGHLIGHT"
+		Highlight.Parent = IslandModel
+		Highlight.Adornee = IslandModel
+		Highlight.FillColor = Color3.fromRGB(255, 53, 46)
+		Highlight.FillTransparency = 0.8
+		Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+		Highlight.OutlineTransparency = 0
+
+		local Gui = Instance.new("BillboardGui")
+		Gui.Parent = Highlight
+		Gui.Adornee = IslandModel
+		Gui.Size = UDim2.new(500,0,40,0)
+		Gui.AlwaysOnTop = true
+
+		local Text_name : TextLabel = Instance.new("TextLabel")
+		Text_name.Parent = Gui
+		Text_name.Size = UDim2.new(1,0,0.5,0)
+		Text_name.BackgroundTransparency = 1
+		Text_name.TextColor3 = Color3.new(1, 0, 0)
+		Text_name.TextScaled = true
+		Text_name.RichText = true
+		Text_name.Text = "<b>" .. IslandModel.Name  .. "</b>"
+		Text_name.TextStrokeTransparency = 0
+		Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
+
+		if IslandModel:FindFirstChild("Display") and IslandModel.Display:FindFirstChild("SurfaceGui") then
+			local gui = IslandModel.Display.SurfaceGui
+			if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
+				local Text_luck = Instance.new("TextLabel")
+				Text_luck.Parent = Gui
+				Text_luck.Position = UDim2.new(0,0,0.5,0)
+				Text_luck.Size = UDim2.new(1,0,0.5,0)
+				Text_luck.BackgroundTransparency = 1
+				Text_luck.TextColor3 = Color3.new(1, 0, 0)
+				Text_luck.TextScaled = true
+				Text_luck.RichText = true
+				Text_luck.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
+				Text_luck.TextStrokeTransparency = 0
+				Text_luck.TextStrokeColor3 = Color3.new(1, 1, 1)
+			end
+		end
+	end
+end
+
+function EggFinder_MainSearch()
+	task.spawn(function()
+		if Setting_ServerHopFarm == true then
+			local Players = game:GetService("Players")
+			local LocalPlayer = Players.LocalPlayer
+			local TweenService = game:GetService("TweenService")
+
+			if LocalPlayer.PlayerGui:FindFirstChild("Intro") then
+				LocalPlayer.PlayerGui.Intro.Enabled = false
+				LocalPlayer.PlayerGui.ScreenGui.Enabled = true
+				game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+			end
+
+			Rayfield:Notify({
+				Title = "Egg Farm: ON",
+				Content = "Looking for eggs...",
+				Image = 92280379340968,
+				OnClick = function()
+					Toggle_ServerHopFarm:Set(false)
+				end,
+			})
+
+			warn("Autofarm Searching...")
+			task.wait(2)
+
+			local Islands = {}
+			local LF_Eggs_Table = {}
+
+			-- Priorities
+			local LuckPriority = {
+				["x25"] = 1, -- Highest priority
+				["x10"] = 2,
+			}
+
+			local EggTypePriority = {
+				["aura-egg"] = 1, -- Highest priority
+				["event-1"] = 2, -- Highest priority
+				["event-2"] = 3, -- Highest priority
+				["void-egg"] = 4,
+				["nightmare-egg"] = 5,
+				["rainbow-egg"] = 6,
+			}
+
+			-- Get islands
+			for _, Island in workspace.Rendered.Rifts:GetChildren() do
+				if Island:FindFirstChild("Display") and Island.Display:FindFirstChild("SurfaceGui") then
+					local gui = Island.Display.SurfaceGui
+					if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
+						local Name = Island.Name
+						local Luck = gui.Icon.Luck.Text
+						local Timer = gui:FindFirstChild("Timer") and gui.Timer.Text or "?"
+						local Height = Island.Display.CFrame.Y
+						local EggCFrame = Island.Display.CFrame
+						local IslandObject = Island
+
+						table.insert(Islands, {Name, Luck, EggCFrame, Timer, Height, IslandObject})
+
+						---------- webhooks
+
+						if table.find(AllowedEventEggs, Name) then
+							SendEggWebhook(Event_Islands_Hook, Name, Luck, Timer, Height)
+						end
+
+
+						if table.find(AllowedRareEggs, Name) then
+							if Luck and Luck == "x25" then
+								SendEggWebhook(Rare_Islands_Hook, Name, Luck, Timer, Height)
+							end
+						end
+
+						if Setting_IslandSpawnWebhookNotifications == true then
+
+							if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+								if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+									if Luck and Luck == "x25" or Name == "aura-egg" or Name == "royal-chest" then
+										ExploitFunctions.Message(Setting_IslandSpawnWebhook, "@everyone")
+									end
+								end
+							end
+
+							if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+								SendEggWebhook(Setting_IslandSpawnWebhook, Name, Luck, Timer, Height)
+							end
+						end
+
+
+						---------
+					end
+				end
+			end
+
+			-- Egg search preferences
+			local EggFlags = {
+				{Setting_Flag_ServerHopFarm_VoidEgg25x,      "void-egg",      "x25"},
+				{Setting_Flag_ServerHopFarm_VoidEgg10x,      "void-egg",      "x10"},
+				{Setting_Flag_ServerHopFarm_NightmareEgg25x, "nightmare-egg", "x25"},
+				{Setting_Flag_ServerHopFarm_NightmareEgg10x, "nightmare-egg", "x10"},
+				{Setting_Flag_ServerHopFarm_BunnyEgg25x, "event-1", "x25"},
+				{Setting_Flag_ServerHopFarm_BunnyEgg10x, "event-1", "x10"},
+				{Setting_Flag_ServerHopFarm_PastelEgg25x, "event-2", "x25"},
+				{Setting_Flag_ServerHopFarm_PastelEgg10x, "event-2", "x10"},
+				{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
+				{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
+				{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
+			}
+
+			for _, flagData in ipairs(EggFlags) do
+				local flag, eggName, luck = table.unpack(flagData)
+				if flag then
+					table.insert(LF_Eggs_Table, {eggName, luck})
+				end
+			end
+
+			-- Create lookup table for matching
+			local LF_Eggs_Lookup = {}
+			for _, lf in LF_Eggs_Table do
+				LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
+			end
+
+			-- Sort islands by egg priority, then luck priority
+			table.sort(Islands, function(a, b)
+				local aEgg, aLuck = a[1], a[2]
+				local bEgg, bLuck = b[1], b[2]
+				local aEggPri = EggTypePriority[aEgg] or 0
+				local bEggPri = EggTypePriority[bEgg] or 0
+				if aEggPri == bEggPri then
+					return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
+				else
+					return aEggPri > bEggPri
+				end
+			end)
+
+			-- Attempt to find and teleport to matching island
+			local FOUND = false
+
+			for _, island in Islands do
+				local Name = island[1]
+				local Luck = island[2]
+				local key = Name .. "|" .. Luck
+
+				if LF_Eggs_Lookup[key] then
+					local EggCFrame = island[3]
+					local Timer = island[4]
+					local Height = island[5]
+					local IslandObject = island[6]
+					local Position = EggCFrame.Position
+
+					local msg = string.format("Egg Matched: %s | %s", Name, Luck)
+					warn(msg)
+
+					Rayfield:Notify({
+						Title = "Rift found!",
+						Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
+						Image = 92280379340968,
+						OnClick = function() end,
+					})
+
+					FOUND = true
+					
+					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
+
+					task.spawn(function()
+						IslandObject.Destroying:Connect(function()
+							warn("Island is despawning! Checking server again!")
+
+							Rayfield:Notify({
+								Title = "Rift disappeared!",
+								Content = "Checking server for any new islands!",
+								Image = 92280379340968,
+								OnClick = function() end,
+							})
+
+							EggFinder_MainSearch()
+						end)
+					end)
+
+
+					task.wait(1)
+					
+					local HRP = LocalPlayer.Character.HumanoidRootPart
+					
+					local function TravelToRift()
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
+						
+						HRP.Anchored = true
+						LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+						
+						HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, -20, HRP.CFrame.Z))
+						
+						task.wait(0.3)
+						
+						local distance = (HRP.Position - Vector3.new(Position.X, -20, Position.Z)).Magnitude
+						local tweenTime = distance / 25
+						
+						TweenService:Create(HRP, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+						
+						task.wait(tweenTime + 0.3)
+						
+						HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, Position.Y, HRP.CFrame.Z))
+						
+						task.wait(0.3)
+						
+						HRP.Anchored = false
+					end
+
+					TravelToRift()
+
+					task.wait(0.5)
+
+					-- Start hatching
+					local EggName = EggNames[Name]
+					task.spawn(function()
+						while IslandObject do
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
+							task.wait(0.25)
+						end
+					end)
+
+					break
+				end
+			end
+
+			if not FOUND then
+				warn("Island not found!")
+
+				Rayfield:Notify({
+					Title = "Island not found...",
+					Content = "Attempting to join a new server in 30s!",
+					Image = 92280379340968,
+					OnClick = function() end,
+				})
+				
+				EggFinderFallback()
+				
+				task.wait(30)
+
+				TeleportService.TeleportInitFailed:Connect(function(plr, id, status, _error)
+					ExploitFunctions.Message(Testing_Hook, "<@1123917877074997298> TeleportService failed: " .. tostring(status) .. " | " .. tostring(_error))
+					
+					Rayfield:Notify({
+						Title = "Server Hop Failed!",
+						Content = "Retrying to server hop in 20s!",
+						Image = 92280379340968,
+						OnClick = function() end,
+					})
+					
+					task.wait(20)
+					
+					ExploitFunctions.Message(Testing_Hook, "Attempting to find a new server!")
+					
+					ExploitFunctions.ServerHop_IY()
+				end)
+
+				ExploitFunctions.ServerHop_IY()
+			end
+		end
+	end)
+end
+
+
+function CharacterIsAnchored(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.Anchored == not value then
+			part.Anchored = value
+		end
+	end
+end
+
+function CharacterCanColide(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.CanCollide == not value then
+			part.CanCollide = value
+		end
+	end
+end
