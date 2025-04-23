@@ -1,4 +1,4 @@
-local _Version_ = "1.077v."
+local _Version_ = "1.078v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -703,11 +703,11 @@ for _, island in Islands do
 
 			TweenService:Create(HRP , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(EggCFrame.Position.X, -20, EggCFrame.Position.Z))}):Play()
 
-			task.wait(tweenTime + 1)
+			task.wait(tweenTime + 2)
 
 			HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, Position__.Y, HRP.CFrame.Z))
 
-			task.wait(0.6)
+			task.wait(1)
 		end
 
 		TravelToRift()
