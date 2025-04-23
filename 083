@@ -1,4 +1,4 @@
-local _Version_ = "1.083v."
+local _Version_ = "1.084v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -313,7 +313,7 @@ function EggFinderFallback()
 			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" or Setting_FallbackSelectedEgg[1] == "Throwback Egg" then
 				local PositionToTravel = Vector3.new(-397, 12013, -62)
 				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
-				task.wait(0.5)
+				task.wait(2)
 				TravelToEgg(Vector3.new(-382, 12016, 135))
 				task.wait(4)
 				TravelToEgg(PositionToTravel)
