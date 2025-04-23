@@ -648,6 +648,8 @@ for _, island in Islands do
 		})
 
 		FOUND = true
+		
+		warn("Rift Found = true")
 
 		------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
