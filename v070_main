@@ -1,4 +1,4 @@
-local _Version_ = "1.071v."
+local _Version_ = "1.072v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -674,7 +674,7 @@ for _, island in Islands do
 		local HRP = LocalPlayer.Character.HumanoidRootPart
 
 		local function TravelToRift()
-			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
+			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 
 			HRP.Anchored = true
 			LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
