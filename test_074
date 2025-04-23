@@ -1,4 +1,4 @@
-local _Version_ = "1.074v."
+local _Version_ = "1.075v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -7,10 +7,11 @@ local EggNames = {
 	["aura-egg"] = "Aura Egg",
 	["event-1"] = "Bunny Egg",
 	["event-2"] = "Pastel Egg",
+	["event-3"] = "Throwback Egg",
 } 
 
-local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "aura-egg"}
-local AllowedEventEggs = {"event-1", "event-2"}
+local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "event-3", "aura-egg"}
+local AllowedEventEggs = {"event-1", "event-2", "event-3"}
 
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/Library'))()
 local ExploitFunctions = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/ExploitFunctions'))()
@@ -91,6 +92,8 @@ local Setting_Flag_ServerHopFarm_PastelEgg25x = false
 local Setting_Flag_ServerHopFarm_PastelEgg10x = false
 local Setting_Flag_ServerHopFarm_BunnyEgg25x = false
 local Setting_Flag_ServerHopFarm_BunnyEgg10x = false
+local Setting_Flag_ServerHopFarm_ThrowbackEgg25x = false
+local Setting_Flag_ServerHopFarm_ThrowbackEgg10x = false
 local Setting_Flag_ServerHopFarm_AuraEgg = false
 
 local Setting_FallbackServerHopper = false
@@ -307,7 +310,7 @@ function EggFinderFallback()
 				end
 			end
 
-			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
+			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" or Setting_FallbackSelectedEgg[1] == "Throwback Egg" then
 				local PositionToTravel = Vector3.new(-397, 12013, -62)
 				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
 				task.wait(0.5)
@@ -526,11 +529,12 @@ function EggFinder_MainSearch()
 
 			local EggTypePriority = {
 				["aura-egg"] = 1, -- Highest priority
-				["event-1"] = 2, -- Highest priority
-				["event-2"] = 3, -- Highest priority
-				["void-egg"] = 4,
-				["nightmare-egg"] = 5,
-				["rainbow-egg"] = 6,
+				["event-3"] = 2,
+				["event-1"] = 3, -- Highest priority
+				["event-2"] = 4, -- Highest priority
+				["void-egg"] = 5,
+				["nightmare-egg"] = 6,
+				["rainbow-egg"] = 7,
 			}
 
 			-- Get islands
@@ -591,6 +595,8 @@ function EggFinder_MainSearch()
 				{Setting_Flag_ServerHopFarm_BunnyEgg10x, "event-1", "x10"},
 				{Setting_Flag_ServerHopFarm_PastelEgg25x, "event-2", "x25"},
 				{Setting_Flag_ServerHopFarm_PastelEgg10x, "event-2", "x10"},
+				{Setting_Flag_ServerHopFarm_ThrowbackEgg25x, "event-3", "x25"},
+				{Setting_Flag_ServerHopFarm_ThrowbackEgg10x, "event-3", "x10"},
 				{Setting_Flag_ServerHopFarm_RainbowEgg25x,   "rainbow-egg",   "x25"},
 				{Setting_Flag_ServerHopFarm_RainbowEgg10x,   "rainbow-egg",   "x10"},
 				{Setting_Flag_ServerHopFarm_AuraEgg,         "aura-egg",      "x10"},
@@ -1015,12 +1021,32 @@ local Toggle_Flag_ServerHopFarm_PastelEgg10x = Tab_EggFarm:CreateToggle({
 	end,
 })
 
+
 local Toggle_Flag_ServerHopFarm_PastelEgg25x = Tab_EggFarm:CreateToggle({
 	Name = "✨ Pastel Egg (x25)",
 	CurrentValue = false,
 	Flag = "Flag_ServerHopFarm_PastelEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		Setting_Flag_ServerHopFarm_PastelEgg25x = Value
+	end,
+})
+
+local Toggle_Flag_ServerHopFarm_ThrowbackEgg10x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Throwback Egg (x10)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_ThrowbackEgg10x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_ThrowbackEgg10x = Value
+	end,
+})
+
+
+local Toggle_Flag_ServerHopFarm_PastelEgg25x = Tab_EggFarm:CreateToggle({
+	Name = "✨ Throwback Egg (x25)",
+	CurrentValue = false,
+	Flag = "Flag_ServerHopFarm_ThrowbackEgg25x", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_Flag_ServerHopFarm_ThrowbackEgg25x = Value
 	end,
 })
 
