@@ -1,4 +1,4 @@
-local _Version_ = "1.081v."
+local _Version_ = "1.082v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -681,6 +681,8 @@ for _, island in Islands do
  
 		local function TravelToRift()
 			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+
+			task.wait(1)
 
 			local Floor = Instance.new("Part")
 			Floor.Anchored = true
