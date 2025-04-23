@@ -1,4 +1,4 @@
-local _Version_ = "1.076v."
+local _Version_ = "1.077v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -641,7 +641,7 @@ for _, island in Islands do
 		local Timer = island[4]
 		local Height = island[5]
 		local IslandObject = island[6]
-		local Position = EggCFrame.Position
+		local Position__ = EggCFrame.Position
 
 		local msg = string.format("Egg Matched: %s | %s", Name, Luck)
 		warn(msg)
@@ -682,13 +682,21 @@ for _, island in Islands do
 		local function TravelToRift()
 			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 
+			local Floor = Instance.new("Part")
+			Floor.Parent = game.Workspace
+			Floor.Anchored = true
+			Floor.Position = Vector3.new(0, -25, 0)
+			Floor.Size = Vector3.new(200, 1, 200)
+			Floor.Transparency = 0.8
+			Floor.Color = Color3.fromRGB(188, 62, 46)
+
 			LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
 
 			HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, -20, HRP.CFrame.Z))
 
-			task.wait(0.5)
+			task.wait(1)
 
-			local distance = (HRP.Position - Vector3.new(Position.X, -20, Position.Z)).Magnitude
+			local distance = (HRP.Position - Vector3.new(Position__.X, -20, Position__.Z)).Magnitude
 			local tweenTime = distance / 30
 
 			--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
@@ -697,7 +705,7 @@ for _, island in Islands do
 
 			task.wait(tweenTime + 1)
 
-			HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, Position.Y, HRP.CFrame.Z))
+			HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, Position__.Y, HRP.CFrame.Z))
 
 			task.wait(0.6)
 		end
