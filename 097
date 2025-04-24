@@ -1,4 +1,4 @@
-local _Version_ = "1.1v."
+local _Version_ = "1.12v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -114,7 +114,7 @@ local HttpService = game:GetService("HttpService")
 -- MAIN WHILE LOOP
 
 local AllLoops = task.spawn(function()
-	local Loop = function()
+	local function Loop1()
 		while Window do
 
 			if Setting_AutoVoidChest == true then
@@ -163,7 +163,7 @@ local AllLoops = task.spawn(function()
 		end
 	end
 
-	local Loop_Fast = function()
+	local function FastLoop()
 		while Window do
 			if Setting_AutoBlowBubble == true then
 				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
@@ -196,7 +196,7 @@ local AllLoops = task.spawn(function()
 		end
 	end
 
-	local Loop_PickupablesAuto = function()
+	local function PickupablesLoop()
 		while Window do
 			if Setting_SilentAutoPickupables == true then
 				for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
@@ -222,6 +222,10 @@ local AllLoops = task.spawn(function()
 			task.wait(1)
 		end
 	end
+	
+	Loop1()
+	FastLoop()
+	PickupablesLoop()
 end)
 
 local TweenService = game:GetService("TweenService")
@@ -362,36 +366,32 @@ function EggFinderFallback()
 				game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 			end
 
-			local function StartOpeningLoop()
-				FallBack_OpenEggsEnabled = true
-			end
 
 			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
 				local DestinationPosition = Vector3.new(-401, 12013, -61)
 				TravelToPosition(DestinationPosition)
-				task.wait(0.5)
-				StartOpeningLoop()
+				FallBack_OpenEggsEnabled = true
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Throwback Egg"  then
 				local DestinationPosition = Vector3.new(-389, 12013, -60)
 				TravelToPosition(DestinationPosition)
-				task.wait(0.5)
-				StartOpeningLoop()
+				FallBack_OpenEggsEnabled = true
+
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Nightmare Egg" then
 				local DestinationPosition = Vector3.new(-141, 10, -44)
 				TravelToPosition(DestinationPosition)
-				task.wait(0.5)
-				StartOpeningLoop()
+				FallBack_OpenEggsEnabled = true
+
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Void Egg" then
 				local DestinationPosition = Vector3.new(-143, 10, -26)
 				TravelToPosition(DestinationPosition)
-				task.wait(0.5)
-				StartOpeningLoop()
+				FallBack_OpenEggsEnabled = true
+
 			end
 		end
 	end)
