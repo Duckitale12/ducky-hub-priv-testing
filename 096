@@ -1,4 +1,4 @@
-local _Version_ = "1.096v."
+local _Version_ = "1.097v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -1167,7 +1167,7 @@ local Toggle_FallbackServerHopper = Tab_EggFarm:CreateToggle({
 
 local Dropdown_FallbackEggSelection = Tab_EggFarm:CreateDropdown({
 	Name = "Egg Selection",
-	Options = {"Bunny Egg", "Pastel Egg", "Void Egg", "Nightmare Egg"},
+	Options = {"Throwback Egg", "Bunny Egg", "Pastel Egg", "Void Egg", "Nightmare Egg"},
 	CurrentOption = {""},
 	MultipleOptions = false,
 	Flag = "Flag_FallbackEggSelection", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
