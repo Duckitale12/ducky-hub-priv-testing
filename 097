@@ -1,4 +1,4 @@
-local _Version_ = "1.097v."
+local _Version_ = "1.099v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -54,8 +54,7 @@ local Window = Rayfield:CreateWindow({
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- VALUES
-
+-- SAVED FLAGS
 local Setting_AutoVoidChest = false
 local Setting_AutoInfinityChest = false
 local Setting_AutoGiantChest = false
@@ -99,6 +98,11 @@ local Setting_Flag_ServerHopFarm_AuraEgg = false
 local Setting_FallbackServerHopper = false
 local Setting_FallbackSelectedEgg = ""
 
+-- TEMP VALUES
+
+local FallBack_OpenEggsEnabled = false
+local FoundEggToOpen = nil
+
 -- TELEPORTING FUNCS
 
 local TeleportService = game:GetService("TeleportService")
@@ -109,133 +113,118 @@ local HttpService = game:GetService("HttpService")
 
 -- MAIN WHILE LOOP
 
-local Loop = task.spawn(function()
-	while Window do
+local AllLoops = task.spawn(function()
+	local Loop = function()
+		while Window do
 
-		if Setting_AutoVoidChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
-		end
+			if Setting_AutoVoidChest == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
+			end
 
-		if Setting_AutoInfinityChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
-		end
+			if Setting_AutoInfinityChest == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
+			end
 
-		if Setting_AutoGiantChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
-		end
+			if Setting_AutoGiantChest == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
+			end
 
-		if Setting_AutoFreeWheelSpin == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
-		end
+			if Setting_AutoFreeWheelSpin == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
+			end
 
 		--[[if Setting_AutoSpinWheel == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
 		end]]
 
-		if Setting_AutoClaimPlaytime == true then
-			for Index = 1, 9 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
-			end
-		end
-
-		if Setting_AutoSellBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
-		end
-
-		if Setting_AutoBuyBlackmarketItems == true then
-			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
-			end
-		end
-
-		if Setting_AutoBuyAlienShop == true then
-			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
-			end
-		end
-
-		task.wait(5)
-	end
-end)
-
-local Loop_Fast = task.spawn(function()
-	while Window do
-		if Setting_AutoBlowBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
-		end
-
-		if Setting_AutoOpenGoldenChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
-		end
-
-		if Setting_AutoOpenRoyalChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
-		end
-
-		if Setting_AutoMysteryBox == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
-			--rs.shared.framework.network.remote.event.fire
-		end
-
-		task.wait(0.25)
-	end
-end)
-
---[[local Loop_PickupablesAuto = task.spawn(function()
-	while true do
-		if Setting_TeleportToPickupables == true then
-			for _, Pickupable in workspace.Rendered:GetChildren()[12]:GetChildren() do
-				local Name = Pickupable.Name
-				local PickupablePart = Pickupable:FindFirstChildOfClass("Part")
-				local PickupableMeshPart = Pickupable:FindFirstChildOfClass("MeshPart")
-				
-				if PickupablePart then
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupablePart.CFrame + Vector3.new(0, 8, 0)
-				elseif PickupableMeshPart then
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PickupableMeshPart.CFrame + Vector3.new(0, 8, 0)
+			if Setting_AutoClaimPlaytime == true then
+				for Index = 1, 9 do
+					ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
 				end
-
-				task.wait(2)
 			end
-		end
 
-		task.wait(0.5)
+			if Setting_AutoSellBubble == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+			end
+
+			if Setting_AutoBuyBlackmarketItems == true then
+				for Index = 1, 3 do
+					ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+				end
+			end
+
+			if Setting_AutoBuyAlienShop == true then
+				for Index = 1, 3 do
+					ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+				end
+			end
+
+			task.wait(10)
+		end
+	end
+
+	local Loop_Fast = function()
+		while Window do
+			if Setting_AutoBlowBubble == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+			end
+
+			if Setting_AutoOpenGoldenChest == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+			end
+
+			if Setting_AutoOpenRoyalChest == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+			end
+
+			if Setting_AutoMysteryBox == true then
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
+				--rs.shared.framework.network.remote.event.fire
+			end
+			
+			if FallBack_OpenEggsEnabled == true then
+				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
+			end
+			
+			if FoundEggToOpen ~= nil then
+				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", FoundEggToOpen, 99)
+			end
+
+			task.wait(0.3)
+		end
+	end
+
+	local Loop_PickupablesAuto = function()
+		while Window do
+			if Setting_SilentAutoPickupables == true then
+				for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
+
+					local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
+
+					if Part then
+						local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+						local distance = (HRP.Position - Part.Position).Magnitude
+
+						if distance < 80 then
+							local Name = pickupable.Name
+
+							game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
+							task.wait(0.2)
+							--task.wait(0.1)
+							--pickupable:Destroy()
+						end
+					end
+				end
+			end
+
+			task.wait(1)
+		end
 	end
 end)
-]]
 
 local TweenService = game:GetService("TweenService")
 
 local Humanoid = game.Players.LocalPlayer.Character.Humanoid
-
-local Loop_PickupablesAuto = task.spawn(function()
-	while Window do
-		if Setting_SilentAutoPickupables == true then
-			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
-
-				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
-
-				if Part then
-					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
-					local distance = (HRP.Position - Part.Position).Magnitude
-
-					if distance < 80 then
-						local Name = pickupable.Name
-
-						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
-						task.wait(0.2)
-						--task.wait(0.1)
-						--pickupable:Destroy()
-					end
-				end
-			end
-		end
-
-		task.wait(0.5)
-	end
-end)
-
-
 
 -- FUNCTIONS
 
@@ -351,6 +340,8 @@ function TravelToPosition(Destination)
 					end,
 				})
 				
+				ExploitFunctions.Message(Testing_Hook, "Tween has failed! Retrying!")
+				
 				TweenToPoint()
 			end
 		end)
@@ -370,10 +361,7 @@ function EggFinderFallback()
 			end
 
 			local function StartOpeningLoop()
-				while Window do
-					game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
-					task.wait(0.25)
-				end
+				FallBack_OpenEggsEnabled = true
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
@@ -408,66 +396,63 @@ function EggFinderFallback()
 end
 
 function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
-	task.spawn(function()
-		local Embed = {
-			["title"] = "✨ Rift Found!",
-			["description"] = "",
-			["fields"] = {
-				{
-					["name"] = "🥚 Rift Name",
-					["value"] = "```" .. tostring(Island) .. "```",
-				},
-				{
-					["name"] = "⌚ Time Left",
-					["value"] = "```" .. tostring(Timer) .. "```",
-				},
-				{
-					["name"] = "🎈 Height",
-					["value"] = "```" .. math.floor(IslandHeight) .. "```",
-				},
-				{
-					["name"] = "🔑 Server Link",
-					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-				},
-
+	local Embed = {
+		["title"] = "✨ Rift Found!",
+		["description"] = "",
+		["fields"] = {
+			{
+				["name"] = "🥚 Rift Name",
+				["value"] = "```" .. tostring(Island) .. "```",
 			},
-			["color"] = 16777215,
-			["footer"] = {
-				["text"] = tostring(os.date("%H:%M:%S")) 
+			{
+				["name"] = "⌚ Time Left",
+				["value"] = "```" .. tostring(Timer) .. "```",
+			},
+			{
+				["name"] = "🎈 Height",
+				["value"] = "```" .. math.floor(IslandHeight) .. "```",
+			},
+			{
+				["name"] = "🔑 Server Link",
+				["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+			},
+
+		},
+		["color"] = 16777215,
+		["footer"] = {
+			["text"] = tostring(os.date("%H:%M:%S")) 
+		},
+	}
+
+	if Luck then
+		Embed["fields"] = {
+			{
+				["name"] = "🥚 Rift Name",
+				["value"] = "```" .. tostring(Island) .. "```",
+			},
+			{
+				["name"] = "⌚ Time Left",
+				["value"] = "```" .. tostring(Timer) .. "```",
+			},
+			{
+				["name"] = "🍀 Luck Multiplier",
+				["value"] = "```" .. tostring(Luck) .. "```",
+			},
+			{
+				["name"] = "🎈 Height",
+				["value"] = "```" .. math.floor(IslandHeight) .. "```",
+			},
+			{
+				["name"] = "🔑 Server Link",
+				["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
 			},
 		}
+	end
 
-		if Luck then
-			Embed["fields"] = {
-				{
-					["name"] = "🥚 Rift Name",
-					["value"] = "```" .. tostring(Island) .. "```",
-				},
-				{
-					["name"] = "⌚ Time Left",
-					["value"] = "```" .. tostring(Timer) .. "```",
-				},
-				{
-					["name"] = "🍀 Luck Multiplier",
-					["value"] = "```" .. tostring(Luck) .. "```",
-				},
-				{
-					["name"] = "🎈 Height",
-					["value"] = "```" .. math.floor(IslandHeight) .. "```",
-				},
-				{
-					["name"] = "🔑 Server Link",
-					["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
-				},
-			}
-		end
-
-		ExploitFunctions.Webhook(Webhook_, Embed)
-	end)
+	ExploitFunctions.Webhook(Webhook_, Embed)
 end
 
 function ChangeRiftESP()
-	task.spawn(function()
 		if Setting_IslandESP == true then
 			for _, Island in workspace.Rendered.Rifts:GetChildren() do
 				if Island then
@@ -486,56 +471,53 @@ function ChangeRiftESP()
 				end
 			end
 		end
-	end)
 end
 
 
 function ChangeDrawLines()
-	task.spawn(function()
-		if not game.Workspace:FindFirstChild("BeamFolder") then
-			local BeamsFolder = Instance.new("Folder")
-			BeamsFolder.Name = "BeamFolder"
-			BeamsFolder.Parent = game.workspace
-		end
+	if not game.Workspace:FindFirstChild("BeamFolder") then
+		local BeamsFolder = Instance.new("Folder")
+		BeamsFolder.Name = "BeamFolder"
+		BeamsFolder.Parent = game.workspace
+	end
 
-		if Setting_DrawLinesToIslands == true then
-			for _, Island in workspace.Rendered.Rifts:GetChildren() do
-				if not Island:FindFirstChild("LineAttachment") then
-					local Attachment__ = Instance.new("Attachment")
-					Attachment__.Name = "LineAttachment"
-					Attachment__.Parent = Island:FindFirstChild("Output")
+	if Setting_DrawLinesToIslands == true then
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if not Island:FindFirstChild("LineAttachment") then
+				local Attachment__ = Instance.new("Attachment")
+				Attachment__.Name = "LineAttachment"
+				Attachment__.Parent = Island:FindFirstChild("Output")
 
-				end
+			end
 
-				if not Island:FindFirstChild("BeamESP") then
-					local Beam = Instance.new("Beam")
-					Beam.Name = "BeamESP"
-					Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
-					Beam.Attachment0 = Island.Output:FindFirstChild("LineAttachment")
-					Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
-					Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
-					Beam.Enabled = true
-					Beam.LightEmission = 0
-					Beam.Width0 = 0.05
-					Beam.Width1 = 0.05
-					Beam.LightInfluence = 0
-					Beam.FaceCamera = true
+			if not Island:FindFirstChild("BeamESP") then
+				local Beam = Instance.new("Beam")
+				Beam.Name = "BeamESP"
+				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
+				Beam.Attachment0 = Island.Output:FindFirstChild("LineAttachment")
+				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
+				Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
+				Beam.Enabled = true
+				Beam.LightEmission = 0
+				Beam.Width0 = 0.05
+				Beam.Width1 = 0.05
+				Beam.LightInfluence = 0
+				Beam.FaceCamera = true
 
-					if Island.Name == "royal-chest" then
-						Beam.Color = ColorSequence.new(Color3.fromRGB(204, 0, 255))
-					elseif Island.Name == "golden-chest" then
-						Beam.Color = ColorSequence.new(Color3.fromRGB(255, 213, 0))
-					end
+				if Island.Name == "royal-chest" then
+					Beam.Color = ColorSequence.new(Color3.fromRGB(204, 0, 255))
+				elseif Island.Name == "golden-chest" then
+					Beam.Color = ColorSequence.new(Color3.fromRGB(255, 213, 0))
 				end
 			end
-		else
-			local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
-
-			for _, Beam_ in BeamsFolder:GetChildren() do
-				Beam_:Destroy()
-			end
 		end
-	end)
+	else
+		local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
+
+		for _, Beam_ in BeamsFolder:GetChildren() do
+			Beam_:Destroy()
+		end
+	end
 end
 
 --[[
@@ -723,19 +705,17 @@ function EggFinder_MainSearch()
 
 					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
-					task.spawn(function()
-						IslandObject.Destroying:Connect(function()
-							warn("Island is despawning! Checking server again!")
+					IslandObject.Destroying:Connect(function()
+						warn("Island is despawning! Checking server again!")
 
-							Rayfield:Notify({
-								Title = "Rift disappeared!",
-								Content = "Checking server for any new islands!",
-								Image = 92280379340968,
-								OnClick = function() end,
-							})
+						Rayfield:Notify({
+							Title = "Rift disappeared!",
+							Content = "Checking server for any new islands!",
+							Image = 92280379340968,
+							OnClick = function() end,
+						})
 
-							EggFinder_MainSearch()
-						end)
+						EggFinder_MainSearch()
 					end)
 
 
@@ -750,12 +730,11 @@ function EggFinder_MainSearch()
 
 					-- Start hatching
 					local EggName = EggNames[Name]
-					task.spawn(function()
-						while IslandObject do
-							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
-							task.wait(0.25)
-						end
-					end)
+					
+					FoundEggToOpen = EggName
+					
+
+					
 
 					break
 				end
@@ -1365,23 +1344,23 @@ local LogEmbed = {
 --Message(Logs_Hook, "`**" .. tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name .. " (SERVER_ID: " .. game.JobId .. "**`")
 Rayfield:LoadConfiguration()
 
-task.spawn(function()
-	task.wait(10)
-
-	if ExploitFunctions then
-		ExploitFunctions.Webhook(Logs_Hook, LogEmbed)
-	end
-
-
-	EggFinder_MainSearch()
-	ChangeRiftESP()
-	ChangeDrawLines()
-
-	--Rayfield.CheckSavedKey()
-
-end)
-
 --------------------------
+
+
+task.wait(8)
+
+if ExploitFunctions then
+	ExploitFunctions.Webhook(Logs_Hook, LogEmbed)
+end
+
+
+EggFinder_MainSearch()
+ChangeRiftESP()
+ChangeDrawLines()
+
+--Rayfield.CheckSavedKey()
+
+
 
 
 
