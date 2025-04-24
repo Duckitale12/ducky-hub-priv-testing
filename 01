@@ -1,4 +1,4 @@
-local _Version_ = "1.174v."
+local _Version_ = "1.176v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -629,6 +629,8 @@ function EggFinder_MainSearch()
 
 			if not FOUND then
 				warn("Island not found!")
+
+				ExploitFunctions.Message(Testing_Hook, "No rifts found on current server!")
 
 				Rayfield:Notify({
 					Title = "Island not found...",
