@@ -1,4 +1,4 @@
-local _Version_ = "1.172v."
+local _Version_ = "1.173v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -596,7 +596,10 @@ function EggFinder_MainSearch()
 							Image = 92280379340968,
 							OnClick = function() end,
 						})
-
+							
+						task.wait(0.5)
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+						task.wait(0.5)
 						EggFinder_MainSearch()
 					end)
 
