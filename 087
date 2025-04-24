@@ -1,4 +1,4 @@
-local _Version_ = "1.089v."
+local _Version_ = "1.09v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -315,7 +315,7 @@ function TravelToPosition(Destination)
 	task.wait(1.5)
 
 	local distance = (Char.HumanoidRootPart.Position - Vector3.new(Destination.X, -40, Destination.Z)).Magnitude
-	local tweenTime = distance / 50
+	local tweenTime = distance / 40
 
 	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
 
