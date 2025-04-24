@@ -1,4 +1,4 @@
-local _Version_ = "1.171v."
+local _Version_ = "1.172v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
