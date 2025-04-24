@@ -1,4 +1,4 @@
-local _Version_ = "1.094v."
+local _Version_ = "1.095v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -306,7 +306,7 @@ function TravelToPosition(Destination)
 	Floor.Anchored = true
 	Floor.Name = "FLOOR_PART"
 	Floor.Parent = game.Workspace
-	Floor.Position = Vector3.new(0, -42, 0)
+	Floor.Position = Vector3.new(0, -45, 0)
 	Floor.Size = Vector3.new(2048, 1, 2048)
 	Floor.Transparency = 0.7
 	Floor.Color = Color3.fromRGB(188, 6, 0)
