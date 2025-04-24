@@ -1,4 +1,4 @@
-local _Version_ = "1.087v."
+local _Version_ = "1.088v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -295,7 +295,7 @@ end
 function TravelToPosition(Destination)
 	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 
-	task.wait(1)
+	task.wait(1.5)
 
 	local Floor = Instance.new("Part")
 	Floor.Anchored = true
@@ -312,10 +312,10 @@ function TravelToPosition(Destination)
 
 	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, -20, Char.HumanoidRootPart.CFrame.Z))
 
-	task.wait(1)
+	task.wait(1.5)
 
 	local distance = (Char.HumanoidRootPart.Position - Vector3.new(Destination.X, -20, Destination.Z)).Magnitude
-	local tweenTime = distance / 60
+	local tweenTime = distance / 45
 
 	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
 
@@ -323,7 +323,7 @@ function TravelToPosition(Destination)
 	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 
 
-	task.wait(tweenTime + 1)
+	task.wait(tweenTime + 1.5)
 
 	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, Destination.Y, Char.HumanoidRootPart.CFrame.Z))
 
