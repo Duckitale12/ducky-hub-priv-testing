@@ -1,4 +1,4 @@
-local _Version_ = "1.173v."
+local _Version_ = "1.174v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -582,6 +582,7 @@ function EggFinder_MainSearch()
 					})
 
 					FOUND = true
+					ExploitFunctions.Message(Testing_Hook, "Found rift: ", Name, Luck, Timer)
 
 					warn("Rift Found = true")
 
@@ -596,6 +597,8 @@ function EggFinder_MainSearch()
 							Image = 92280379340968,
 							OnClick = function() end,
 						})
+						
+						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: ", Name)
 							
 						task.wait(0.5)
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
