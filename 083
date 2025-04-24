@@ -1,4 +1,4 @@
-local _Version_ = "1.085v."
+local _Version_ = "1.086v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -306,7 +306,7 @@ function TravelToPosition(Destination)
 	Floor.Transparency = 0.9
 	Floor.Color = Color3.fromRGB(188, 43, 24)
 
-	local Char = game.Players.LocalPlacer.Character
+	local Char = game.Players.LocalPlayer.Character
 
 	Char.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
 
@@ -314,12 +314,12 @@ function TravelToPosition(Destination)
 
 	task.wait(1)
 
-	local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(Destination.X, -20, Destination.Z)).Magnitude
+	local distance = (Char.HumanoidRootPart.Position - Vector3.new(Destination.X, -20, Destination.Z)).Magnitude
 	local tweenTime = distance / 60
 
 	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
 
-	TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(Destination.Position.X, -20, Destination.Position.Z))}):Play()
+	TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(Destination.Position.X, -20, Destination.Position.Z))}):Play()
 	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 
 
