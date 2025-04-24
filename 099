@@ -1,4 +1,4 @@
-local _Version_ = "1.15v."
+local _Version_ = "1.16v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -111,120 +111,8 @@ local HttpService = game:GetService("HttpService")
 --------
 
 
--- MAIN WHILE LOOP
 
-local function Loop1()
-	while true do
 
-		if Setting_AutoVoidChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
-		end
-
-		if Setting_AutoInfinityChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
-		end
-
-		if Setting_AutoGiantChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
-		end
-
-		if Setting_AutoFreeWheelSpin == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
-		end
-
-	--[[if Setting_AutoSpinWheel == true then
-		ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
-	end]]
-
-		if Setting_AutoClaimPlaytime == true then
-			for Index = 1, 9 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
-			end
-		end
-
-		if Setting_AutoSellBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
-		end
-
-		if Setting_AutoBuyBlackmarketItems == true then
-			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
-			end
-		end
-
-		if Setting_AutoBuyAlienShop == true then
-			for Index = 1, 3 do
-				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
-			end
-		end
-
-		task.wait(10)
-	end
-end
-
-local function FastLoop()
-	while true do
-		if Setting_AutoBlowBubble == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
-		end
-
-		if Setting_AutoOpenGoldenChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
-		end
-
-		if Setting_AutoOpenRoyalChest == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
-		end
-
-		if Setting_AutoMysteryBox == true then
-			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
-			--rs.shared.framework.network.remote.event.fire
-		end
-		
-		if FallBack_OpenEggsEnabled == true then
-			warn("open fallback")
-			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
-		end
-		
-		if FoundEggToOpen ~= "" then
-			warn(FoundEggToOpen)
-			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", FoundEggToOpen, 99)
-		end
-
-		task.wait(0.3)
-	end
-end
-
-local function PickupablesLoop()
-	while true do
-		if Setting_SilentAutoPickupables == true then
-			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
-
-				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
-
-				if Part then
-					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
-					local distance = (HRP.Position - Part.Position).Magnitude
-
-					if distance < 80 then
-						local Name = pickupable.Name
-
-						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
-						task.wait(0.2)
-						--task.wait(0.1)
-						--pickupable:Destroy()
-					end
-				end
-			end
-		end
-
-		task.wait(1)
-	end
-end
-	
-task.spawn(Loop1)
-task.spawn(FastLoop)
-task.spawn(PickupablesLoop)
 
 local TweenService = game:GetService("TweenService")
 
@@ -1342,6 +1230,109 @@ Rayfield:LoadConfiguration()
 
 --------------------------
 
+task.wait(1)
+
+task.spawn(function()
+	while true do
+
+		if Setting_AutoVoidChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
+		end
+
+		if Setting_AutoInfinityChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
+		end
+
+		if Setting_AutoGiantChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
+		end
+
+		if Setting_AutoFreeWheelSpin == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
+		end
+
+	--[[if Setting_AutoSpinWheel == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
+	end]]
+
+		if Setting_AutoClaimPlaytime == true then
+			for Index = 1, 9 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
+			end
+		end
+
+		if Setting_AutoSellBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("SellBubble")
+		end
+
+		if Setting_AutoBuyBlackmarketItems == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+			end
+		end
+
+		if Setting_AutoBuyAlienShop == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+			end
+		end
+
+		task.wait(10)
+	end
+end)
+
+task.spawn(function()
+
+	while true do
+		if Setting_AutoBlowBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+		end
+
+		if Setting_AutoOpenGoldenChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+		end
+
+		if Setting_AutoOpenRoyalChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+		end
+
+		if Setting_AutoMysteryBox == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
+			--rs.shared.framework.network.remote.event.fire
+		end
+
+		task.wait(0.3)
+	end
+end)
+
+task.spawn(function()
+	while true do
+		if Setting_SilentAutoPickupables == true then
+			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
+
+				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
+
+				if Part then
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+					local distance = (HRP.Position - Part.Position).Magnitude
+
+					if distance < 80 then
+						local Name = pickupable.Name
+
+						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
+						task.wait(0.2)
+						--task.wait(0.1)
+						--pickupable:Destroy()
+					end
+				end
+			end
+		end
+
+		task.wait(1)
+	end
+end)
+
+----
 
 task.wait(8)
 
