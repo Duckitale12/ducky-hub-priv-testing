@@ -1,4 +1,4 @@
-local _Version_ = "1.17v."
+local _Version_ = "1.171v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -109,9 +109,6 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 
 --------
-
-
-
 
 
 local TweenService = game:GetService("TweenService")
@@ -1338,6 +1335,25 @@ task.spawn(function()
 		end
 
 		task.wait(1)
+	end
+end)
+
+task.spawn(function()
+	while true do
+		if FallBack_OpenEggsEnabled == true then
+			warn("open fallback")
+			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
+			task.wait(0.1)
+		end
+
+		if FoundEggToOpen ~= "" then
+			warn(FoundEggToOpen)
+			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", FoundEggToOpen, 99)
+			task.wait(0.1)
+		end
+		
+		
+		task.wait(0.25)
 	end
 end)
 
