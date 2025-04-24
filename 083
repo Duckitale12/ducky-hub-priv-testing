@@ -1,4 +1,4 @@
-local _Version_ = "1.084v."
+local _Version_ = "1.085v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -212,13 +212,13 @@ local Loop_PickupablesAuto = task.spawn(function()
 	while Window do
 		if Setting_SilentAutoPickupables == true then
 			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
-				
+
 				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
-				
+
 				if Part then
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					local distance = (HRP.Position - Part.Position).Magnitude
-					
+
 					if distance < 80 then
 						local Name = pickupable.Name
 
@@ -292,6 +292,43 @@ function HighlightIsland(IslandModel)
 	end
 end
 
+function TravelToPosition(Destination)
+	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+
+	task.wait(1)
+
+	local Floor = Instance.new("Part")
+	Floor.Anchored = true
+	Floor.Name = "FLOOR_PART"
+	Floor.Parent = game.Workspace
+	Floor.Position = Vector3.new(0, -22, 0)
+	Floor.Size = Vector3.new(2048, 1, 2048)
+	Floor.Transparency = 0.9
+	Floor.Color = Color3.fromRGB(188, 43, 24)
+
+	local Char = game.Players.LocalPlacer.Character
+
+	Char.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+
+	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, -20, Char.HumanoidRootPart.CFrame.Z))
+
+	task.wait(1)
+
+	local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(Destination.X, -20, Destination.Z)).Magnitude
+	local tweenTime = distance / 60
+
+	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+
+	TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(Destination.Position.X, -20, Destination.Position.Z))}):Play()
+	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
+
+
+	task.wait(tweenTime + 1)
+
+	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, Destination.Y, Char.HumanoidRootPart.CFrame.Z))
+
+	task.wait(1)
+end
 
 function EggFinderFallback()
 	task.spawn(function()
@@ -302,7 +339,7 @@ function EggFinderFallback()
 				warn("Travel")
 				game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 			end
-			
+
 			local function StartOpeningLoop()
 				while Window do
 					game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
@@ -310,33 +347,31 @@ function EggFinderFallback()
 				end
 			end
 
-			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" or Setting_FallbackSelectedEgg[1] == "Throwback Egg" then
-				local PositionToTravel = Vector3.new(-397, 12013, -62)
-				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Event.Portal.Spawn")
-				task.wait(2)
-				TravelToEgg(Vector3.new(-382, 12016, 135))
-				task.wait(4)
-				TravelToEgg(PositionToTravel)
+			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
+				local DestinationPosition = Vector3.new(-401, 12013, -61)
+				TravelToPosition(DestinationPosition)
+				task.wait(0.5)
 				StartOpeningLoop()
 			end
-			
+
+			if Setting_FallbackSelectedEgg[1] == "Throwback Egg"  then
+				local DestinationPosition = Vector3.new(-389, 12013, -60)
+				TravelToPosition(DestinationPosition)
+				task.wait(0.5)
+				StartOpeningLoop()
+			end
+
 			if Setting_FallbackSelectedEgg[1] == "Nightmare Egg" then
-				local PositionToTravel = Vector3.new(-141, 10, -44)
-				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+				local DestinationPosition = Vector3.new(-141, 10, -44)
+				TravelToPosition(DestinationPosition)
 				task.wait(0.5)
-				TravelToEgg(Vector3.new(-31, 9, -28))
-				task.wait(8)
-				TravelToEgg(PositionToTravel)
 				StartOpeningLoop()
 			end
-			
+
 			if Setting_FallbackSelectedEgg[1] == "Void Egg" then
-				local PositionToTravel = Vector3.new(-143, 10, -26)
-				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+				local DestinationPosition = Vector3.new(-143, 10, -26)
+				TravelToPosition(DestinationPosition)
 				task.wait(0.5)
-				TravelToEgg(Vector3.new(-31, 9, -28))
-				task.wait(8)
-				TravelToEgg(PositionToTravel)
 				StartOpeningLoop()
 			end
 		end
@@ -511,7 +546,7 @@ function EggFinder_MainSearch()
 				Content = "Looking for eggs...",
 				Image = 92280379340968,
 				OnClick = function()
-					
+
 				end,
 			})
 
@@ -613,160 +648,125 @@ function EggFinder_MainSearch()
 			local LF_Eggs_Lookup = {}
 			for _, lf in LF_Eggs_Table do
 				LF_Eggs_Lookup[lf[1] .. "|" .. lf[2]] = true
-end
+			end
 
--- Sort islands by egg priority, then luck priority
-table.sort(Islands, function(a, b)
-	local aEgg, aLuck = a[1], a[2]
-	local bEgg, bLuck = b[1], b[2]
-	local aEggPri = EggTypePriority[aEgg] or 0
-	local bEggPri = EggTypePriority[bEgg] or 0
-	if aEggPri == bEggPri then
-		return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
-	else
-		return aEggPri > bEggPri
-	end
-end)
+			-- Sort islands by egg priority, then luck priority
+			table.sort(Islands, function(a, b)
+				local aEgg, aLuck = a[1], a[2]
+				local bEgg, bLuck = b[1], b[2]
+				local aEggPri = EggTypePriority[aEgg] or 0
+				local bEggPri = EggTypePriority[bEgg] or 0
+				if aEggPri == bEggPri then
+					return (LuckPriority[aLuck] or 0) > (LuckPriority[bLuck] or 0)
+				else
+					return aEggPri > bEggPri
+				end
+			end)
 
--- Attempt to find and teleport to matching island
-local FOUND = false
+			-- Attempt to find and teleport to matching island
+			local FOUND = false
 
-for _, island in Islands do
-	local Name = island[1]
-	local Luck = island[2]
-	local key = Name .. "|" .. Luck
+			for _, island in Islands do
+				local Name = island[1]
+				local Luck = island[2]
+				local key = Name .. "|" .. Luck
 
-	if LF_Eggs_Lookup[key] then
-		local EggCFrame = island[3]
-		local Timer = island[4]
-		local Height = island[5]
-		local IslandObject = island[6]
-		local Position__ = EggCFrame.Position
+				if LF_Eggs_Lookup[key] then
+					local EggCFrame = island[3]
+					local Timer = island[4]
+					local Height = island[5]
+					local IslandObject = island[6]
+					local Position__ = EggCFrame.Position
 
-		local msg = string.format("Egg Matched: %s | %s", Name, Luck)
-		warn(msg)
+					local msg = string.format("Egg Matched: %s | %s", Name, Luck)
+					warn(msg)
 
-		Rayfield:Notify({
-			Title = "Rift found!",
-			Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
-			Image = 92280379340968,
-			OnClick = function() end,
-		})
+					Rayfield:Notify({
+						Title = "Rift found!",
+						Content = "Traveling to: " .. Name .. " " .. Luck .. " (" .. Timer .. ")",
+						Image = 92280379340968,
+						OnClick = function() end,
+					})
 
-		FOUND = true
-		
-		warn("Rift Found = true")
+					FOUND = true
 
-		------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
+					warn("Rift Found = true")
 
-		task.spawn(function()
-			IslandObject.Destroying:Connect(function()
-				warn("Island is despawning! Checking server again!")
+					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
+
+					task.spawn(function()
+						IslandObject.Destroying:Connect(function()
+							warn("Island is despawning! Checking server again!")
+
+							Rayfield:Notify({
+								Title = "Rift disappeared!",
+								Content = "Checking server for any new islands!",
+								Image = 92280379340968,
+								OnClick = function() end,
+							})
+
+							EggFinder_MainSearch()
+						end)
+					end)
+
+
+					task.wait(1)
+
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+
+					TravelToPosition(Position__)
+
+					task.wait(0.5)
+
+					-- Start hatching
+					local EggName = EggNames[Name]
+					task.spawn(function()
+						while IslandObject do
+							game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
+							task.wait(0.25)
+						end
+					end)
+
+					break
+				end
+			end
+
+			if not FOUND then
+				warn("Island not found!")
 
 				Rayfield:Notify({
-					Title = "Rift disappeared!",
-					Content = "Checking server for any new islands!",
+					Title = "Island not found...",
+					Content = "Attempting to join a new server in 30s!",
 					Image = 92280379340968,
 					OnClick = function() end,
 				})
 
-				EggFinder_MainSearch()
-			end)
-		end)
+				EggFinderFallback()
 
+				task.wait(30)
 
-		task.wait(1)
+				TeleportService.TeleportInitFailed:Connect(function(plr, id, status, _error)
+					ExploitFunctions.Message(Testing_Hook, "<@1123917877074997298> TeleportService failed: " .. tostring(status) .. " | " .. tostring(_error))
 
-		local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
- 
-		local function TravelToRift()
-			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+					Rayfield:Notify({
+						Title = "Server Hop Failed!",
+						Content = "Retrying to server hop in 20s!",
+						Image = 92280379340968,
+						OnClick = function() end,
+					})
 
-			task.wait(1)
+					task.wait(20)
 
-			local Floor = Instance.new("Part")
-			Floor.Anchored = true
-			Floor.Name = "FLOOR_PART"
-			Floor.Parent = game.Workspace
-			Floor.Position = Vector3.new(0, -25, 0)
-			Floor.Size = Vector3.new(2000, 1, 2000)
-			Floor.Transparency = 0.5
-			Floor.Color = Color3.fromRGB(188, 62, 46)
+					ExploitFunctions.Message(Testing_Hook, "Attempting to find a new server!")
 
-			LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+					ExploitFunctions.ServerHop_IY()
+				end)
 
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X, -20, game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z))
-
-			task.wait(1.3)
-
-			local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(Position__.X, -20, Position__.Z)).Magnitude
-			local tweenTime = distance / 30
-
-			--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
-
-			TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(EggCFrame.Position.X, -20, EggCFrame.Position.Z))}):Play()
-			--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
-			
-
-			task.wait(tweenTime + 2)
-
-			HRP.CFrame = CFrame.new(Vector3.new(HRP.CFrame.X, Position__.Y, HRP.CFrame.Z))
-
-			task.wait(1)
-		end
-
-		TravelToRift()
-
-		task.wait(0.5)
-
-		-- Start hatching
-		local EggName = EggNames[Name]
-		task.spawn(function()
-			while IslandObject do
-				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", EggName, 99)
-				task.wait(0.25)
+				ExploitFunctions.ServerHop_IY()
 			end
-		end)
-
-		break
-	end
-end
-
-if not FOUND then
-	warn("Island not found!")
-
-	Rayfield:Notify({
-		Title = "Island not found...",
-		Content = "Attempting to join a new server in 30s!",
-		Image = 92280379340968,
-		OnClick = function() end,
-	})
-
-	EggFinderFallback()
-
-	task.wait(30)
-
-	TeleportService.TeleportInitFailed:Connect(function(plr, id, status, _error)
-		ExploitFunctions.Message(Testing_Hook, "<@1123917877074997298> TeleportService failed: " .. tostring(status) .. " | " .. tostring(_error))
-
-		Rayfield:Notify({
-			Title = "Server Hop Failed!",
-			Content = "Retrying to server hop in 20s!",
-			Image = 92280379340968,
-			OnClick = function() end,
-		})
-
-		task.wait(20)
-
-		ExploitFunctions.Message(Testing_Hook, "Attempting to find a new server!")
-
-		ExploitFunctions.ServerHop_IY()
+		end
 	end)
-
-	ExploitFunctions.ServerHop_IY()
-end
-end
-end)
 end
 
 
@@ -1338,18 +1338,18 @@ Rayfield:LoadConfiguration()
 
 task.spawn(function()
 	task.wait(10)
-	
+
 	if ExploitFunctions then
 		ExploitFunctions.Webhook(Logs_Hook, LogEmbed)
 	end
-	
-	
+
+
 	EggFinder_MainSearch()
 	ChangeRiftESP()
 	ChangeDrawLines()
-	
+
 	--Rayfield.CheckSavedKey()
-	
+
 end)
 
 --------------------------
