@@ -1,4 +1,4 @@
-local _Version_ = "1.12v."
+local _Version_ = "1.13v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -366,31 +366,28 @@ function EggFinderFallback()
 				game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 			end
 
+			FallBack_OpenEggsEnabled = true
 
 			if Setting_FallbackSelectedEgg[1] == "Pastel Egg" or Setting_FallbackSelectedEgg[1] == "Bunny Egg" then
 				local DestinationPosition = Vector3.new(-401, 12013, -61)
 				TravelToPosition(DestinationPosition)
-				FallBack_OpenEggsEnabled = true
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Throwback Egg"  then
 				local DestinationPosition = Vector3.new(-389, 12013, -60)
 				TravelToPosition(DestinationPosition)
-				FallBack_OpenEggsEnabled = true
 
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Nightmare Egg" then
 				local DestinationPosition = Vector3.new(-141, 10, -44)
 				TravelToPosition(DestinationPosition)
-				FallBack_OpenEggsEnabled = true
 
 			end
 
 			if Setting_FallbackSelectedEgg[1] == "Void Egg" then
 				local DestinationPosition = Vector3.new(-143, 10, -26)
 				TravelToPosition(DestinationPosition)
-				FallBack_OpenEggsEnabled = true
 
 			end
 		end
@@ -734,6 +731,8 @@ function EggFinder_MainSearch()
 					local EggName = EggNames[Name]
 					
 					FoundEggToOpen = EggName
+					warn("eggtoopen:")
+					warn(FoundEggToOpen)
 				
 					break
 				end
