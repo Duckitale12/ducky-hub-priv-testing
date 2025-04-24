@@ -1,4 +1,4 @@
-local _Version_ = "1.099v."
+local _Version_ = "1.1v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -101,7 +101,7 @@ local Setting_FallbackSelectedEgg = ""
 -- TEMP VALUES
 
 local FallBack_OpenEggsEnabled = false
-local FoundEggToOpen = nil
+local FoundEggToOpen = ""
 
 -- TELEPORTING FUNCS
 
@@ -183,10 +183,12 @@ local AllLoops = task.spawn(function()
 			end
 			
 			if FallBack_OpenEggsEnabled == true then
+				warn("open fallback")
 				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", Setting_FallbackSelectedEgg[1], 99)
 			end
 			
-			if FoundEggToOpen ~= nil then
+			if FoundEggToOpen ~= "" then
+				warn(FoundEggToOpen)
 				game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", FoundEggToOpen, 99)
 			end
 
@@ -732,10 +734,7 @@ function EggFinder_MainSearch()
 					local EggName = EggNames[Name]
 					
 					FoundEggToOpen = EggName
-					
-
-					
-
+				
 					break
 				end
 			end
