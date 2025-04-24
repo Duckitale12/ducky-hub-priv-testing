@@ -1,4 +1,4 @@
-local _Version_ = "1.09v."
+local _Version_ = "1.092v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -292,6 +292,27 @@ function HighlightIsland(IslandModel)
 	end
 end
 
+local Char = game.Players.LocalPlayer.Character
+local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+
+function TweenToPoint(Point)
+	local distance = (Char.HumanoidRootPart.Position - Vector3.new(Point.X, -40, Point.Z)).Magnitude
+	local tweenTime = distance / 40
+	
+	local Tween_ = TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Point)})
+	Tween_:Play()
+	
+	Tween_.Completed:Connect(function()
+		if (HRP.Position - Vector3.new(Point.X, HRP.Position.Y, Point.Z) ).magnitude <= 2 then
+			print("Success")
+			return "Success"
+		else
+			return "Failed"
+		end
+	end)
+end
+
 function TravelToPosition(Destination)
 	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 
@@ -314,20 +335,28 @@ function TravelToPosition(Destination)
 
 	task.wait(1.5)
 
-	local distance = (Char.HumanoidRootPart.Position - Vector3.new(Destination.X, -40, Destination.Z)).Magnitude
-	local tweenTime = distance / 40
-
 	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
-
-	TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(Vector3.new(Destination.X, -40, Destination.Z))}):Play()
+	
+	local UnderTweenDestination = Vector3.new(Destination.X, -40, Destination.Z)
+	--TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(UnderTweenDestination)}):Play()
 	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
+	local TweenToPointCallback = TweenToPoint(UnderTweenDestination)
 
+	if TweenToPointCallback == "Success" then
+		Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, Destination.Y, Char.HumanoidRootPart.CFrame.Z))
 
-	task.wait(tweenTime + 1.5)
-
-	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, Destination.Y, Char.HumanoidRootPart.CFrame.Z))
-
-	task.wait(1)
+		task.wait(1)
+	else
+		Rayfield:Notify({
+			Title = "Tween Error!",
+			Content = "Tween failed due to lag... Retrying!",
+			Image = 92280379340968,
+			OnClick = function()
+			end,
+		})
+		
+		TweenToPoint(UnderTweenDestination)
+	end
 end
 
 function EggFinderFallback()
