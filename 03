@@ -1,4 +1,4 @@
-local _Version_ = "1.183v."
+local _Version_ = "1.184v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -176,6 +176,8 @@ local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 
 
 function TravelToPosition(Destination)
+	task.wait(0.5)
+	
 	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 
 	task.wait(1.5)
@@ -601,8 +603,8 @@ function EggFinder_MainSearch()
 						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: " .. tostring(Name) .. " " .. tostring(Luck))
 						
 						print("teleport attempt return")
-						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
-						task.wait(1.5)
+						game.Players.LocalPlayer.Character.Humanoid.Health = 0
+						task.wait(6)
 						EggFinder_MainSearch()
 					end)
 
