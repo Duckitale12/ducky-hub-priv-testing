@@ -1,4 +1,4 @@
-local _Version_ = "1.185v."
+local _Version_ = "1.186v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -213,7 +213,10 @@ function TravelToPosition(Destination)
 		Tween_.Completed:Connect(function()
 			task.wait(1)
 			
-			if (HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z) ).magnitude <= 2 then
+			warn("MAGNITUDE:")
+			warn((HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).magnitude)
+			
+			if (HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).magnitude <= 3 then
 				print("Success")
 				
 				task.wait(1)
