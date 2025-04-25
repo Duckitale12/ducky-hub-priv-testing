@@ -1,4 +1,4 @@
-local _Version_ = "1.177v."
+local _Version_ = "1.178v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -598,7 +598,7 @@ function EggFinder_MainSearch()
 							OnClick = function() end,
 						})
 						
-						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: ", Name)
+						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: " .. tostring(Name) .. " " .. tostring(Luck))
 							
 						task.wait(0.5)
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
@@ -1335,15 +1335,14 @@ task.spawn(function()
 						local Name = pickupable.Name
 
 						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
-						task.wait(0.2)
-						--task.wait(0.1)
-						--pickupable:Destroy()
+						task.wait(0.1)
+						pickupable:Destroy()
 					end
 				end
 			end
 		end
 
-		task.wait(1)
+		task.wait(0.5)
 	end
 end)
 
