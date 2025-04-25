@@ -1,4 +1,4 @@
-local _Version_ = "1.184v."
+local _Version_ = "1.185v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -200,11 +200,10 @@ function TravelToPosition(Destination)
 	task.wait(1.5)
 
 	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
-	
-	local UnderTweenDestination = Vector3.new(Destination.X, -40, Destination.Z)
 	--TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(UnderTweenDestination)}):Play()
 	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 	local function TweenToPoint()
+		local UnderTweenDestination = Vector3.new(Destination.X, -40, Destination.Z)
 		local distance = (Char.HumanoidRootPart.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).Magnitude
 		local tweenTime = distance / 32
 
@@ -214,7 +213,7 @@ function TravelToPosition(Destination)
 		Tween_.Completed:Connect(function()
 			task.wait(1)
 			
-			if (HRP.Position - Vector3.new(UnderTweenDestination.X, HRP.Position.Y, UnderTweenDestination.Z) ).magnitude <= 2 then
+			if (HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z) ).magnitude <= 2 then
 				print("Success")
 				
 				task.wait(1)
@@ -591,6 +590,8 @@ function EggFinder_MainSearch()
 					------------------Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly
 
 					IslandObject.Destroying:Connect(function()
+						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+
 						warn("Island is despawning! Checking server again!")
 
 						Rayfield:Notify({
@@ -603,7 +604,9 @@ function EggFinder_MainSearch()
 						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: " .. tostring(Name) .. " " .. tostring(Luck))
 						
 						print("teleport attempt return")
-						game.Players.LocalPlayer.Character.Humanoid.Health = 0
+						FOUND = false
+						FoundEggToOpen = ""
+						
 						task.wait(6)
 						EggFinder_MainSearch()
 					end)
