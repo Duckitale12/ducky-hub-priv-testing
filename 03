@@ -1,4 +1,4 @@
-local _Version_ = "1.182v."
+local _Version_ = "1.183v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -599,7 +599,8 @@ function EggFinder_MainSearch()
 						})
 						
 						ExploitFunctions.Message(Testing_Hook, "Rift dissapeared: " .. tostring(Name) .. " " .. tostring(Luck))
-							
+						
+						print("teleport attempt return")
 						game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
 						task.wait(1.5)
 						EggFinder_MainSearch()
