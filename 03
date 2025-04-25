@@ -1,4 +1,4 @@
-local _Version_ = "1.18v."
+local _Version_ = "1.181v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -634,14 +634,14 @@ function EggFinder_MainSearch()
 
 				Rayfield:Notify({
 					Title = "Island not found...",
-					Content = "Attempting to join a new server in 30s!",
+					Content = "Attempting to join a new server in 45s!",
 					Image = 92280379340968,
 					OnClick = function() end,
 				})
 
 				EggFinderFallback()
 
-				task.wait(30)
+				task.wait(45)
 
 				TeleportService.TeleportInitFailed:Connect(function(plr, id, status, _error)
 					ExploitFunctions.Message(Testing_Hook, "<@1123917877074997298> TeleportService failed: " .. tostring(status) .. " | " .. tostring(_error))
