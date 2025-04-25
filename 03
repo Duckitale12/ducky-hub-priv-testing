@@ -1,4 +1,4 @@
-local _Version_ = "1.179v."
+local _Version_ = "1.18v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -1268,7 +1268,7 @@ task.spawn(function()
 				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
 				task.wait(0.1)
 			end
-			task.wait(0.1)
+			task.wait(0.5)
 		end
 
 
@@ -1277,7 +1277,7 @@ task.spawn(function()
 				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
 				task.wait(0.1)
 			end
-			task.wait(0.1)
+			task.wait(0.5)
 		end
 
 		if Setting_AutoBuyAlienShop == true then
@@ -1285,7 +1285,7 @@ task.spawn(function()
 				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
 				task.wait(0.1)
 			end
-			task.wait(0.1)
+			task.wait(0.5)
 		end
 
 		task.wait(10)
@@ -1293,27 +1293,26 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-
 	while true do
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
-			task.wait(0.1)
+			task.wait(0.25)
 		end
 
 		if Setting_AutoOpenGoldenChest == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
-			task.wait(0.1)
+			task.wait(0.25)
 		end
 
 		if Setting_AutoOpenRoyalChest == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
-			task.wait(0.1)
+			task.wait(0.25)
 		end
 
 		if Setting_AutoMysteryBox == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
 			--rs.shared.framework.network.remote.event.fire
-			task.wait(0.1)
+			task.wait(0.25)
 		end
 
 		task.wait(0.3)
