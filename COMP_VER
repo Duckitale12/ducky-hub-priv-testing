@@ -1,0 +1,911 @@
+local _Version_ = "Optimized Ver."
+
+local EggNames = {
+	["void-egg"] = "Void Egg",
+	["rainbow-egg"] = "Rainbow Egg",
+	["nightmare-egg"] = "Nightmare Egg",
+	["aura-egg"] = "Aura Egg",
+	["event-1"] = "Bunny Egg",
+	["event-2"] = "Pastel Egg",
+	["event-3"] = "Throwback Egg",
+} 
+
+local AllowedRareEggs = {"void-egg", "nightmare-egg", "event-1", "event-2", "event-3", "aura-egg"}
+local AllowedEventEggs = {"event-1", "event-2", "event-3"}
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/Library'))()
+local ExploitFunctions = loadstring(game:HttpGet('https://raw.githubusercontent.com/DuckyHub-roblox/Ducky-Hub/refs/heads/main/ExploitFunctions'))()
+
+
+local Window = Rayfield:CreateWindow({
+	Name = "Ducky-Hub [Comp Ver.]",
+	Icon = 92280379340968, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	LoadingTitle = "Ducky-Hub",
+	LoadingSubtitle = "Welcome!",
+	Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+	DisableRayfieldPrompts = true,
+	DisableBuildWarnings = true, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil, -- Create a custom folder for your hub/game
+		FileName = "Ducky_Hub_Configs_COMP_VERSION"
+	},
+
+	Discord = {
+		Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+		Invite = "P49rCFQ7FX", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+	},
+
+	KeySystem = false, -- Set this to true to use our key system
+	KeySettings = {
+		Title = "Ducky-Hub",
+		Subtitle = "Key System",
+		Note = "Join our discord to get the key! (https://discord.gg/P49rCFQ7FX)", -- Use this to tell the user how to get a key
+		FileName = "_Ducky_Hub_Key_System_", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = {"PERM-Xi9DFGY8"}, -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+	}
+})
+
+-- SERVICES
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- SAVED FLAGS
+local Setting_AutoVoidChest = false
+local Setting_AutoInfinityChest = false
+local Setting_AutoGiantChest = false
+local Setting_AutoFreeWheelSpin = false
+--local Setting_AutoSpinWheel = false
+local Setting_AutoClaimPlaytime = false
+local Setting_AutoBlowBubble = false
+local Setting_AutoSellBubble = false
+local Setting_AutoBuyAlienShop = false
+local Setting_AutoBuyBlackmarketItems = false
+local Setting_SilentAutoPickupables = false
+local Setting_IslandSpawnNotifications = false
+local Setting_IslandSpawnWebhookNotifications = false
+local Setting_IslandSpawnWebhook = "000"
+local Setting_IslandSpawnWebhookPingEveryoneOn25 = false
+local Setting_TeleportToPickupables = false
+local Setting_IslandESP = false
+
+local Setting_InfEggFast = false
+
+local Setting_DrawLinesToIslands = false
+local Setting_AutoOpenRoyalChest = false
+local Setting_AutoOpenGoldenChest = false
+local Setting_AutoMysteryBox = false
+
+-- TELEPORTING FUNCS
+
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+
+--------
+
+local TweenService = game:GetService("TweenService")
+
+local Humanoid = game.Players.LocalPlayer.Character.Humanoid
+
+-- FUNCTIONS
+
+local Logs_Hook = "https://discord.com/api/webhooks/1362702270084550780/1TK0CX2K2hy3pVLdzcVLWxY-POhbWi9if-89JZqVWVh0OaS1ykwzBYbtYlkhTq7lDbSj"
+local Testing_Hook = "https://discord.com/api/webhooks/1362552545343439081/jvNgkuU4VFETKI-0ZnQfo1-IxDHetD6OU1T7qQPL1HHxaBh4OB_HLjROipa3KNamnvEJ"
+local Rare_Islands_Hook = "https://discord.com/api/webhooks/1362693689943654502/zX6vmw-AbGOdn_mm8qtrhnBCZdo6wcmayLZisiqUpszAAT7oUbolA5Ag9LhVYI1WdGhs"
+local Event_Islands_Hook = "https://discord.com/api/webhooks/1363151340364366066/j0S4ioUPagpdOawbcZJ_sxhGn2hhGeDwVfNw0ILLgvm6ovaOjaA-YPjGB_2wZNpohiuV"
+
+
+function HighlightIsland(IslandModel)
+	if IslandModel then
+		local Highlight = Instance.new("Highlight")
+		Highlight.Name = "ESP_HIGHLIGHT"
+		Highlight.Parent = IslandModel
+		Highlight.Adornee = IslandModel
+		Highlight.FillColor = Color3.fromRGB(255, 53, 46)
+		Highlight.FillTransparency = 0.8
+		Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+		Highlight.OutlineTransparency = 0
+
+		local Gui = Instance.new("BillboardGui")
+		Gui.Parent = Highlight
+		Gui.Adornee = IslandModel
+		Gui.Size = UDim2.new(500,0,40,0)
+		Gui.AlwaysOnTop = true
+
+		local Text_name : TextLabel = Instance.new("TextLabel")
+		Text_name.Parent = Gui
+		Text_name.Size = UDim2.new(1,0,0.5,0)
+		Text_name.BackgroundTransparency = 1
+		Text_name.TextColor3 = Color3.new(1, 0, 0)
+		Text_name.TextScaled = true
+		Text_name.RichText = true
+		Text_name.Text = "<b>" .. IslandModel.Name  .. "</b>"
+		Text_name.TextStrokeTransparency = 0
+		Text_name.TextStrokeColor3 = Color3.new(1, 1, 1)
+
+		if IslandModel:FindFirstChild("Display") and IslandModel.Display:FindFirstChild("SurfaceGui") then
+			local gui = IslandModel.Display.SurfaceGui
+			if gui:FindFirstChild("Icon") and gui.Icon:FindFirstChild("Luck") then
+				local Text_luck = Instance.new("TextLabel")
+				Text_luck.Parent = Gui
+				Text_luck.Position = UDim2.new(0,0,0.5,0)
+				Text_luck.Size = UDim2.new(1,0,0.5,0)
+				Text_luck.BackgroundTransparency = 1
+				Text_luck.TextColor3 = Color3.new(1, 0, 0)
+				Text_luck.TextScaled = true
+				Text_luck.RichText = true
+				Text_luck.Text = "<b>" .. gui.Icon.Luck.Text .. " Luck</b>"
+				Text_luck.TextStrokeTransparency = 0
+				Text_luck.TextStrokeColor3 = Color3.new(1, 1, 1)
+			end
+		end
+	end
+end
+
+local Char = game.Players.LocalPlayer.Character
+local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+
+
+function TravelToPosition(Destination)
+	task.wait(0.5)
+
+	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("Teleport", "Workspace.Worlds.The Overworld.PortalSpawn")
+
+	task.wait(1.5)
+
+	local Floor = Instance.new("Part")
+	Floor.Anchored = true
+	Floor.Name = "FLOOR_PART"
+	Floor.Parent = game.Workspace
+	Floor.Position = Vector3.new(0, -45, 0)
+	Floor.Size = Vector3.new(2048, 1, 2048)
+	Floor.Transparency = 0.7
+	Floor.Color = Color3.fromRGB(188, 6, 0)
+
+	local Char = game.Players.LocalPlayer.Character
+
+	Char.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+
+	Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, -40, Char.HumanoidRootPart.CFrame.Z))
+
+	task.wait(1.5)
+
+	--TweenService:Create( , TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = EggCFrame + Vector3.new(0, 30, 0)}):Play()
+	--TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(UnderTweenDestination)}):Play()
+	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
+	local function TweenToPoint()
+		local UnderTweenDestination = Vector3.new(Destination.X, -40, Destination.Z)
+
+		local distance = (Char.HumanoidRootPart.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).Magnitude
+		local tweenTime = distance / 32
+
+		local Tween_ = TweenService:Create(Char.HumanoidRootPart, TweenInfo.new(tweenTime, Enum.EasingStyle.Linear), {CFrame = CFrame.new(UnderTweenDestination)})
+		Tween_:Play()
+
+		Tween_.Completed:Connect(function()
+			task.wait(1)
+
+			warn("MAGNITUDE:")
+			warn((HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).magnitude)
+
+			if (HRP.Position - Vector3.new(UnderTweenDestination.X, HRP.Position.Y, UnderTweenDestination.Z)).magnitude <= 3 then
+				print("Success")
+
+				task.wait(1)
+
+				Char.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(Char.HumanoidRootPart.CFrame.X, Destination.Y, Char.HumanoidRootPart.CFrame.Z))
+
+				task.wait(0.2)
+			else
+				Rayfield:Notify({
+					Title = "Tween Error!",
+					Content = "Tween failed due to lag... Retrying!",
+					Image = 92280379340968,
+					OnClick = function()
+					end,
+				})
+
+				ExploitFunctions.Message(Testing_Hook, "Tween has failed! Retrying!")
+
+				TweenToPoint()
+			end
+		end)
+	end
+
+	TweenToPoint()
+end
+
+
+
+function SendEggWebhook(Webhook_, Island, Luck, Timer, IslandHeight, RaresOnly)
+	local Embed = {
+		["title"] = "✨ Rift Found!",
+		["description"] = "",
+		["fields"] = {
+			{
+				["name"] = "🥚 Rift Name",
+				["value"] = "```" .. tostring(Island) .. "```",
+			},
+			{
+				["name"] = "⌚ Time Left",
+				["value"] = "```" .. tostring(Timer) .. "```",
+			},
+			{
+				["name"] = "🎈 Height",
+				["value"] = "```" .. math.floor(IslandHeight) .. "```",
+			},
+			{
+				["name"] = "🔑 Server Link",
+				["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+			},
+
+		},
+		["color"] = 16777215,
+		["footer"] = {
+			["text"] = tostring(os.date("%H:%M:%S")) 
+		},
+	}
+
+	if Luck then
+		Embed["fields"] = {
+			{
+				["name"] = "🥚 Rift Name",
+				["value"] = "```" .. tostring(Island) .. "```",
+			},
+			{
+				["name"] = "⌚ Time Left",
+				["value"] = "```" .. tostring(Timer) .. "```",
+			},
+			{
+				["name"] = "🍀 Luck Multiplier",
+				["value"] = "```" .. tostring(Luck) .. "```",
+			},
+			{
+				["name"] = "🎈 Height",
+				["value"] = "```" .. math.floor(IslandHeight) .. "```",
+			},
+			{
+				["name"] = "🔑 Server Link",
+				["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+			},
+		}
+	end
+
+	ExploitFunctions.Webhook(Webhook_, Embed)
+end
+
+function ChangeRiftESP()
+	if Setting_IslandESP == true then
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if Island then
+				if not Island:FindFirstChildOfClass("Highlight") then
+					warn("island: " .. tostring(Island))
+					HighlightIsland(Island)
+				end
+			end
+		end
+	else
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if Island then
+				if Island:FindFirstChildOfClass("Highlight") then
+					Island:FindFirstChildOfClass("Highlight"):Destroy()
+				end
+			end
+		end
+	end
+end
+
+
+function ChangeDrawLines()
+	if not game.Workspace:FindFirstChild("BeamFolder") then
+		local BeamsFolder = Instance.new("Folder")
+		BeamsFolder.Name = "BeamFolder"
+		BeamsFolder.Parent = game.workspace
+	end
+
+	if Setting_DrawLinesToIslands == true then
+		for _, Island in workspace.Rendered.Rifts:GetChildren() do
+			if not Island:FindFirstChild("LineAttachment") then
+				local Attachment__ = Instance.new("Attachment")
+				Attachment__.Name = "LineAttachment"
+				Attachment__.Parent = Island:FindFirstChild("Output")
+
+			end
+
+			if not Island:FindFirstChild("BeamESP") then
+				local Beam = Instance.new("Beam")
+				Beam.Name = "BeamESP"
+				Beam.Parent = game.Workspace:FindFirstChild("BeamFolder")
+				Beam.Attachment0 = Island.Output:FindFirstChild("LineAttachment")
+				Beam.Attachment1 = game.Players.LocalPlayer.Character.HumanoidRootPart.RootAttachment
+				Beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
+				Beam.Enabled = true
+				Beam.LightEmission = 0
+				Beam.Width0 = 0.05
+				Beam.Width1 = 0.05
+				Beam.LightInfluence = 0
+				Beam.FaceCamera = true
+
+				if Island.Name == "royal-chest" then
+					Beam.Color = ColorSequence.new(Color3.fromRGB(204, 0, 255))
+				elseif Island.Name == "golden-chest" then
+					Beam.Color = ColorSequence.new(Color3.fromRGB(255, 213, 0))
+				end
+			end
+		end
+	else
+		local BeamsFolder = game.Workspace:FindFirstChild("BeamFolder")
+
+		for _, Beam_ in BeamsFolder:GetChildren() do
+			Beam_:Destroy()
+		end
+	end
+end
+
+--[[
+
+function CharacterIsAnchored(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.Anchored == not value then
+			part.Anchored = value
+		end
+	end
+end
+
+function CharacterCanColide(value)
+	for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if part:IsA("BasePart") and part.CanCollide == not value then
+			part.CanCollide = value
+		end
+	end
+end
+]]
+
+
+
+
+
+workspace.Rendered.Rifts.ChildAdded:Connect(function(IslandObject)
+	task.wait(10)
+
+	if Setting_IslandESP == true then
+		HighlightIsland(IslandObject)
+	end
+
+	if Setting_DrawLinesToIslands == true then
+		ChangeDrawLines()
+	end
+
+	local IslandName = IslandObject.Name
+	local IslandHeight = math.floor(IslandObject.Display.CFrame.Y)
+
+	local Luck = nil
+	local Timer = IslandObject.Display.SurfaceGui.Timer.Text
+
+	if IslandObject.Display.SurfaceGui:FindFirstChild("Icon") then
+		Luck = IslandObject.Display.SurfaceGui:FindFirstChild("Icon"):FindFirstChild("Luck").Text
+	end
+
+	if Setting_IslandSpawnNotifications == true then
+		if Luck then
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = IslandName .. " " .. Luck .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 92280379340968,
+
+				OnClick = function()
+
+				end,
+			})
+		else
+			Rayfield:Notify({
+				Title = "New Island Detected!",
+				Content = IslandName .. " (" .. IslandHeight .. "m) (" .. Timer .. ")",
+				Image = 92280379340968,
+
+				OnClick = function()
+
+				end,
+			})
+		end
+	end
+
+
+
+
+	if table.find(AllowedEventEggs, tostring(IslandObject)) then
+		SendEggWebhook(Event_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+	end
+
+
+	if table.find(AllowedRareEggs, tostring(IslandObject)) then
+		if Luck and Luck == "x25" then
+			SendEggWebhook(Rare_Islands_Hook, IslandObject, Luck, Timer, IslandHeight)
+		end
+	end
+
+	if Setting_IslandSpawnWebhookNotifications == true then
+
+		if Setting_IslandSpawnWebhookPingEveryoneOn25 == true then
+			if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+				if Luck and Luck == "x25" or IslandObject == "aura-egg" or IslandObject == "royal-chest" then
+					ExploitFunctions.Message(Setting_IslandSpawnWebhook, "@everyone")
+				end
+			end
+		end
+
+		if Setting_IslandSpawnWebhook ~= nil or Setting_IslandSpawnWebhook ~= "" or Setting_IslandSpawnWebhook ~= "000" then
+			SendEggWebhook(Setting_IslandSpawnWebhook, IslandObject, Luck, Timer, IslandHeight)
+		end
+	end
+end)
+
+function test_print_table(tbl_)
+	local tablee = tbl_
+	for _, v in tablee do
+		warn(v)
+		for _, x in v do
+			print(x)
+		end
+	end
+end
+
+--[[workspace.Rendered:GetChildren()[12].ChildAdded:Connect(function(Pickupable)
+	if Setting_SilentAutoPickupables == true then
+		task.spawn(function()
+			local Name = Pickupable.Name
+
+			--Pickupable.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- maybe?
+			ReplicatedStorage.Remotes.Pickups.CollectPickup:FireServer(Name)
+			wait(1)
+			Pickupable:Destroy()
+		end)
+	end
+end)]]
+
+-- FARMING TAB
+
+local Tab_Farming = Window:CreateTab("Farming") -- Title, Image
+
+local Section_Bubbles = Tab_Farming:CreateSection("Bubbles")
+
+local Toggle_AutoBubbleBlow = Tab_Farming:CreateToggle({
+	Name = "Auto Blow Bubbles",
+	CurrentValue = false,
+	Flag = "Flag_AutoBubbleBlow", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBlowBubble = Value
+	end,
+})
+
+		--[[local Toggle_AutoSellBubble = Tab_Farming:CreateToggle({
+			Name = "Auto Sell Bubbles",
+			CurrentValue = false,
+			Flag = "Flag_AutoSellBubble", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+			Callback = function(Value)
+				Setting_AutoSellBubble = Value
+			end,
+		})]]
+
+local Section_Pickupables = Tab_Farming:CreateSection("Pickupables")
+
+local Toggle_SilentAutoPickupables = Tab_Farming:CreateToggle({
+	Name = "Collect Pickupables Near You",
+	CurrentValue = false,	
+	Flag = "Flag_SilentAutoPickupables", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_SilentAutoPickupables = Value
+	end,
+})
+
+
+local Section_Automatic = Tab_Farming:CreateSection("Chests")
+
+local Paragraph_1 = Tab_Farming:CreateParagraph({Title = "<b>Warning!</b>", Content = "Auto chests require buffs mastery level 15 to work!"})
+
+local Toggle_AutoVoidChest = Tab_Farming:CreateToggle({
+	Name = "Auto Void Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoVoidChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoVoidChest = Value		
+	end,
+})
+
+local Toggle_AutoGiantChest = Tab_Farming:CreateToggle({
+	Name = "Auto Giant Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoGiantChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoGiantChest = Value
+	end,
+})
+
+local Toggle_AutoInfinityChest = Tab_Farming:CreateToggle({
+	Name = "Auto Infinity Chest",
+	CurrentValue = false,
+	Flag = "Flag_AutoInfinityChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoInfinityChest = Value
+	end,
+})
+
+
+local Section_Automatic = Tab_Farming:CreateSection("Rewards")
+
+local Toggle_AutoFreeWheelSpin = Tab_Farming:CreateToggle({
+	Name = "Auto Claim Free Wheel Spin",
+	CurrentValue = false,
+	Flag = "Flag_AutoFreeWheelSpinClaim", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoFreeWheelSpin = Value
+	end,
+})
+
+--[[local Toggle_AutoSpinWheel = Tab_Farming:CreateToggle({
+	Name = "Auto Spin Wheel",
+	CurrentValue = false,
+	Flag = "Flag_AutoSpinWheel", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			Setting_AutoSpinWheel = true
+		elseif Value == false then
+			Setting_AutoSpinWheel = false
+		end
+	end,
+})]]
+
+local Toggle_AutoClaimPlaytime = Tab_Farming:CreateToggle({
+	Name = "Auto Claim Playtime Rewards",
+	CurrentValue = false,
+	Flag = "Flag_AutoClaimPlaytime", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoClaimPlaytime  = Value
+	end,
+})
+
+local Selection_Shops = Tab_Farming:CreateSection("Shops")
+
+local Toggle_AutoBuyBlackmarket= Tab_Farming:CreateToggle({
+	Name = "Auto Buy Blackmarket Items",
+	CurrentValue = false,
+	Flag = "Flag_AutoBuyBlackmarketItems", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBuyBlackmarketItems  = Value
+	end,
+})
+
+local Toggle_AutoBuyAlienShop = Tab_Farming:CreateToggle({
+	Name = "Auto Buy Alien Shop Items",
+	CurrentValue = false,
+	Flag = "Flag_AutoBuyAlienShop", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoBuyAlienShop  = Value
+	end,
+})
+
+
+
+
+
+local Tab_Islands = Window:CreateTab("Rifts") -- Title, Image
+
+local Section_Notifications = Tab_Islands:CreateSection("Rifts")
+
+local Toggle_IslandSpawnNotifications = Tab_Islands:CreateToggle({
+	Name = "Rift Spawn: In-Game Notifications",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnNotifications  = Value
+	end,
+})
+
+local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
+	Name = "Rift ESP",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnESP", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandESP  = Value
+		ChangeRiftESP()
+	end,
+})
+
+local Toggle_IslandSpawnESP= Tab_Islands:CreateToggle({
+	Name = "Draw Lines To Rifts [ESP+]",
+	CurrentValue = false,
+	Flag = "Flag_DrawLinesToIslands", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_DrawLinesToIslands  = Value
+		ChangeDrawLines()
+	end,
+})
+
+local Section_NotificationsDiscord = Tab_Islands:CreateSection("Discord Notifications")
+
+local Toggle_IslandSpawnWebhookNotifications = Tab_Islands:CreateToggle({
+	Name = "Rift Spawn: Discord Webhook Notifications",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnWebhookNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnWebhookNotifications  = Value
+	end,
+})
+
+local WebhookInput = Tab_Islands:CreateInput({
+	Name = "Webhook Link",
+	CurrentValue = "000",
+	PlaceholderText = "Put Webhook Here",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Flag_IslandSpawnWebhookWebhookString",
+	Callback = function(Text)
+		Setting_IslandSpawnWebhook = Text
+	end,
+})
+
+local Toggle_IslandSpawnWebhookPingEveryoneOn25 = Tab_Islands:CreateToggle({
+	Name = "Ping @everyone When a 25x Luck Rift Spawns",
+	CurrentValue = false,
+	Flag = "Flag_IslandSpawnWebhookPingEveryoneOn25", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_IslandSpawnWebhookPingEveryoneOn25  = Value
+	end,
+})
+
+local Tab_Misc = Window:CreateTab("Misc") -- Title, Image
+
+local Section_Unlockables = Tab_Misc:CreateSection("Unlockables")
+
+local Button_UnlockIslands = Tab_Misc:CreateButton({
+	Name = "Unlock All Islands",
+	Callback = function()
+		for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IslandFolders.Island.UnlockHitbox.CFrame
+			task.wait(0.5)
+		end
+	end,
+})
+
+local Toggle_InfEggFast = Tab_Misc:CreateToggle({
+	Name = "Fast Hatch Infinity Egg",
+	CurrentValue = false,
+	Flag = "Flag_InfEggFast", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_InfEggFast = Value
+	end,
+})
+
+local Section_JoinServer = Tab_Misc:CreateSection("Specific Join")
+
+local Job_Id = nil
+
+local Button_UnlockIslands = Tab_Misc:CreateButton({
+	Name = "Join",
+	Callback = function()
+		for _, IslandFolders in workspace.Worlds["The Overworld"].Islands:GetChildren() do
+			if Job_Id ~= "-" then
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, Job_Id, game.Players.LocalPlayer)
+			end
+		end
+	end,
+})
+
+local Job_IdRejoin = Tab_Misc:CreateInput({
+	Name = "Server JobID",
+	CurrentValue = "-",
+	PlaceholderText = "-",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Flag_Job_IdRejoin",
+	Callback = function(Text)
+		Job_Id = Text
+	end,
+})
+
+
+local Section_Unlockables = Tab_Misc:CreateSection("QOL")
+
+local Toggle_AutoMysteryBox = Tab_Misc:CreateToggle({
+	Name = "Auto Use Mystery Box",
+	CurrentValue = false,
+	Flag = "Flag_AutoMysteryBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoMysteryBox  = Value
+	end,
+})
+
+local Toggle_AutoOpenGoldenChest = Tab_Misc:CreateToggle({
+	Name = "Auto Open Golden Chest (When Close)",
+	CurrentValue = false,
+	Flag = "Flag_AutoOpenGoldenChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoOpenGoldenChest  = Value
+	end,
+})
+
+local Toggle_AutoOpenRoyalChest = Tab_Misc:CreateToggle({
+	Name = "Auto Open Royal Chest (When Close)",
+	CurrentValue = false,
+	Flag = "Flag_AutoOpenRoyalChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		Setting_AutoOpenRoyalChest  = Value
+	end,
+})
+
+local Section_Info = Tab_Misc:CreateSection("Info")
+
+local DiscordParagraph = Tab_Misc:CreateParagraph({Title = "<b>Discord Server</b>", Content = "https://discord.gg/P49rCFQ7FX"})
+local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Script Version</b>", Content = _Version_})
+local VersionParagraph = Tab_Misc:CreateParagraph({Title = "<b>Server ID</b>", Content = game.JobId})
+
+
+
+--- AFTER JOINING SERVER
+
+local LogEmbed = {
+	["title"] = "Launch Log",
+	["description"] = "",
+	["fields"] = {
+		{
+			["name"] = "Username",
+			["value"] = "```" .. game.Players.LocalPlayer.Name .."```",
+		},
+		{
+			["name"] = "Server Link",
+			["value"] = "```roblox://placeId=" .. tostring(game.PlaceId) .. "&gameInstanceId=" .. tostring(game.JobId) .. "```",
+		},
+
+	},
+	["color"] = 16777215,
+	["footer"] = {
+		["text"] = tostring(os.date("%H:%M:%S")) 
+	},
+}
+
+--Message(Logs_Hook, "`**" .. tostring(os.date("%H:%M:%S"))  .. " - Launched by: " .. game.Players.LocalPlayer.Name .. " (SERVER_ID: " .. game.JobId .. "**`")
+Rayfield:LoadConfiguration()
+
+--------------------------
+
+task.spawn(function()
+	while true do
+
+		if Setting_AutoVoidChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Void Chest", true)
+			task.wait(0.5)
+		end
+
+		if Setting_AutoInfinityChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Infinity Chest", true)
+			task.wait(0.5)
+		end
+
+		if Setting_AutoGiantChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimChest", "Giant Chest", true)
+			task.wait(0.5)
+		end
+
+		if Setting_AutoFreeWheelSpin == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("ClaimFreeWheelSpin")
+			task.wait(0.5)
+		end
+
+	--[[if Setting_AutoSpinWheel == true then
+		ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("WheelSpin")
+	end]]
+
+		if Setting_AutoClaimPlaytime == true then
+			for Index = 1, 9 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Function:InvokeServer("ClaimPlaytime", Index)
+				task.wait(0.1)
+			end
+			task.wait(0.5)
+		end
+
+
+		if Setting_AutoBuyBlackmarketItems == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "shard-shop", Index)
+				task.wait(0.1)
+			end
+			task.wait(0.5)
+		end
+
+		if Setting_AutoBuyAlienShop == true then
+			for Index = 1, 3 do
+				ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BuyShopItem", "alien-shop", Index)
+				task.wait(0.1)
+			end
+			task.wait(0.5)
+		end
+
+		task.wait(10)
+	end
+end)
+
+task.spawn(function()
+	while true do
+		if Setting_AutoBlowBubble == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
+			task.wait(0.1)
+		end
+		task.wait(0.25)
+	end
+end)
+
+
+task.spawn(function()
+	while true do
+		if Setting_AutoOpenGoldenChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "golden-chest", false)
+			task.wait(0.2)
+		end
+
+		if Setting_AutoOpenRoyalChest == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UnlockRiftChest", "royal-chest", false)
+			task.wait(0.2)
+		end
+
+		if Setting_AutoMysteryBox == true then
+			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("UseGift", "Mystery Box", 10)
+			--rs.shared.framework.network.remote.event.fire
+			task.wait(0.2)
+		end
+
+		task.wait(0.25)
+	end
+end)
+
+task.spawn(function()
+	while true do
+		if Setting_SilentAutoPickupables == true then
+			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
+
+				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
+
+				if Part then
+					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+					local distance = (HRP.Position - Part.Position).Magnitude
+
+					if distance < 80 then
+						local Name = pickupable.Name
+
+						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
+						task.wait(0.1)
+						pickupable:Destroy()
+					end
+				end
+			end
+		end
+
+		task.wait(0.5)
+	end
+end)
+
+
+----
+
+task.wait(8)
+
+ExploitFunctions.Message(Testing_Hook, "Connected to server.")
+
+if ExploitFunctions then
+	ExploitFunctions.Webhook(Logs_Hook, LogEmbed)
+end
+
+
+ChangeRiftESP()
+ChangeDrawLines()
+
+--Rayfield.CheckSavedKey()
+
+
+
+
+
+
