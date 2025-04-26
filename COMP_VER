@@ -1,4 +1,4 @@
-local _Version_ = "Optimized Ver. #02"
+local _Version_ = "Optimized Ver. #03"
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -678,6 +678,13 @@ local Toggle_InfEggFast = Tab_Misc:CreateToggle({
 	Flag = "Flag_InfEggFast", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		Setting_InfEggFast = Value
+	end,
+})
+
+local Button_Rejoin = Tab_Misc:CreateButton({
+	Name = "Rejoin Server",
+	Callback = function()
+		TeleportService:Teleport(game.PlaceId)
 	end,
 })
 
