@@ -1,4 +1,4 @@
-local _Version_ = "Optimized Ver. #03"
+local _Version_ = "Optimized Ver. #04"
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -850,7 +850,7 @@ task.spawn(function()
 		if Setting_InfEggFast == true then
 			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", "Infinity Egg", 6)
 		end
-		task.wait(0.25)
+		task.wait(0.12)
 	end
 end)
 
