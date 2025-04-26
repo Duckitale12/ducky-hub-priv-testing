@@ -1,4 +1,4 @@
-local _Version_ = "1.186v."
+local _Version_ = "1.187v."
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -204,6 +204,7 @@ function TravelToPosition(Destination)
 	--game.Players.LocalPlayer.Character.Humanoid:MoveTo(pos)
 	local function TweenToPoint()
 		local UnderTweenDestination = Vector3.new(Destination.X, -40, Destination.Z)
+		
 		local distance = (Char.HumanoidRootPart.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).Magnitude
 		local tweenTime = distance / 32
 
@@ -216,7 +217,7 @@ function TravelToPosition(Destination)
 			warn("MAGNITUDE:")
 			warn((HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).magnitude)
 			
-			if (HRP.Position - Vector3.new(UnderTweenDestination.X, -40, UnderTweenDestination.Z)).magnitude <= 3 then
+			if (HRP.Position - Vector3.new(UnderTweenDestination.X, HRP.Position.Y, UnderTweenDestination.Z)).magnitude <= 3 then
 				print("Success")
 				
 				task.wait(1)
@@ -610,7 +611,6 @@ function EggFinder_MainSearch()
 						FOUND = false
 						FoundEggToOpen = ""
 						
-						task.wait(6)
 						EggFinder_MainSearch()
 					end)
 
@@ -618,7 +618,6 @@ function EggFinder_MainSearch()
 					task.wait(1)
 
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
-
 
 					TravelToPosition(Position__)
 
