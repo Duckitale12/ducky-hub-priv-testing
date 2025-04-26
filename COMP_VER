@@ -1,4 +1,4 @@
-local _Version_ = "Optimized Ver."
+local _Version_ = "Optimized Ver. #02"
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -833,6 +833,15 @@ task.spawn(function()
 		if Setting_AutoBlowBubble == true then
 			ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer("BlowBubble")
 			task.wait(0.1)
+		end
+		task.wait(0.25)
+	end
+end)
+
+task.spawn(function()
+	while true do
+		if Setting_InfEggFast == true then
+			game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer("HatchEgg", "Infinity Egg", 6)
 		end
 		task.wait(0.25)
 	end
