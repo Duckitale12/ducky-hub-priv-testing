@@ -1,4 +1,4 @@
-local _Version_ = "Optimized Ver. #04"
+local _Version_ = "Optimized Ver. #05"
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -880,7 +880,7 @@ end)
 task.spawn(function()
 	while true do
 		if Setting_SilentAutoPickupables == true then
-			for _, pickupable in workspace.Rendered:GetChildren()[14]:GetChildren() do
+			for _, pickupable in workspace.Rendered:GetChildren()[13]:GetChildren() do
 
 				local Part = pickupable:FindFirstChildOfClass("MeshPart") or  pickupable:FindFirstChildOfClass("Part")
 
