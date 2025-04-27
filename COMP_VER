@@ -1,4 +1,4 @@
-local _Version_ = "Optimized Ver. #05"
+local _Version_ = "Optimized Ver. #06"
 
 local EggNames = {
 	["void-egg"] = "Void Egg",
@@ -888,7 +888,7 @@ task.spawn(function()
 					local HRP = game.Players.LocalPlayer.Character.HumanoidRootPart
 					local distance = (HRP.Position - Part.Position).Magnitude
 
-					if distance < 80 then
+					if distance < 35 then
 						local Name = pickupable.Name
 
 						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(Name)
